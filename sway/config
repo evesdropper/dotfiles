@@ -204,7 +204,17 @@ bar {
     swaybar_command waybar
 }
 
+
+# color changes go brr
 # font pango:"Inconsolata Nerd Font Mono" Regular 11
-set $uifont "Inconsolata Nerd Font Mono"
+# set $uifont "Inconsolata Nerd Font Mono"
+
+#client.<class>         <border>  <background>    <text>      <indicator>   <child_border> 
+
+client.focused          "#ffffff" "#b5d5ff"      "#000000"   "#b5d5ff"     "#ffffff"
+
+client.focused_inactive "#d4b07b" "#24221c"      "#666666"   "#24221c"     "#d4b07b"
+
+client.unfocused        "#666666" "#fff5e5"      "#666666"   "#000000"     "#999999"
 
 include /etc/sway/config.d/*
