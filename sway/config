@@ -32,11 +32,20 @@ output * bg ~/dotfiles/sway/revise.png fill
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 
 ### Idle configuration
-exec swayidle -w \
-          timeout 300 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2' \
-          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-          before-sleep 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2' \
-	  lock 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2'
+# swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2
+#$bl_time 600
+#$lk_time 615
+#$lb_time  15
+
+exec_always pgrep swayidle || swayidle -w \
+    timeout 300'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2' \
+    timeout 600 'swaymsg "output * dpms off"' \
+     resume 'swaymsg "output * dpms on"' \
+    timeout 15 'pgrep swaylock && swaymsg "output * dpms off"' \
+     resume 'pgrep swaylock && swaymsg "output * dpms on"' \
+    before-sleep 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2' 
+
+bindsym $mod+escape exec killall -s SIGUSR1 swayidle && killall -s SIGUSR1 swayidle
 
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
@@ -204,6 +213,7 @@ bar {
 
 
 # color changes go brr
+font pango:Inconsolata Nerd Font Mono 11
 # font pango:"Inconsolata Nerd Font Mono" Regular 11
 # set $uifont "Inconsolata Nerd Font Mono"
 
@@ -230,4 +240,5 @@ for_window [app_id="zenity"] resize set 225 75
 include /etc/sway/config.d/*
 
 # scripts
-exec wl-clipboard-history -t
+exec_always wl-clipboard-history -t
+exec_always swaycons
