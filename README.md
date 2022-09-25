@@ -13,8 +13,8 @@ Some basic information about my setup.
 No, I don't think so.
 
 ## Serious To Do
-- [] Wifi Setup (Eduroam)
-- [] Get Bluetooth to work with headphones
+- [ ] Wifi Setup (Eduroam)
+- [ ] Get Bluetooth to work with headphones
 
 ## Cool Stuff
 Screenshots when I'm done.
