@@ -32,14 +32,12 @@ output * bg ~/dotfiles/sway/revise.png fill
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 
 ### Idle configuration
-#
-# Example configuration:
-#
-# exec swayidle -w \
-#          timeout 300 'swaylock -f -c 000000' \
-#          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-#          before-sleep 'swaylock -f -c 000000'
-#
+exec swayidle -w \
+          timeout 300 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2' \
+          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+          before-sleep 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2' \
+	  lock 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2'
+
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
@@ -217,4 +215,19 @@ client.focused_inactive "#d4b07b" "#24221c"      "#666666"   "#24221c"     "#d4b
 
 client.unfocused        "#666666" "#fff5e5"      "#666666"   "#000000"     "#999999"
 
+# Generated windows.
+for_window [title="(?:Open|Save) (?:File|Folder|As)"] floating enable;
+for_window [title="(?:Open|Save) (?:File|Folder|As)"] resize set 800 600
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="bubble"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_role="Preferences"] floating enable
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
+for_window [app_id="zenity"] floating enable
+for_window [app_id="zenity"] resize set 225 75
+
 include /etc/sway/config.d/*
+
+# scripts
+exec wl-clipboard-history -t
