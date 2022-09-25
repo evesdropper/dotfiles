@@ -1,5 +1,5 @@
 # dotfiles
-New (and hopefully more organized) dotfiles on Arch Linux. Wayland-based configuration. Inspired by [https://github.com/dexpota/kitty-themes/blob/master/themes/Desert.conf](Kitty Desert Theme).
+New (and hopefully more organized) dotfiles on Arch Linux. Wayland-based configuration. Inspired by [Kitty Desert Theme](https://github.com/dexpota/kitty-themes/blob/master/themes/Desert.conf).
 
 ## Setup
 Some basic information about my setup.
