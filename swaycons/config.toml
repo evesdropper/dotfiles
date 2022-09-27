@@ -2,7 +2,7 @@
 color = "#FFFFFF"
 focused_color = "#FFFFFF"
 icon = "类"
-size = "14pt"
+size = "16pt"
 
 [app_id]
 "dev.alextren.Spot" = { icon = "阮", color = "#1ed760" }

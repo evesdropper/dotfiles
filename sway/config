@@ -38,9 +38,9 @@ output * bg ~/dotfiles/sway/revise.png fill
 #$lb_time  15
 
 exec_always pgrep swayidle || swayidle -w \
-    timeout 300'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2' \
+    timeout 300 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2' \
     timeout 600 'swaymsg "output * dpms off"' \
-     resume 'swaymsg "output * dpms on"' \
+    resume 'swaymsg "output * dpms on"' \
     timeout 15 'pgrep swaylock && swaymsg "output * dpms off"' \
      resume 'pgrep swaylock && swaymsg "output * dpms on"' \
     before-sleep 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2' 
@@ -240,5 +240,9 @@ for_window [app_id="zenity"] resize set 225 75
 include /etc/sway/config.d/*
 
 # scripts
-exec_always wl-clipboard-history -t
+# exec_always wl-clipboard-history -t
 exec_always swaycons
+exec_always /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec_always $HOME/start-swhkd.sh
+# exec_always ydotoold
+

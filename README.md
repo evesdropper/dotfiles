@@ -18,3 +18,6 @@ No, I don't think so.
 
 ## Cool Stuff
 Screenshots when I'm done.
+
+## Serious Stuff
+Startpage is a clone of [hawk](https://github.com/itsvs/hawk) with some personal changes added.
