@@ -92,6 +92,10 @@ return packer.startup(function(use)
     -- git 
     use 'lewis6991/gitsigns.nvim'
 
+    -- extinctifying vscode 
+    use 'kyazdani42/nvim-tree.lua'
+    require("nvim-tree").setup()
+
     -- appearance
     use "jnurmine/Zenburn" -- colorscheme
     use 'Mofiqul/vscode.nvim' -- code dark scheme

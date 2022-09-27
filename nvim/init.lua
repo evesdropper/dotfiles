@@ -1,8 +1,16 @@
+-- load maplocalleaders first
 require "random.vimtex"
+
+-- core
 require "random.options"
 require "random.keymaps"
 require "random.plugins"
+
+-- appearance 
 require "random.colorscheme"
+require "random.icons"
+
+-- code editing
 require "random.cmp"
 require "random.gitsigns"
 
