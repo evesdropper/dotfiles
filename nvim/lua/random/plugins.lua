@@ -103,8 +103,15 @@ return packer.startup(function(use)
     'nvim-lualine/lualine.nvim',
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
     }
-    -- use "akinsho/bufferline.nvim"
-    -- use "romgrk/barbar.nvim"
+    use {'akinsho/bufferline.nvim', tag = "v2.*", requires = 'kyazdani42/nvim-web-devicons'}
+    require("bufferline").setup{
+        options = {
+            show_buffer_icons = true
+        }
+    }
+
+    -- use { 'fgheng/winbar.nvim' }
+
     use 'andweeb/presence.nvim' -- to remind discord users that i am a superior being
 
   -- Automatically set up your configuration after cloning packer.nvim

@@ -89,6 +89,11 @@ _G.packer_plugins = {
     path = "/home/revise/.local/share/nvim/site/pack/packer/start/Zenburn",
     url = "https://github.com/jnurmine/Zenburn"
   },
+  ["bufferline.nvim"] = {
+    loaded = true,
+    path = "/home/revise/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
+    url = "https://github.com/akinsho/bufferline.nvim"
+  },
   ["cmp-buffer"] = {
     loaded = true,
     path = "/home/revise/.local/share/nvim/site/pack/packer/start/cmp-buffer",

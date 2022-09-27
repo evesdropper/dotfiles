@@ -1,5 +1,6 @@
 -- load maplocalleaders first
 require "random.vimtex"
+require "random.telescope"
 
 -- core
 require "random.options"
@@ -9,8 +10,11 @@ require "random.plugins"
 -- appearance 
 require "random.colorscheme"
 require "random.icons"
+require "random.lualine"
+require "random.presence"
 
 -- code editing
+require "random.treesitter"
 require "random.cmp"
 require "random.gitsigns"
 
