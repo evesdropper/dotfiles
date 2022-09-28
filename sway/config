@@ -237,7 +237,7 @@ for_window [window_type="menu"] floating enable
 for_window [app_id="zenity"] floating enable
 for_window [app_id="zenity"] resize set 225 75
 
-include /etc/sway/config.d/*
+include /home/revise/.config/sway/config.d/*
 
 # scripts
 # exec_always wl-clipboard-history -t

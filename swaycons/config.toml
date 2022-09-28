@@ -23,6 +23,8 @@ kitty = { icon = "", color="#D4B07B" }
 neovide = { icon = "", color = "#8fff6d" }
 nvim-qt = { icon = "", color = "#8fff6d" }
 shotwell = { icon = "", color = "#4f7aaf" }
+sioyek = { icon = ""}
+zathura = { icon = ""}
 zoom = { icon = "", color = "#2d8cff" }
 
 [title]
