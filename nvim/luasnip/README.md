@@ -1,7 +1,5 @@
 # From UltiSnips to LuaSnip: A Comprehensive Guide
 
-${toc}
-
 #### Acknowledgement/Notes
 This is a guide centered around moving snippets from UltiSnips to LuaSnip. While a majority of snippets discussed will be LaTeX snippets, I will not be discussing practices for creating LaTeX snippets or anything of the like - that seems better suited for a future guide.
 
