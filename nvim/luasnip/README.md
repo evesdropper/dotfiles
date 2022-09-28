@@ -382,4 +382,4 @@ Here are some resources I found incredibly helpful for learning more about how L
 
 <hr>
 
-And that’s a wrap! Hopefully this guide was helpful as an introduction to LuaSnip and a reference for moving your snippets over. If you want to check out some of my snippets, they are linked here.
+And that’s a wrap! Hopefully this guide was helpful as an introduction to LuaSnip and a reference for moving your snippets over. If you want to check out some of my snippets, they are linked [here](https://github.com/evesdropper/dotfiles/tree/main/nvim/luasnip).
