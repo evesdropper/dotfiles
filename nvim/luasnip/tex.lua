@@ -88,7 +88,7 @@ local mat = function(args, snip)
 		table.insert(nodes, t{"\\\\", ""})
 	end
 	-- fix last node.
-	nodes[#nodes] = t""
+	-- nodes[#nodes] = t""
 	return sn(nil, nodes)
 end
 
@@ -447,7 +447,7 @@ return {
     { delimiters='<>' }
     ), { condition=math }),
     s('tikztest', {t('this works only in tikz')},
-    { condition=tex.in_tikz }),
+    { condition=tikz, show_condition=tikz}),
     
 }, {
     -- math mode
