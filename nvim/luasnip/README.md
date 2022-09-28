@@ -28,6 +28,16 @@ While UltiSnips is quite simple in format, only using plain text and dollar sign
 
 And secondly, as the name implies, LuaSnip is heavily based on Lua parsing, whereas UltiSnips uses Python. For the most part, there is very little difference between the two save for a few syntax changes. However, the Achilles’ heel of Lua parsing is probably its more limited regex parsing - Lua only supports its own Lua patterns, which are not as complete as Python’s full suite of regex features. The lack of such regex support may make a few commonly defined snippets in UltiSnips a bit harder to convert, but in general, LuaSnip should be able to replicate most, if not all functionality of UltiSnips and add its own flair. Here’s a reference of all the snippet types/conditions I commonly used in UltiSnips and their LuaSnip counterparts as a reference and a preview as to what’s next:
 
+| UltiSnips                          | LuaSnip                                                  |
+|------------------------------------|----------------------------------------------------------|
+| `a` Snippets                       | `autoexpand = true`, put on separate snip table          |
+| `b` Snippets                       | `require("luasnip.extras.expand_conditions").line_begin` |
+| `i`/`w` Snippets                   | `wordTrig = (true\|false)` Set to true by default        |
+| `r` Snippets                       | `regTrig = true`                                         |
+| `e`/`context` Snippets             | LuaSnip conditions                                       |
+| Visual Mode Snippets               | `LS_SELECT_RAW/LS_SELECT_DEDENT`                         |
+| Autoexpand/parsing heavy snippets  | Function/Choice/Dynamic Nodes                            |
+
 Now, let’s get started by setting up LuaSnip.
 
 ## Basic Configuration

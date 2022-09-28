@@ -446,6 +446,15 @@ return {
     { i(1), i(0) },
     { delimiters='<>' }
     ), { condition=math }),
+    s({ trig='lrv', name='left right', dscr='left right'},
+    fmt([[\left(<>\right)<>]],
+    { f(function(args, snip)
+      local res, env = {}, snip.env
+      for _, val in ipairs(env.LS_SELECT_RAW) do table.insert(res, val) end
+      return res
+      end, {}), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
     s('tikztest', {t('this works only in tikz')},
     { condition=tikz, show_condition=tikz}),
     
