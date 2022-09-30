@@ -76,6 +76,9 @@ keymap("n", "<leader>fg", ":Telescope live_grep<CR>", opts)
 keymap("n", "<leader>fb", ":Telescope buffers<CR>", opts)
 keymap("n", "<leader>fh", ":Telescope help_tags<CR>", opts)
 
+-- nvim-tree 
+keymap("n", "<C-e>", ":NvimTreeToggle<CR>", opts)
+
 -- mkdp 
 keymap("n", "<C-s>", ":MarkdownPreview", opts)
 keymap("n", "<M-s>", ":MarkdownPreviewStop", opts)

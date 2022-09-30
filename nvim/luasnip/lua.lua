@@ -34,5 +34,11 @@ return {
     { delimiters='<>' }
     )),
     s('shide', {t('hidden=true')}
-    )
+    ),
+    -- add nvim keybinds
+    s({ trig='nkey', name='nvim keybinds', dscr='add a nvim keybinds'},
+    fmt([[keymap("<>", "<>", "<>", "<>")]],
+    { i(1, "n"), i(2, "keybind"), i(3, "command"), i(4, "options") },
+    { delimiters='<>' }
+    ))
 }

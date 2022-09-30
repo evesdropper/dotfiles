@@ -31,12 +31,10 @@ local function tikz()
     return env("tikzpicture")
 end
 
-local tex = {}
-tex.in_tikz = function()
-  local is_inside = vim.fn['vimtex#env#is_inside']("tikzpicture")
-  -- perhaps using both tests is redundant and only the is_inside[1] is needed?
-  return (is_inside[1] > 0 and is_inside[2] > 0)
+local function bp()
+    return env("itemize") or env("enumerate")
 end
+
 
 -- table of greek symbols 
 griss = {
@@ -369,8 +367,8 @@ return {
     { delimiters='<>' }
     )),
     -- item but i cant get this to work
-    --[[ s({trig="-", hidden=true}, {t('\\item')}, ]]
-    --[[ { condition=enumerate or itemize }), ]]
+    s({trig="-", hidden=true}, {t('\\item')},
+    { condition=bp, show_condition=bp }),
     s({ trig='adef', name='add definition', dscr='add definition box'},
     fmt([[ 
     \begin{definition}[<>]{<>
