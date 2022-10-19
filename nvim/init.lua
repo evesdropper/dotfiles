@@ -15,6 +15,7 @@ require "random.presence"
 
 -- code editing
 require "random.treesitter"
+require "random.autopairs"
 require "random.cmp"
 require "random.gitsigns"
 

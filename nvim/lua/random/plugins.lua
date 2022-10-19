@@ -110,7 +110,7 @@ return packer.startup(function(use)
         }
     }
 
-    -- use { 'fgheng/winbar.nvim' }
+    use { 'fgheng/winbar.nvim' }
 
     use 'andweeb/presence.nvim' -- to remind discord users that i am a superior being
 
