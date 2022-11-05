@@ -234,7 +234,21 @@ snippet () "left( right)" iA
 endsnippet
 ```
 
-This similar behavior can be replicated in LuaSnip using the `LS_SELECT_RAW/LS_SELECT_DEDENT` variables. To have this work, make sure you have `store_selection_keys="<Tab>"`somewhere in your config to store the values. After your configuration is set up, it's time to create the snippet.
+This similar behavior can be replicated in LuaSnip using the `LS_SELECT_RAW/LS_SELECT_DEDENT` variables. To have this work, make sure you have something like `store_selection_keys="<Tab>"` somewhere in your config to store the values. After your configuration is set up, it's time to create the snippet.
+
+The idea behind this is very similar - use `LS_SELECT_RAW`, but instead of directly using the snippet, use the `store_selection_keys` trigger to save it to the `LS_SELECT_RAW` variable, then apply the snippet. And how do we get the values from `LS_SELECT_RAW` to show up with the snippet? This is done with a function node that retrieves the values we want. Here's the finished snippet:
+```lua
+s({ trig='lrv', name='left right', dscr='left right'},
+    fmt([[\left(<>\right)<>]],
+    { f(function(args, snip)
+      local res, env = {}, snip.env
+      for _, val in ipairs(env.LS_SELECT_RAW) do table.insert(res, val) end
+      return res
+      end, {}), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+
+```
 
 > <strong>Warning:</strong> With this part of the guide, my knowledge starts to fade. I'll be posting updates once I have more time to understand how the more complex nodes work.
 
