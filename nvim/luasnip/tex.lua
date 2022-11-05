@@ -10,17 +10,6 @@ local function math()
     return vim.api.nvim_eval('vimtex#syntax#in_mathzone()') == 1
 end
 
---[[ local function env(name) ]]
---[[     if vim.api.nvim_eval("vimtex#env#is_inside('tikzpicture')") ~= nil then ]]
---[[         return 1 ]]
---[[     end ]]
---[[     return 0 ]]
---[[ end ]]
---[[]]
---[[ local function tikz() ]]
---[[     return env("tikzpicture") ]]
---[[ end ]]
-
 -- test
 local function env(name) 
     local is_inside = vim.fn['vimtex#env#is_inside'](name)
@@ -32,7 +21,7 @@ local function tikz()
 end
 
 local function bp()
-    return env("itemize") or env("enumerate")
+    return (env("itemize") or env("enumerate") and line_begin)
 end
 
 
@@ -367,8 +356,6 @@ return {
     { delimiters='<>' }
     )),
     -- item but i cant get this to work
-    s({trig="-", hidden=true}, {t('\\item')},
-    { condition=bp, show_condition=bp }),
     s({ trig='adef', name='add definition', dscr='add definition box'},
     fmt([[ 
     \begin{definition}[<>]{<>
@@ -409,7 +396,7 @@ return {
     { i(0) },
     { delimiters='<>' }
     )),
-    s({ trig='tab(%d+)x(%d+)', regTrig=true, name='test for tabular', dscr='test'},
+    s({ trig='tab(%d+)x(%d+)', regTrig=true, name='test for tabular', dscr='test', hidden=true},
     fmt([[
     \begin{tabular}{@{}<>@{}}
     \toprule
@@ -421,7 +408,7 @@ return {
     end), d(1, tab) },
     { delimiters='<>' }
     )),
-    s({ trig='([bBpvV])mat(%d+)x(%d+)([ar])', regTrig=true, name='matrix', dscr='matrix trigger lets go'},
+    s({ trig='([bBpvV])mat(%d+)x(%d+)([ar])', regTrig=true, name='matrix', dscr='matrix trigger lets go', hidden=true},
     fmt([[
     \begin{<>}<>
     <>
@@ -437,7 +424,7 @@ return {
     d(1, mat),
     f(function (_, snip) return snip.captures[1] .. "matrix" end)},
     { delimiters='<>' }
-    )),
+    ), { condition=math, show_condition=math }),
     -- parentheses
     s({ trig='lr', name='left right', dscr='left right'},
     fmt([[\left(<>\right)<>]],
@@ -457,6 +444,9 @@ return {
     { condition=tikz, show_condition=tikz}),
     
 }, {
+    -- bullet points 
+    s({trig="-", hidden=true}, {t('\\item')},
+    { condition=bp, show_condition=bp }),
     -- math mode
     s({ trig='mk', name='math', dscr='inline math'},
     fmt([[$<>$<>]],
@@ -481,7 +471,7 @@ return {
     { i(1, "*"), i(2), rep(1), i(0) },
     { delimiters='<>' }
     )),
-    s({ trig='gat', name='gather', dscr='gather math'},
+    s({ trig='mgat', name='gather', dscr='gather math'},
     fmt([[ 
     \begin{gather<>}
     <>
@@ -490,6 +480,13 @@ return {
     { i(1, "*"), i(2), rep(1), i(0) },
     { delimiters='<>' }
     )),
+    s({ trig='tt', name='text', dscr='text in math'},
+    fmt([[
+    \text{<>}<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
     -- operators, symbols
     s({trig='**', priority=100}, {t('\\cdot')},
     { condition=math }),
@@ -608,6 +605,8 @@ return {
     { condition=math }),
     s('mu', {t('\\mu')},
     { condition=math }),
+    s('theta', {t('\\theta')},
+    { condition=math, show_condition=math }),
     -- stuff i need for m110
     s({ trig='set', name='set', dscr='set'},
     fmt([[\{<>\}<>]],
@@ -624,6 +623,23 @@ return {
     { condition=math }),
     s('UU', {t('\\cup')},
     { condition=math }),
+    -- stuff i need to do calculus 
+    s('nabl', {t('\\nabla')},
+    { condition=math, show_condition=math }),
+    s({ trig='part', name='partial derivative', dscr='partial derivative'},
+    fmt([[ 
+    \frac{\partial <>}{\partial <>} <>
+    ]],
+    { i(1, "V"), i(2, "x"), i(0) },
+    { delimiters='<>' }
+    ),{ condition=math, show_condition=math }),
+    s({ trig='elr', name='left right eval', dscr='evaluated at left/right'},
+    fmt([[ 
+    \left. <> \right|<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ),{ condition=math, show_condition=math }),
     -- reals and number sets 
     s('RR', {t('\\mathbb{R}')},
     { condition=math }),
@@ -644,6 +660,12 @@ return {
     { condition=math }),
     s('ooo', {t('\\infty')},
     { condition=math }),
+    s('=>', {t('\\implies')},
+    { condition=math, show_condition=math }),
+    s('=<', {t('\\impliedby')},
+    { condition=math, show_condition=math }),
+    s('iff', {t('\\iff')},
+    { condition=math, show_condition=math }),
     -- utils
     s('||', {t('\\mid')},
     { condition=math }),

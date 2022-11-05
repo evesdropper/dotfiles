@@ -224,6 +224,18 @@ s({ trig='(%a)+hat', regTrig=true, name='hats', dscr='hats'},
     ))
 ```
 
+### `LS_SELECT_RAW/LS_SELECT_DEDENT`: Visual Mode Snippets
+
+A less commonly used set of snippets are those in Visual mode. Usually they look something like this in UltiSnips:
+```vim
+context "math()"
+snippet () "left( right)" iA
+\left( ${1:${VISUAL}} \right) $0
+endsnippet
+```
+
+This similar behavior can be replicated in LuaSnip using the `LS_SELECT_RAW/LS_SELECT_DEDENT` variables. To have this work, make sure you have `store_selection_keys="<Tab>"`somewhere in your config to store the values. After your configuration is set up, it's time to create the snippet.
+
 > <strong>Warning:</strong> With this part of the guide, my knowledge starts to fade. I'll be posting updates once I have more time to understand how the more complex nodes work.
 
 ### Choice Nodes: Fun Side Utility with Potential
@@ -248,7 +260,7 @@ If you want to use choice nodes often, make sure to include this in your config 
 ```vim
 " feel free to change mappings - these were just defaults
 imap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
-smap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-W>'
+smap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-prev-choice' : '<C-W>'
 ```
 
 ### Dynamic Nodes: Generating Tables and Matrices
