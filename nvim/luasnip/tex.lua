@@ -21,7 +21,7 @@ local function tikz()
 end
 
 local function bp()
-    return (env("itemize") or env("enumerate") and line_begin)
+    return env("itemize") or env("enumerate")
 end
 
 
@@ -55,6 +55,7 @@ local tab = function(args, snip)
             table.insert(nodes, t{"\\midrule", ""})
         end
 	end
+    nodes[#nodes] = t"\\\\"
     return sn(nil, nodes)
 end
 
@@ -75,7 +76,7 @@ local mat = function(args, snip)
 		table.insert(nodes, t{"\\\\", ""})
 	end
 	-- fix last node.
-	-- nodes[#nodes] = t""
+	nodes[#nodes] = t"\\\\"
 	return sn(nil, nodes)
 end
 
@@ -446,7 +447,7 @@ return {
 }, {
     -- bullet points 
     s({trig="-", hidden=true}, {t('\\item')},
-    { condition=bp, show_condition=bp }),
+    { condition=(bp and line_begin), show_condition=bp }),
     -- math mode
     s({ trig='mk', name='math', dscr='inline math'},
     fmt([[$<>$<>]],
@@ -529,6 +530,13 @@ return {
     f(function(_, snip) return snip.captures[2] end)},
     { delimiters='<>' }),
     { condition=math }),
+    s({ trig='__', name='subscript iii', dscr='auto subscript for brackets'},
+    fmt([[ 
+    _{<>}<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ),{ condition=math, show_condition=math }),
     s('xnn', {t('x_n')},
     { condition=math }),
     s('xii', {t('x_i')},
@@ -606,6 +614,8 @@ return {
     s('mu', {t('\\mu')},
     { condition=math }),
     s('theta', {t('\\theta')},
+    { condition=math, show_condition=math }),
+    s('sig', {t('\\sigma')},
     { condition=math, show_condition=math }),
     -- stuff i need for m110
     s({ trig='set', name='set', dscr='set'},
