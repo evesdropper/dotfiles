@@ -446,8 +446,8 @@ return {
     
 }, {
     -- bullet points 
-    s({trig="-", hidden=true}, {t('\\item')},
-    { condition=(bp and line_begin), show_condition=bp }),
+    s({trig="--", hidden=true}, {t('\\item')},
+    { condition=bp, show_condition=bp }),
     -- math mode
     s({ trig='mk', name='math', dscr='inline math'},
     fmt([[$<>$<>]],
