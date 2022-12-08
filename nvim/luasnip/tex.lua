@@ -488,6 +488,20 @@ return {
     { i(1), i(0) },
     { delimiters='<>' }
     ), { condition=math, show_condition=math }),
+    s({ trig='sbf', name='bold math', dscr='sam bankrupt fraud'},
+    fmt([[ 
+    \symbf{<>}<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+    s({ trig='syi', name='italic math', dscr='symit'},
+    fmt([[ 
+    \symit{<>}<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
     -- operators, symbols
     s({trig='**', priority=100}, {t('\\cdot')},
     { condition=math }),
