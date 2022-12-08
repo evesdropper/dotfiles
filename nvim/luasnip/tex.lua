@@ -463,7 +463,7 @@ return {
     { i(1), i(0) },
     { delimiters='<>' }
     )),
-    s({ trig='ali', name='align', dscr='align math'},
+    s({ trig='mmali', name='align', dscr='align math'},
     fmt([[ 
     \begin{align<>}
     <>
@@ -472,7 +472,7 @@ return {
     { i(1, "*"), i(2), rep(1), i(0) },
     { delimiters='<>' }
     )),
-    s({ trig='mgat', name='gather', dscr='gather math'},
+    s({ trig='mmgat', name='gather', dscr='gather math'},
     fmt([[ 
     \begin{gather<>}
     <>
