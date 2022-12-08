@@ -18,6 +18,7 @@
 % Initializing Options
 \newif\ifopt@tikz\opt@tikztrue % global
 \newif\ifopt@circuits\opt@circuitsfalse
+\newif\ifopt@pgfexternal\opt@pgfexternalfalse
 \newif\ifopt@chapterheadings\opt@chapterheadingsfalse
 \newif\ifopt@enumerate\opt@enumeratefalse
 
@@ -77,9 +78,9 @@
     \unimathsetup{math-style=TeX}
     \RequirePackage[english]{babel}
     \defaultfontfeatures{Ligatures=TeX, Scale=MatchLowercase}
-    \setmainfont{Linux Libertine O}
-    \setsansfont{Kurier}
-    \setmonofont{Inconsolata}
+    \setmainfont{Minion Pro}
+    \setsansfont{Myriad Pro}
+    \setmonofont{Inconsolata Nerd Font}
     \unimathsetup{math-style=TeX}
     \setmathfont{Libertinus Math}
     \RequirePackage{sectsty}
@@ -227,13 +228,13 @@
     \RequirePackage{tikz-3dplot}  % 3d views
     \RequirePackage{pgfplotstable}  % pgfplots tables
 
-    %\ifopt@pgfexternal
-    %    \usepgfplotslibrary{external}  % externalize to speed up
-    %    \tikzexternalize
-    %    % use job name (filename) as inner folder
-    %    \tikzsetexternalprefix{out/figures/\tikzexternalrealjob/}
-    %    %\tikzset{external/force remake}
-    %\fi
+    \ifopt@pgfexternal
+        \usepgfplotslibrary{external}  % externalize to speed up
+        \tikzexternalize
+        % use job name (filename) as inner folder
+        \tikzsetexternalprefix{out/figures/\tikzexternalrealjob/}
+        %\tikzset{external/force remake}
+    \fi
 
     % Circuits
     \ifopt@circuits
@@ -254,7 +255,7 @@
         \fi
     \fi
 
-    \pgfplotsset{compat=1.16}
+    \pgfplotsset{compat=1.18}
 
     \usetikzlibrary{calc,trees,positioning,arrows,fit,shapes,calc,intersections,fadings,decorations.markings,decorations.pathmorphing,matrix}
     \usepgfplotslibrary{fillbetween,patchplots,groupplots,statistics}
