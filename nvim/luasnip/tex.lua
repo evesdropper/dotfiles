@@ -530,7 +530,7 @@ return {
     f(function(_, snip) return snip.captures[2] end)},
     { delimiters='<>' }),
     { condition=math }),
-    s({ trig='__', name='subscript iii', dscr='auto subscript for brackets'},
+    s({ trig='__', name='subscript iii', dscr='auto subscript for brackets', wordTrig=false},
     fmt([[ 
     _{<>}<>
     ]],

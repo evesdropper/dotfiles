@@ -41,6 +41,7 @@ keymap("n", "J", ":m .+1<CR>==", opts)
 
 -- misc
 keymap("n", "zz", ":w<CR>", opts) -- save
+keymap("n", "zq", ":q!<CR>", opts) -- save
 
 -- Insert --
 -- Press jk fast to enter
@@ -80,9 +81,9 @@ keymap("n", "<leader>fh", ":Telescope help_tags<CR>", opts)
 keymap("n", "<C-e>", ":NvimTreeToggle<CR>", opts)
 
 -- mkdp 
-keymap("n", "<C-s>", ":MarkdownPreview", opts)
-keymap("n", "<M-s>", ":MarkdownPreviewStop", opts)
-keymap("n", "<C-p>", ":MarkdownPreviewToggle", opts)
+keymap("n", "<C-s>", ":MarkdownPreview<CR>", opts)
+keymap("n", "<M-s>", ":MarkdownPreviewStop<CR>", opts)
+keymap("n", "<C-p>", ":MarkdownPreviewToggle<CR>", opts)
 
 -- Comment
 -- keymap("n", "<m-/>", "<cmd>lua require('Comment.api').toggle_current_linewise()<CR>", opts)

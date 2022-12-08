@@ -241,6 +241,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/revise/.local/share/nvim/site/pack/packer/start/vscode.nvim",
     url = "https://github.com/Mofiqul/vscode.nvim"
+  },
+  ["winbar.nvim"] = {
+    loaded = true,
+    path = "/home/revise/.local/share/nvim/site/pack/packer/start/winbar.nvim",
+    url = "https://github.com/fgheng/winbar.nvim"
   }
 }
 
