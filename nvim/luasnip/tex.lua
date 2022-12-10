@@ -388,7 +388,7 @@ return {
     \end{notebox}]],
     { i(1), i(0) },
     { delimiters='<>' }
-    )),
+    )), 
     s({ trig='sol', name='solution', dscr='solution box for homework'},
     fmt([[ 
     \begin{solution}
@@ -531,6 +531,8 @@ return {
     { condition=math }),
     s('~~', {t('\\sim')},
     { condition=math }),
+    s('~=', {t('\\approx')},
+    { condition=math, show_condition=math }),
     -- sub super scripts
     s({ trig='(%a)(%d)', regTrig=true, name='auto subscript', dscr='hi'},
     fmt([[<>_<>]],
@@ -695,13 +697,12 @@ return {
     { condition=math }),
     s('lb', {t('\\\\')},
     { condition=math }),
-    s('tcbl', {t('\\tcbline')},
-    { condition=math }),
+    s('tcbl', {t('\\tcbline')}),
     s('ctd', {t('%TODO: '), i(1)}
     ),
-    s('->', {t('\\to')},
+    s({trig='->', priority=250}, {t('\\to')},
     { condition=math }),
-    s('<->', {t('\\leftrightarrow')},
+    s({trig='<->', priority=500}, {t('\\leftrightarrow')},
     { condition=math }),
     s('!>', {t('\\mapsto')},
     { condition=math }),
