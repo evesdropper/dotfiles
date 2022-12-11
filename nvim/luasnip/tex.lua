@@ -175,44 +175,52 @@ return {
     { t("Homework"), i(1), i(2), i(3), rep(1), rep(2), t(os.date("%d-%m-%Y")), rep(2), rep(1), i(0) },
     { delimiters='<>' }
     )),
+    s({ trig='atoc', name='add toc', dscr='add this to toc line'},
+    fmt([[ 
+    \addcontentsline{toc}{<>}{<>}
+    <>
+    ]],
+    { i(1, "section"), i(2, "content"), i(0) },
+    { delimiters='<>' }
+    )),
     -- semantic snippets from markdown
     -- sections
-    s({trig="#", hidden=true},
+    s({trig="#", hidden=true, priority=250},
     fmt([[
     \section{<>}
     <>]],
     { i(1), i(0) },
     { delimiters="<>" }
     )),
-    s({trig="#*", hidden=true},
+    s({trig="#*", hidden=true, priority=250},
     fmt([[
     \section*{<>}
     <>]],
     { i(1), i(0) },
     { delimiters='<>' }
     )),
-    s({trig="#2", hidden=true},
+    s({trig="##", hidden=true, priority=500},
     fmt([[
     \subsection{<>}
     <>]],
     { i(1), i(0) },
     { delimiters='<>' }
     )),
-    s({trig="#2*", hidden=true},
+    s({trig="##*", hidden=true, priority=500},
     fmt([[
     \subsection*{<>}
     <>]],
     { i(1), i(0) },
     { delimiters='<>' }
     )),
-    s({trig="#3", hidden=true},
+    s({trig="###", hidden=true, priority=1000},
     fmt([[ 
     \subsubsection{<>}
     <>]],
     { i(1), i(0) },
     { delimiters='<>' }
     )),
-    s({trig="#3*", hidden=true},
+    s({trig="###*", hidden=true, priority=1000},
     fmt([[ 
     \subsubsection*{<>}
     <>]],
@@ -463,7 +471,7 @@ return {
     { i(1), i(0) },
     { delimiters='<>' }
     )),
-    s({ trig='mmali', name='align', dscr='align math'},
+    s({ trig='ali', name='align', dscr='align math'},
     fmt([[ 
     \begin{align<>}
     <>
@@ -471,8 +479,8 @@ return {
     <>]],
     { i(1, "*"), i(2), rep(1), i(0) },
     { delimiters='<>' }
-    )),
-    s({ trig='mmgat', name='gather', dscr='gather math'},
+    ), { condition=line_begin, show_condition=line_begin }),
+    s({ trig='gat', name='gather', dscr='gather math'},
     fmt([[ 
     \begin{gather<>}
     <>
@@ -480,7 +488,7 @@ return {
     <>]],
     { i(1, "*"), i(2), rep(1), i(0) },
     { delimiters='<>' }
-    )),
+    ), { condition=line_begin, show_condition=line_begin }),
     s({ trig='tt', name='text', dscr='text in math'},
     fmt([[
     \text{<>}<>
@@ -700,6 +708,10 @@ return {
     s('tcbl', {t('\\tcbline')}),
     s('ctd', {t('%TODO: '), i(1)}
     ),
+    s('upar', {t('\\uparrow')},
+    { condition=math, show_condition=math }),
+    s('dnar', {t('\\downarrow')},
+    { condition=math, show_condition=math }),
     s({trig='->', priority=250}, {t('\\to')},
     { condition=math }),
     s({trig='<->', priority=500}, {t('\\leftrightarrow')},

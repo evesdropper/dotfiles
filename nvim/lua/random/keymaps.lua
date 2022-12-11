@@ -90,9 +90,9 @@ keymap("n", "<C-p>", ":MarkdownPreviewToggle<CR>", opts)
 -- keymap("x", "<m-/>", '<ESC><CMD>lua require("Comment.api").toggle_linewise_op(vim.fn.visualmode())<CR>', opts)
 
 keymap("n", "<leader><leader>s", "<cmd>source ~/.config/nvim/luasnip/tex.lua<CR>", opts)
-keymap("i", "<C-n>", "<Plug>luasnip-next-choice", {})
-keymap("s", "<C-n>", "<Plug>luasnip-next-choice", {})
-keymap("i", "<C-p>", "<Plug>luasnip-prev-choice", {})
-keymap("s", "<C-p>", "<Plug>luasnip-prev-choice", {})
+keymap("i", "<C-f>", "<Plug>luasnip-next-choice", {})
+keymap("s", "<C-f>", "<Plug>luasnip-next-choice", {})
+keymap("i", "<C-d>", "<Plug>luasnip-prev-choice", {})
+keymap("s", "<C-d>", "<Plug>luasnip-prev-choice", {})
 
 return M
