@@ -228,23 +228,23 @@ return {
     { delimiters='<>' }
     )),
     -- special sections 
-    s({ trig='#l', name='lecture', dscr='fancy section header - lecture #'},
+    s({ trig='#l', name='lecture', dscr='fancy section header - lecture #', hidden=true},
     fmt([[ 
     \lecture[<>]{<>}
     <>]],
     { t(os.date("%d-%m-%Y")), i(1), i(0) },
     { delimiters='<>' }
     )),
-    s({ trig='#ch', name='chap', dscr='fancy section header - chapter #'},
+    s({ trig='#ch', name='chap', dscr='fancy section header - chapter #', hidden=true},
     fmt([[ 
     \bookchap[<>]{<>}{<>}
     <>]],
     { t(os.date("%d-%m-%Y")), i(1, "dscr"), i(2, "\\thesection"), i(0) },
     { delimiters='<>' }
     )),
-    s({ trig='#f', name='fancy section', dscr='fancy section header - vanilla'},
+    s({ trig='#f', name='fancy section', dscr='fancy section header - vanilla', hidden=true},
     fmt([[ 
-    \fancysec[<>}{<>}{<>}
+    \fancysec[<>]{<>}{<>}
     <>]],
     { t(os.date('%d-%m-%Y')), i(1, "dscr"), i(2, "title"), i(0) },
     { delimiters='<>' }
@@ -280,9 +280,9 @@ return {
     { delimiters='<>' }
     )),
     -- code
-    s({ trig='qw', name='inline code', dscr='inline code'},
-    fmt([[\mintinline{<>}{<>}<>]],
-    { i(1, "text"), i(2), i(0) },
+    s({ trig='qw', name='inline code', dscr='inline code, ft escape'},
+    fmt([[\mintinline{<>}<>]],
+    { i(1, "text"), c(2, {sn(nil, {t("{"), i(1), t("}")}), sn(nil, {t("|"), i(1), t("|")})})},
     { delimiters='<>' }
     )),
     s({ trig='qe', name='code', dscr='Code with minted.'},
@@ -470,7 +470,7 @@ return {
     <>]],
     { i(1), i(0) },
     { delimiters='<>' }
-    )),
+    ), { condition=line_begin, show_condition=line_begin }),
     s({ trig='ali', name='align', dscr='align math'},
     fmt([[ 
     \begin{align<>}

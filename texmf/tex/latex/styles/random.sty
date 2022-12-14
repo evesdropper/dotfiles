@@ -70,18 +70,17 @@
 \RequirePackage{amsmath, amssymb, amsthm}
 
 % Font / LuaLaTeX setup
+\RequirePackage{pifont}
 \RequirePackage{iftex}
 \usepackage{iftex}
 \ifluatex
-    \RequirePackage{fontspec}
     \RequirePackage{unicode-math} 
-    \unimathsetup{math-style=TeX}
     \RequirePackage[english]{babel}
+    \unimathsetup{math-style=TeX}
     \defaultfontfeatures{Ligatures=TeX, Scale=MatchLowercase}
     \setmainfont{Minion Pro}
     \setsansfont{Myriad Pro}
     \setmonofont{Inconsolata Nerd Font}
-    \unimathsetup{math-style=TeX}
     \setmathfont{Libertinus Math}
     \RequirePackage{sectsty}
     \allsectionsfont{\sffamily}
@@ -393,7 +392,7 @@
 
 % ----- Math -----
 \DeclareMathOperator{\proj}{proj}  % Projection
-%\DeclareMathOperator{\span}{span}
+\DeclareMathOperator{\spn}{span}
 \DeclareMathOperator{\range}{range}  % Range (span of columns)
 \DeclareMathOperator{\Range}{R}  % range
 \DeclareMathOperator{\Null}{N}  % Null space
@@ -418,8 +417,8 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\Q}{\mathbb{Q}}
-% \newcommand{\U}{\mathbb{U}}
-% \newcommand{\C}{\mathbb{C}}
+\newcommand{\U}{\mathbb{U}}
+\newcommand{\C}{\mathbb{C}}
 
 \renewcommand{\Pr}{\operatorname{\mathbb{P}}\mathopen{}\opbraces{}}  % Probability
 \WithSuffix\newcommand\Pr*{\operatorname{\mathbb{P}}\mathopen{}}  % Probability (no qty)
@@ -490,6 +489,10 @@
     \IfValueT{#1}{_{\!#1}}% tuck in the subscript
     \IfValueT{#2}{^{#2}}% possible superscript
 }
+
+% dumb commands 
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
 
 % ----- Commands -----
 \def\packagename{random.sty}
@@ -776,8 +779,16 @@ ctiondesc}}}
 % ----- Enumerate labels -----
 
 \ifopt@enumerate
+    % enumerate with 1 - a - I
     \setlist[enumerate, 1]{label=(\alph*)}
     \setlist[enumerate, 2]{label=(\roman*)}
+
+    % todo list 
+    \newlist{todolist}{itemize}{2}
+    \setlist[todolist]{label=$\square$}
+    \newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}%
+    \hspace{-2.5pt}}
+    \newcommand{\wontfix}{\rlap{$\square$}{\large\hspace{1pt}\xmark}}
 \fi
 
 % ----- Spacing -----

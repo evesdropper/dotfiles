@@ -262,12 +262,9 @@ Let's focus on choice nodes. As the name suggests, this node allows you to selec
 Personally, I haven’t found much use through my LaTeX typesetting (yet - maybe some use cases for TikZ will eventually catch my eye), but here’s a small example I made that allows you to change between some preset `\minipage` sizes and accept user input.
 
 ```lua
-s({ trig='mp', name='minipage', dscr='create minipage env'}, -- choice node
-    fmt([[
-    \begin{minipage}{<>\textwidth}
-    <>
-    \end{minipage}]],
-    { c(1, {t("0.5"), t("0.33"), i(nil)}), i(0) },
+s({ trig='qw', name='inline code', dscr='inline code, ft escape'},
+    fmt([[\mintinline{<>}<>]],
+    { i(1, "text"), c(2, {sn(nil, {t("{"), i(1), t("}")}), sn(nil, {t("|"), i(1), t("|")})})},
     { delimiters='<>' }
     )),
 ```

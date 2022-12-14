@@ -1,2 +1,12 @@
-ctrl + delete
-    ~/dotfiles/scripts/powermenu.sh
+ctrl + f8
+    playerctl previous
+
+ctrl + f9
+    playerctl next
+
+ctrl + f10 
+    playerctl play-pause
+
+ctrl + print
+    ~/figures.sh
+
