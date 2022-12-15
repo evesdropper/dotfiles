@@ -4,6 +4,8 @@
 #
 # Read `man 5 sway` for a complete reference.
 
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+
 ### Variables
 #
 # Logo key. Use Mod1 for Alt.
@@ -38,14 +40,12 @@ output * bg ~/dotfiles/sway/revise.png fill
 #$lb_time  15
 
 exec_always pgrep swayidle || swayidle -w \
-    timeout 1200 'systemctl suspend' \
     timeout 300 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2' \
-    timeout 600 'swaymsg "output * dpms off"' \
+    timeout 600 'swaymsg "output * dpms off" && systemctl suspend' \
     resume 'swaymsg "output * dpms on"' \
     timeout 15 'pgrep swaylock && swaymsg "output * dpms off"' \
      resume 'pgrep swaylock && swaymsg "output * dpms on"' \
-    before-sleep 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2' 
-    
+    before-sleep 'swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2'
 
 bindsym $mod+escape exec killall -s SIGUSR1 swayidle && killall -s SIGUSR1 swayidle
 
