@@ -23,15 +23,10 @@ return {
     s("snipt", fmt([[ 
     <>(<>, {t('<>')}<>
     <>)<>,]],
-        { c(1, {t("s"), t("autosnippet")}), c(2, {t("trig"), sn(nil, {t("{trig='"), i(1), t("'}")})}), i(3, "text"), i(4, "opts"), i(5), i(0)},
+    { c(1, {t("s"), t("autosnippet")}), c(2, {t("trig"), sn(nil, {t("{trig='"), i(1), t("'}")})}), i(3, "text"), i(4, "opts"), i(5), i(0)},
     { delimiters='<>' }
     )),
     -- add snippet conditions
-    autosnippet({ trig='sacd', name='snippet conditions for autosnippets', dscr='snippet condition for autosnippets'},
-    fmt([[{ condition=<> }]],
-    { i(1, math) },
-    { delimiters='<>' }
-    )),
     s('scond', fmt([[{ condition=<>, show_condition=<> }]],
     { i(1, "math"), rep(1) },
     { delimiters='<>' }
