@@ -1,16 +1,22 @@
 -- LaTeX Snippets
--- TODO: set options for matrix and table snippets (either auto generate or user input)
--- TODO: fix env function; make it for tikz
-local postfix = require("luasnip.extras.postfix").postfix
-local line_begin = require("luasnip.extras.expand_conditions").line_begin
+-- TODO:
+-- set options for matrix and table snippets (either auto generate or user input)
+-- fix integral snippet 
+-- clean up snippets
 
--- env stuff
+--[
+-- Setup: LuaSnip imports, define conditions/additional functions for function/dynamic nodes.
+--]
+local postfix = require("luasnip.extras.postfix").postfix
+local line_begin = require("luasnip.extras.conditions.expand").line_begin
+local autosnippet = ls.extend_decorator.apply(s, {snippetType = "autosnippet"})
+
+-- condition envs
+-- global p! functions from UltiSnips
 local function math()
-    -- global p! functions from UltiSnips
     return vim.api.nvim_eval('vimtex#syntax#in_mathzone()') == 1
 end
 
--- test
 local function env(name) 
     local is_inside = vim.fn['vimtex#env#is_inside'](name)
     return (is_inside[1] > 0 and is_inside[2] > 0)
@@ -22,6 +28,10 @@ end
 
 local function bp()
     return env("itemize") or env("enumerate")
+end
+
+local function beamer()
+    return vim.b.vimtex["documentclass"] == "beamer"
 end
 
 
@@ -36,6 +46,7 @@ brackets = {
     a = {"<", ">"}, b = {"[", "]"}, c = {"{", "}"}, m = {"|", "|"}, p = {"(", ")"}
 }
 
+-- dynamic stuff
 -- LFG tables and matrices work
 local tab = function(args, snip)
 	local rows = tonumber(snip.captures[1])
@@ -59,7 +70,8 @@ local tab = function(args, snip)
     return sn(nil, nodes)
 end
 
--- yes this is a ripoff
+-- yes this is a ripoff 
+-- thanks L3MON4D3!
 local mat = function(args, snip)
 	local rows = tonumber(snip.captures[2])
     local cols = tonumber(snip.captures[3])
@@ -80,6 +92,67 @@ local mat = function(args, snip)
 	return sn(nil, nodes)
 end
 
+-- update for cases
+local case = function(args, snip)
+	local rows = tonumber(snip.captures[1]) or 2 -- default option 2 for cases
+    local cols = 2 -- fix to 2 cols
+	local nodes = {}
+	local ins_indx = 1
+	for j = 1, rows do
+		table.insert(nodes, r(ins_indx, tostring(j).."x1", i(1)))
+		ins_indx = ins_indx+1
+		for k = 2, cols do
+			table.insert(nodes, t" & ")
+			table.insert(nodes, r(ins_indx, tostring(j).."x"..tostring(k), i(1)))
+			ins_indx = ins_indx+1
+		end
+		table.insert(nodes, t{"\\\\", ""})
+	end
+	-- fix last node.
+	nodes[#nodes] = t"\\\\"
+	return sn(nil, nodes)
+end
+
+-- add table/matrix/case row
+local tr = function(args, snip)
+    local cols = tonumber(snip.captures[1])
+	local nodes = {}
+	local ins_indx = 1
+	table.insert(nodes, r(ins_indx, '1', i(1)))
+	ins_indx = ins_indx+1
+	for k = 2, cols do
+		table.insert(nodes, t" & ")
+		table.insert(nodes, r(ins_indx, tostring(k), i(1)))
+		ins_indx = ins_indx+1
+	end
+	table.insert(nodes, t{"\\\\", ""})
+	-- fix last node.
+	nodes[#nodes] = t"\\\\"
+	return sn(nil, nodes)
+end
+
+
+-- integral function 
+local int = function(args, snip)
+    local vars = tonumber(snip.captures[1])
+    local nodes = {}
+    for j = 1, vars do 
+        table.insert(nodes, t" \\dd ")
+        table.insert(nodes, r(j, "var"..tostring(j), i(1)))
+    end
+    return sn(nil, nodes)
+end
+
+-- visual util to add insert node 
+-- thanks ejmastnak!
+local get_visual = function(args, parent)
+  if (#parent.snippet.env.SELECT_RAW > 0) then
+    return sn(nil, i(1, parent.snippet.env.SELECT_RAW))
+  else  -- If SELECT_RAW is empty, return a blank insert node
+    return sn(nil, i(1))
+  end
+end
+
 -- TODO: itemize/enumerate
 --[[ rec_ls = function() ]]
 --[[ 	return sn(nil, { ]]
@@ -93,10 +166,14 @@ end
 --[[ end ]]
 --[[]]
 
--- snippets go here
+--[
+-- Snippets go here
+--]
 
 return {
-    -- templates
+    --[
+    -- Templates: Stuff for lecture notes, homeworks, and draft documents
+    --]
     s({ trig='texdoc', name='new tex doc', dscr='Create a general new tex document'},
     fmt([[ 
     \documentclass{article}
@@ -175,6 +252,29 @@ return {
     { t("Homework"), i(1), i(2), i(3), rep(1), rep(2), t(os.date("%d-%m-%Y")), rep(2), rep(1), i(0) },
     { delimiters='<>' }
     )),
+    s({ trig='draft', name='draft', dscr='draft', hidden=true},
+    fmt([[ 
+    \documentclass{article}
+    \usepackage{random}
+    \begin{document}
+    <>
+    \end{document}
+    ]],
+    { i(0) },
+    { delimiters='<>' }
+    ),{ condition=line_begin, show_condition=line_begin }),
+
+    -- [
+    -- Introductory Stuff: e.g. table of contents, packages, other setup Stuff
+    -- think templates but modular
+    -- ]
+    s({ trig='pac', name='add package', dscr='add package'},
+    fmt([[
+    \usepackage<>{<>}
+    ]],
+    { c(1, {t(""), sn(nil, {t("["), i(1, "options"), t("]")})}), i(0, "package") },
+    { delimiters='<>' }
+    )),
     s({ trig='atoc', name='add toc', dscr='add this to toc line'},
     fmt([[ 
     \addcontentsline{toc}{<>}{<>}
@@ -183,8 +283,13 @@ return {
     { i(1, "section"), i(2, "content"), i(0) },
     { delimiters='<>' }
     )),
-    -- semantic snippets from markdown
-    -- sections
+
+    
+    --[
+    -- Semantic Snippets: sections n stuff, mostly stolen from markdown
+    --]
+    
+    -- sections from LaTeX
     s({trig="#", hidden=true, priority=250},
     fmt([[
     \section{<>}
@@ -227,7 +332,8 @@ return {
     { i(1), i(0) },
     { delimiters='<>' }
     )),
-    -- special sections 
+
+    -- custom sections 
     s({ trig='#l', name='lecture', dscr='fancy section header - lecture #', hidden=true},
     fmt([[ 
     \lecture[<>]{<>}
@@ -249,6 +355,7 @@ return {
     { t(os.date('%d-%m-%Y')), i(1, "dscr"), i(2, "title"), i(0) },
     { delimiters='<>' }
     )),
+
     -- links images figures
     s({trig="!l", name="link", dscr="Link reference", hidden=true},
     fmt([[\href{<>}{\color{<>}<>}<>]],
@@ -279,7 +386,8 @@ return {
     { i(1, "0.5"), i(2), i(3), i(0) },
     { delimiters='<>' }
     )),
-    -- code
+
+    -- code highlighting
     s({ trig='qw', name='inline code', dscr='inline code, ft escape'},
     fmt([[\mintinline{<>}<>]],
     { i(1, "text"), c(2, {sn(nil, {t("{"), i(1), t("}")}), sn(nil, {t("|"), i(1), t("|")})})},
@@ -302,6 +410,10 @@ return {
     { c(1, {t("0.5"), t("0.33"), i(nil)}), i(0) },
     { delimiters='<>' }
     )),
+
+    --[
+    -- Text Commands: formatting you'd click a button to do in word for
+    --]
     -- quotes
     s({ trig='sq', name='single quotes', dscr='single quotes', hidden=true},
     fmt([[`<>'<>]],
@@ -313,6 +425,7 @@ return {
     { i(1), i(0) },
     { delimiters='<>' }
     )),
+
     -- text changes
     s({ trig='bf', name='bold', dscr='bold text', hidden=true},
     fmt([[\textbf{<>}<>]],
@@ -339,7 +452,11 @@ return {
     { i(1), i(0) },
     { delimiters='<>' }
     )),
-    -- environments
+
+    --[
+    -- Environments
+    --]
+    -- generic
     s({trig="beg", name="begin env", dscr="begin/end environment"},
     fmt([[
     \begin{<>}
@@ -348,7 +465,9 @@ return {
     { i(1), i(0), rep(1) },
     { delimiters="<>" }
     )),
-    s({ trig='-i', name='itemize', dscr='bullet points (itemize)'},
+
+    -- Bullet Points
+    autosnippet({ trig='-i', name='itemize', dscr='bullet points (itemize)'},
     fmt([[ 
     \begin{itemize}
     \item <>
@@ -356,7 +475,7 @@ return {
     { i(1) },
     { delimiters='<>' }
     )),
-    s({ trig='-e', name='enumerate', dscr='numbered list (enumerate)'},
+    autosnippet({ trig='-e', name='enumerate', dscr='numbered list (enumerate)'},
     fmt([[ 
     \begin{enumerate}
     \item <>
@@ -364,7 +483,18 @@ return {
     { i(1) },
     { delimiters='<>' }
     )),
-    -- item but i cant get this to work
+    -- generate new bullet points 
+    s({trig="--", hidden=true}, {t('\\item')},
+    { condition=bp * line_begin, show_condition=bp * line_begin }),
+    s({ trig='!-', name='bp custom', dscr='bullet point'},
+    fmt([[ 
+    \item [<>]<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=bp * line_begin, show_condition=bp * line_begin }),
+
+    -- tcolorboxes
     s({ trig='adef', name='add definition', dscr='add definition box'},
     fmt([[ 
     \begin{definition}[<>]{<>
@@ -396,15 +526,9 @@ return {
     \end{notebox}]],
     { i(1), i(0) },
     { delimiters='<>' }
-    )), 
-    s({ trig='sol', name='solution', dscr='solution box for homework'},
-    fmt([[ 
-    \begin{solution}
-    <>
-    \end{solution}]],
-    { i(0) },
-    { delimiters='<>' }
     )),
+
+    -- tables/matrices
     s({ trig='tab(%d+)x(%d+)', regTrig=true, name='test for tabular', dscr='test', hidden=true},
     fmt([[
     \begin{tabular}{@{}<>@{}}
@@ -434,35 +558,28 @@ return {
     f(function (_, snip) return snip.captures[1] .. "matrix" end)},
     { delimiters='<>' }
     ), { condition=math, show_condition=math }),
-    -- parentheses
-    s({ trig='lr', name='left right', dscr='left right'},
-    fmt([[\left(<>\right)<>]],
-    { i(1), i(0) },
+
+    -- etc
+    s({ trig='sol', name='solution', dscr='solution box for homework'},
+    fmt([[ 
+    \begin{solution}
+    <>
+    \end{solution}]],
+    { i(0) },
     { delimiters='<>' }
-    ), { condition=math }),
-    s({ trig='lrv', name='left right', dscr='left right'},
-    fmt([[\left(<>\right)<>]],
-    { f(function(args, snip)
-      local res, env = {}, snip.env
-      for _, val in ipairs(env.LS_SELECT_RAW) do table.insert(res, val) end
-      return res
-      end, {}), i(0) },
-    { delimiters='<>' }
-    ), { condition=math, show_condition=math }),
-    s('tikztest', {t('this works only in tikz')},
-    { condition=tikz, show_condition=tikz}),
+    )),
+
+    --[
+    -- Math Snippets - Environments/Setup Commands
+    --]
     
-}, {
-    -- bullet points 
-    s({trig="--", hidden=true}, {t('\\item')},
-    { condition=bp, show_condition=bp }),
-    -- math mode
-    s({ trig='mk', name='math', dscr='inline math'},
+    -- entering math mode
+    autosnippet({ trig='mk', name='math', dscr='inline math'},
     fmt([[$<>$<>]],
     { i(1), i(0) },
     { delimiters='<>' }
     )),
-    s({ trig='dm', name='math', dscr='display math'},
+    autosnippet({ trig='dm', name='math', dscr='display math'},
     fmt([[ 
     \[ 
     <>
@@ -471,148 +588,406 @@ return {
     { i(1), i(0) },
     { delimiters='<>' }
     ), { condition=line_begin, show_condition=line_begin }),
-    s({ trig='ali', name='align', dscr='align math'},
+    autosnippet({ trig='ali', name='align', dscr='align math'},
     fmt([[ 
     \begin{align<>}
     <>
     .\end{align<>}
-    <>]],
-    { i(1, "*"), i(2), rep(1), i(0) },
+    ]],
+    { i(1, "*"), i(2), rep(1) },
     { delimiters='<>' }
     ), { condition=line_begin, show_condition=line_begin }),
-    s({ trig='gat', name='gather', dscr='gather math'},
+    autosnippet({ trig='gat', name='gather', dscr='gather math'},
     fmt([[ 
     \begin{gather<>}
     <>
     .\end{gather<>}
-    <>]],
-    { i(1, "*"), i(2), rep(1), i(0) },
+    ]],
+    { i(1, "*"), i(2), rep(1) },
     { delimiters='<>' }
     ), { condition=line_begin, show_condition=line_begin }),
-    s({ trig='tt', name='text', dscr='text in math'},
+    autosnippet({ trig='eqn', name='equation', dscr='equation math'},
+    fmt([[
+    \begin{equation<>}
+    <>
+    .\end{equation<>}
+    ]],
+    { i(1, "*"), i(2), rep(1) },
+    { delimiters='<>' }
+    ), { condition=line_begin, show_condition=line_begin }),
+    autosnippet({ trig='(%d?)cases', name='cases', dscr='cases', regTrig=true, hidden=true},
+    fmt([[
+    \begin{cases}
+    <>
+    .\end{cases}
+    ]],
+    { d(1, case) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+
+    -- text in math 
+    autosnippet({ trig='tt', name='text', dscr='text in math'},
     fmt([[
     \text{<>}<>
     ]],
     { i(1), i(0) },
     { delimiters='<>' }
     ), { condition=math, show_condition=math }),
-    s({ trig='sbf', name='bold math', dscr='sam bankrupt fraud'},
+    autosnippet({ trig='sbf', name='bold math', dscr='sam bankrupt fraud'},
     fmt([[ 
     \symbf{<>}<>
     ]],
     { i(1), i(0) },
     { delimiters='<>' }
     ), { condition=math, show_condition=math }),
-    s({ trig='syi', name='italic math', dscr='symit'},
+    autosnippet({ trig='syi', name='italic math', dscr='symit'},
     fmt([[ 
     \symit{<>}<>
     ]],
     { i(1), i(0) },
     { delimiters='<>' }
     ), { condition=math, show_condition=math }),
+    -- fallback for pdftex
+    autosnippet({ trig='mbf', name='bold math', dscr='unfortunately cannot use this joke'},
+    fmt([[ 
+    \mathbf{<>}<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+    autosnippet({ trig='mit', name='italic math', dscr='symit'},
+    fmt([[ 
+    \mathit{<>}<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+
+    -- delimiters
+    s({ trig='lr', name='left right', dscr='left right'},
+    fmt([[\left(<>\right)<>]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math }),
+    autosnippet({ trig='lr(%a)', name='left right', dscr='left right delimiters', regTrig=true, hidden=true},
+    fmt([[
+    \left<><>right<><>
+    ]],
+    { f(function(_, snip) 
+        cap = snip.captures[1]
+        if brackets[cap] == nil then cap = 'p' end -- set default to parentheses
+        return brackets[cap][1]
+    end), i(1), f(function(_, snip) 
+        cap = snip.captures[1]
+        if brackets[cap] == nil then cap = 'p' end
+        return brackets[cap][2]
+    end), i(0)},
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+    s({ trig='lrv', name='left right', dscr='left right'}, -- TODO: update visual mode
+    fmt([[\left(<>\right)<>]],
+    { f(function(args, snip)
+      local res, env = {}, snip.env
+      for _, val in ipairs(env.LS_SELECT_RAW) do table.insert(res, val) end
+      return res
+      end, {}), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+    s({ trig='floor', name='math floor', dscr='math floor'},
+    fmt([[\floor{<>}<>]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math }),
+    s({ trig='ceil', name='math ceiling', dscr='math ceiling'},
+    fmt([[\ceil{<>}<>]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math }),
+
     -- operators, symbols
-    s({trig='**', priority=100}, {t('\\cdot')},
+    autosnippet({trig='**', priority=100}, {t('\\cdot')},
     { condition=math }),
-    s('xx', {t('\\times')},
+    autosnippet('xx', {t('\\times')},
     { condition=math }),
-    s({ trig='//', name='fraction', dscr='fraction (autoexpand)'},
+    autosnippet({ trig='//', name='fraction', dscr='fraction (autoexpand)'},
     fmt([[\frac{<>}{<>}<>]],
     { i(1), i(2), i(0) },
     { delimiters='<>' }),
     { condition=math }),
-    s('==', {t('&='), i(1), t("\\\\")},
+    autosnippet('==', {t('&='), i(1), t("\\\\")},
     { condition=math }),
-    s('!=', {t('\\neq')},
+    autosnippet('!=', {t('\\neq')},
     { condition=math }),
-    s({ trig='conj', name='conjugate', dscr='conjugate would have been useful in eecs 126'},
+    autosnippet({ trig='conj', name='conjugate', dscr='conjugate would have been useful in eecs 126'},
     fmt([[\overline{<>}<>]],
     { i(1), i(0) },
     { delimiters='<>' },
     { condition=math })),
-    s('<=', {t('\\leq')},
+    autosnippet('<=', {t('\\leq')},
     { condition=math }),
-    s('>=', {t('\\geq')},
+    autosnippet('>=', {t('\\geq')},
     { condition=math }),
-    s('>>', {t('\\gg')},
+    autosnippet('>>', {t('\\gg')},
     { condition=math }),
-    s('<<', {t('\\ll')},
+    autosnippet('<<', {t('\\ll')},
     { condition=math }),
-    s('~~', {t('\\sim')},
+    autosnippet('~~', {t('\\sim')},
     { condition=math }),
-    s('~=', {t('\\approx')},
+    autosnippet('~=', {t('\\approx')},
     { condition=math, show_condition=math }),
+    autosnippet('-=', {t('\\equiv')},
+    { condition=math, show_condition=math }),
+    autosnippet('=~', {t('\\cong')},
+    { condition=math, show_condition=math }),
+    autosnippet(':=', {t('\\definedas')},
+    { condition=math, show_condition=math }),
+    autosnippet({ trig='abs', name='abs', dscr='absolute value'},
+    fmt([[\abs{<>}]],
+    { i(1) },
+    { delimiters='<>' }
+    ),{ condition=math, show_condition=math }),
+    autosnippet('!+', {t('\\oplus')},
+    { condition=math, show_condition=math }),
+
     -- sub super scripts
-    s({ trig='(%a)(%d)', regTrig=true, name='auto subscript', dscr='hi'},
+    autosnippet({ trig='(%a)(%d)', regTrig=true, name='auto subscript', dscr='hi'},
     fmt([[<>_<>]],
     { f(function(_, snip) return snip.captures[1] end),
     f(function(_, snip) return snip.captures[2] end) },
     { delimiters='<>' }),
     { condition=math }),
-    s({ trig='(%a)_(%d%d)', regTrig=true, name='auto subscript 2', dscr='auto subscript for 2+ digits'},
+    autosnippet({ trig='(%a)_(%d%d)', regTrig=true, name='auto subscript 2', dscr='auto subscript for 2+ digits'},
     fmt([[<>_{<>}]],
     { f(function(_, snip) return snip.captures[1] end),
     f(function(_, snip) return snip.captures[2] end)},
     { delimiters='<>' }),
     { condition=math }),
-    s({ trig='__', name='subscript iii', dscr='auto subscript for brackets', wordTrig=false},
+    autosnippet({ trig='__', name='subscript iii', dscr='auto subscript for brackets', wordTrig=false},
     fmt([[ 
     _{<>}<>
     ]],
     { i(1), i(0) },
     { delimiters='<>' }
     ),{ condition=math, show_condition=math }),
-    s('xnn', {t('x_n')},
+    autosnippet('xnn', {t('x_n')},
     { condition=math }),
-    s('xii', {t('x_i')},
+    autosnippet('xii', {t('x_i')},
     { condition=math }),
-    s('xjj', {t('x_j')},
+    autosnippet('xjj', {t('x_j')},
     { condition=math}),
-    s('ynn', {t('y_n')},
+    autosnippet('ynn', {t('y_n')},
     { condition=math }),
-    s('yii', {t('y_i')},
+    autosnippet('yii', {t('y_i')},
     { condition=math }),
-    s('yjj', {t('y_j')},
+    autosnippet('yjj', {t('y_j')},
     { condition=math }),
-    s({trig='sr', wordTrig=false}, {t('^2')},
+    autosnippet({trig='sr', wordTrig=false}, {t('^2')},
     { condition=math }),
-    s({trig='cb', wordTrig=false}, {t('^3')},
+    autosnippet({trig='cb', wordTrig=false}, {t('^3')},
     { condition=math }),
-    s({trig='compl', wordTrig=false}, {t('^{c}')},
+    autosnippet({trig='compl', wordTrig=false}, {t('^{c}')},
     { condition=math }),
-    s({trig='vtr', wordTrig=false}, {t('^{T}')},
+    autosnippet({trig='vtr', wordTrig=false}, {t('^{T}')},
     { condition=math }),
-    s({trig="inv", wordTrig=false}, {t('^{-1}')},
+    autosnippet({trig="inv", wordTrig=false}, {t('^{-1}')},
     { condition=math }),
-    s({ trig='td', name='superscript', dscr='superscript', wordTrig=false},
+    autosnippet({ trig='td', name='superscript', dscr='superscript', wordTrig=false},
     fmt([[^{<>}<>]],
     { i(1), i(0) },
     { delimiters='<>' }
     ), { condition=math }),
-    s({ trig='sq', name='square root', dscr='square root'},
-    fmt([[\sqrt{<>}]],
-    { i(1) },
+    autosnippet({ trig='sq', name='square root', dscr='square root'},
+    fmt([[\sqrt<>{<>}<>]],
+    { c(1, {t(""), sn(nil, {t("["), i(1), t("]")})}), i(2), i(0) },
     { delimiters='<>' }
     ), { condition=math }),
-    -- hats and bars (postfixes) 
-    postfix("bar", {l("\\bar{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
-    postfix("hat", {l("\\hat{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
-    postfix(",.", {l("\\vec{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
-    postfix("vr", {l("$" .. l.POSTFIX_MATCH .. "$")}),
-    postfix("mbb", {l("\\mathbb{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
-    postfix("vc", {l("\\mintinline{text}{" .. l.POSTFIX_MATCH .. "}")}),
-    -- etc
-    s({ trig='([clvd])%.', regTrig=true, name='dots', dscr='generate some dots'},
+
+    -- (greek) symbols 
+    -- TODO: add greek symbol thing 
+    autosnippet('lll', {t('\\ell')},
+    { condition=math, show_condition=math }),
+
+    -- stuff i need to do calculus
+    autosnippet('dd', {t('\\dd')}, 
+    { condition=math, show_condition=math }),
+    autosnippet('nabl', {t('\\nabla')},
+    { condition=math, show_condition=math }),
+    autosnippet('grad', {t('\\grad')},
+    { condition=math, show_condition=math }),
+    autosnippet({ trig='lim', name='lim(sup)', dscr='lim(sup)'},
+    fmt([[ 
+    \lim<>_{<> \to <>}<>
+    ]],
+    { c(1, {t(""), t("sup")}), i(2, "n"), i(3, "\\infty"), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+    autosnippet({ trig='part', name='partial derivative', dscr='partial derivative'},
+    fmt([[ 
+    \frac{\ddp <>}{\ddp <>}<>
+    ]],
+    { i(1, "V"), i(2, "x"), i(0) },
+    { delimiters='<>' }
+    ),{ condition=math, show_condition=math }),
+    autosnippet({ trig='dint', name='integrals', dscr='integrals but cooler'},
+    fmt([[
+    \<>int_{<>}^{<>} <> <> <>
+    ]],
+    { c(1, {t(""), t("o")}), i(2, "-\\infty"), i(3, "\\infty"), i(4), t("\\dd"), i(0) },
+    { delimiters='<>' }
+    ),{ condition=math, show_condition=math }),
+    autosnippet({ trig='(%d)int', name='multi integrals', dscr='please work', regTrig=true, hidden=true},
+    fmt([[ 
+    \<><>nt_{<>}^{<>} <> <> <>
+    ]],
+    { c(1, {t(""), t("o")}), f(function(_, snip)
+        inum = tonumber(snip.captures[1])
+        res = string.rep("i", inum)
+        return res
+        end), i(2, "-\\infty"), i(3, "\\infty"), i(4), d(5, int), i(0)},
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }), 
+    autosnippet({ trig='elr', name='eval left right', dscr='eval left right'},
+    fmt([[ 
+    \eval{<>}<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+    autosnippet({ trig='sum', name='summation', dscr='summation'},
+    fmt([[
+    \sum_{<>}^{<>} <>
+    ]],
+    { i(1, "i = 0"), i(2, "\\infty"), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+    autosnippet({ trig='prod', name='product', dscr='summation'},
+    fmt([[
+    \prod_{<>}^{<>} <>
+    ]],
+    { i(1, "i = 0"), i(2, "\\infty"), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+
+    -- linalg stuff minus matrices
+    autosnippet({ trig='norm', name='norm', dscr='norm'},
+    fmt([[ 
+    \norm{<>}<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+    autosnippet({ trig='iprod', name='inner product', dscr='inner product'},
+    fmt([[
+    \vinner{<>}<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+
+    -- discrete maf
+    -- reals and number sets 
+    autosnippet('RR', {t('\\mathbb{R}')},
+    { condition=math }),
+    autosnippet('CC', {t('\\mathbb{C}')},
+    { condition=math }),
+    autosnippet('ZZ', {t('\\mathbb{Z}')},
+    { condition=math }),
+    autosnippet('QQ', {t('\\mathbb{Q}')},
+    { condition=math }),
+    autosnippet('NN', {t('\\mathbb{N}')},
+    { condition=math, show_condition=math }),
+    autosnippet('OO', {t('\\emptyset')},
+    { condition=math, show_condition=math }),
+    autosnippet('pwr', {t('\\powerset')},
+    { condition=math, show_condition=math }),
+
+    -- quantifiers and cs70 n1 stuff
+    autosnippet('AA', {t('\\forall')},
+    { condition=math }),
+    autosnippet('EE', {t('\\exists')},
+    { condition=math }),
+    autosnippet('inn', {t('\\in')},
+    { condition=math }),
+    autosnippet('notin', {t('\\not\\in')},
+    { condition=math }),
+    autosnippet('ooo', {t('\\infty')},
+    { condition=math }),
+    autosnippet('=>', {t('\\implies')},
+    { condition=math, show_condition=math }),
+    autosnippet('=<', {t('\\impliedby')},
+    { condition=math, show_condition=math }),
+    autosnippet('iff', {t('\\iff')},
+    { condition=math, show_condition=math }),
+    autosnippet('||', {t('\\divides')},
+    { condition=math }),
+    autosnippet('!|', {t('\\notdivides')},
+    { condition=math, show_condition=math }),
+    autosnippet({trig='->', priority=250}, {t('\\to')},
+    { condition=math }),
+    autosnippet({trig='<->', priority=500}, {t('\\leftrightarrow')},
+    { condition=math }),
+    autosnippet('!>', {t('\\mapsto')},
+    { condition=math }),
+
+    -- sets 
+    autosnippet({ trig='set', name='set', dscr='set'}, -- overload with set builder notation
+    fmt([[\{<>\}<>]],
+    { c(1, {i(nil), sn(nil, {i(1), t("\\mid"), i(2)})}), i(0) },
+    { delimiters='<>' }
+    ), { condition=math }),
+    autosnippet('cc', {t('\\subset')},
+    { condition=math }),
+    autosnippet('cq', {t('\\subseteq')},
+    { condition=math }),
+    autosnippet('\\\\\\', {t('\\setminus')},
+    { condition=math }),
+    autosnippet('Nn', {t('\\cap')},
+    { condition=math }),
+    autosnippet('UU', {t('\\cup')},
+    { condition=math }),
+
+    -- counting, probability 
+    autosnippet({ trig='bnc', name='binomial', dscr='binomial (nCR)'},
+    fmt([[\binom{<>}{<>}<>]],
+    { i(1), i(2), i(0) },
+    { delimiters='<>' }),
+    { condition=math }),
+
+    -- etc: utils and stuff 
+    autosnippet({ trig='subs', name='substack', dscr='if sum two lines'},
+    fmt([[
+    \substack{<>}
+    ]],
+    { i(1) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
+    autosnippet({ trig='([clvd])%.', regTrig=true, name='dots', dscr='generate some dots'},
     fmt([[\<>dots]],
     { f(function(_, snip) 
       return snip.captures[1]
       end)},
     { delimiters='<>' }),
     { condition=math }),
-    s({ trig='bnc', name='binomial', dscr='binomial (nCR)'},
-    fmt([[\binom{<>}{<>}<>]],
-    { i(1), i(2), i(0) },
-    { delimiters='<>' }),
+    autosnippet('lb', {t('\\\\')},
     { condition=math }),
+    autosnippet('tcbl', {t('\\tcbline')}),
+    autosnippet('ctd', {t('%TODO: '), i(1)}),
+    autosnippet('upar', {t('\\uparrow')},
+    { condition=math, show_condition=math }),
+    autosnippet('dnar', {t('\\downarrow')},
+    { condition=math, show_condition=math }),
+
+}, {
+    -- hats and bars (postfixes) 
+    postfix({trig="bar", snippetType = "autosnippet"}, {l("\\bar{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
+    postfix("hat", {l("\\hat{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
+    postfix("sym", {l("\\" .. l.POSTFIX_MATCH)}, { condition=math, show_condition=math }),
+    postfix({trig=",.", priority=500}, {l("\\vec{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
+    postfix(",,.", {l("\\mat{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
+    postfix("vr", {l("$" .. l.POSTFIX_MATCH .. "$")}),
+    postfix("mbb", {l("\\mathbb{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
+    postfix("vc", {l("\\mintinline{text}{" .. l.POSTFIX_MATCH .. "}")}),
+    -- etc
     -- a living nightmare worth of greek symbols
     -- TODO: replace with regex
     s({ trig='(alpha|beta|delta)', regTrig=true,
@@ -623,15 +998,17 @@ return {
     end) },
     { delimiters='<>' }),
     { condition=math }),
-    s("alpha", {t("\\alpha")},
-    {condition = math}),
-    s('beta', {t('\\beta')},
-    { condition=math }),
+    --s("alpha", {t("\\alpha")},
+    --{condition = math}),
+    --s('beta', {t('\\beta')},
+    --{ condition=math }),
     s('delta', {t('\\delta')},
     { condition=math }),
     s('gam', {t('\\gamma')},
     { condition=math }),
     s('eps', {t('\\epsilon')},
+    { condition=math }),
+    s('veps', {t('\\varepsilon')},
     { condition=math }),
     s('lmbd', {t('\\lambda')},
     { condition=math }),
@@ -642,90 +1019,5 @@ return {
     s('sig', {t('\\sigma')},
     { condition=math, show_condition=math }),
     -- stuff i need for m110
-    s({ trig='set', name='set', dscr='set'},
-    fmt([[\{<>\}<>]],
-    { i(1), i(0) },
-    { delimiters='<>' }
-    ), { condition=math }),
-    s('cc', {t('\\subset')},
-    { condition=math }),
-    s('cq', {t('\\subseteq')},
-    { condition=math }),
-    s('\\\\\\', {t('\\setminus')},
-    { condition=math }),
-    s('Nn', {t('\\cap')},
-    { condition=math }),
-    s('UU', {t('\\cup')},
-    { condition=math }),
-    -- stuff i need to do calculus 
-    s('nabl', {t('\\nabla')},
-    { condition=math, show_condition=math }),
-    s({ trig='part', name='partial derivative', dscr='partial derivative'},
-    fmt([[ 
-    \frac{\partial <>}{\partial <>} <>
-    ]],
-    { i(1, "V"), i(2, "x"), i(0) },
-    { delimiters='<>' }
-    ),{ condition=math, show_condition=math }),
-    s({ trig='elr', name='left right eval', dscr='evaluated at left/right'},
-    fmt([[ 
-    \left. <> \right|<>
-    ]],
-    { i(1), i(0) },
-    { delimiters='<>' }
-    ),{ condition=math, show_condition=math }),
-    -- reals and number sets 
-    s('RR', {t('\\mathbb{R}')},
-    { condition=math }),
-    s('CC', {t('\\mathbb{C}')},
-    { condition=math }),
-    s('ZZ', {t('\\mathbb{Z}')},
-    { condition=math }),
-    s('QQ', {t('\\mathbb{Q}')},
-    { condition=math }),
-    -- quantifiers and cs70 n1 stuff
-    s('AA', {t('\\forall')},
-    { condition=math }),
-    s('EE', {t('\\exists')},
-    { condition=math }),
-    s('inn', {t('\\in')},
-    { condition=math }),
-    s('notin', {t('\\not\\in')},
-    { condition=math }),
-    s('ooo', {t('\\infty')},
-    { condition=math }),
-    s('=>', {t('\\implies')},
-    { condition=math, show_condition=math }),
-    s('=<', {t('\\impliedby')},
-    { condition=math, show_condition=math }),
-    s('iff', {t('\\iff')},
-    { condition=math, show_condition=math }),
-    -- utils
-    s('||', {t('\\mid')},
-    { condition=math }),
-    s('lb', {t('\\\\')},
-    { condition=math }),
-    s('tcbl', {t('\\tcbline')}),
-    s('ctd', {t('%TODO: '), i(1)}
-    ),
-    s('upar', {t('\\uparrow')},
-    { condition=math, show_condition=math }),
-    s('dnar', {t('\\downarrow')},
-    { condition=math, show_condition=math }),
-    s({trig='->', priority=250}, {t('\\to')},
-    { condition=math }),
-    s({trig='<->', priority=500}, {t('\\leftrightarrow')},
-    { condition=math }),
-    s('!>', {t('\\mapsto')},
-    { condition=math }),
-    s({ trig='floor', name='math floor', dscr='math floor'},
-    fmt([[\left\lfloor <> \right\rfloor <>]],
-    { i(1), i(0) },
-    { delimiters='<>' }
-    ), { condition=math }),
-    s({ trig='ceil', name='math ceiling', dscr='math ceiling'},
-    fmt([[\left\lceil <> \right\rfloor <>]],
-    { i(1), i(0) },
-    { delimiters='<>' }
-    ), { condition=math }),
+
 }
