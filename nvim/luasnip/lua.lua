@@ -23,7 +23,15 @@ return {
     s("snipt", fmt([[ 
     <>(<>, {t('<>')}<>
     <>)<>,]],
-    { c(1, {t("s"), t("autosnippet")}), c(2, {t("trig"), sn(nil, {t("{trig='"), i(1), t("'}")})}), i(3, "text"), i(4, "opts"), i(5), i(0)},
+    { c(1, {t("s"), t("autosnippet")}), c(2, {i(nil, "trig"), sn(nil, {t("{trig='"), i(1), t("'}")})}), i(3, "text"), i(4, "opts"), i(5), i(0)},
+    { delimiters='<>' }
+    )),
+    -- choice node stuff 
+    autosnippet({ trig='sch', name='choice node', dscr='add choice node'},
+    fmt([[
+    c(<>, {<>})
+    ]],
+    { i(1), i(0) },
     { delimiters='<>' }
     )),
     -- add snippet conditions
