@@ -86,8 +86,8 @@ keymap("n", "<M-s>", ":MarkdownPreviewStop<CR>", opts)
 keymap("n", "<C-p>", ":MarkdownPreviewToggle<CR>", opts)
 
 -- Comment
--- keymap("n", "<m-/>", "<cmd>lua require('Comment.api').toggle_current_linewise()<CR>", opts)
--- keymap("x", "<m-/>", '<ESC><CMD>lua require("Comment.api").toggle_linewise_op(vim.fn.visualmode())<CR>', opts)
+keymap("n", "<C-/>", "<cmd>lua require('Comment.api').toggle_current_linewise()<CR>", opts)
+keymap("x", "<C-/>", '<ESC><CMD>lua require("Comment.api").toggle_linewise_op(vim.fn.visualmode())<CR>', opts)
 
 keymap("n", "<leader><leader>s", "<cmd>source ~/.config/nvim/luasnip/tex.lua<CR>", opts)
 keymap("i", "<C-f>", "<Plug>luasnip-next-choice", {})

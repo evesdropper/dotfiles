@@ -11,6 +11,7 @@ require "random.plugins"
 require "random.colorscheme"
 require "random.icons"
 require "random.lualine"
+require "random.bufferline"
 require "random.presence"
 
 -- code editing
@@ -26,3 +27,16 @@ ls.config.set_config({
     enable_autosnippets = true,
     store_selection_keys="<Tab>"})
 require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/luasnip/"})
+--require("luasnip.loaders").edit_snippet_files {
+--  extend = function(ft, paths)
+--    if #paths == 0 then
+--      return {
+--        { "$CONFIG/" .. ft .. ".snippets",
+--          string.format("%s/%s.snippets", "~/.config/nvim/luasnip/", ft) }
+--      }
+--    end
+--
+--    return {}
+--  end
+--}
+vim.cmd[[silent command! LuaSnipEdit :lua require("luasnip.loaders").edit_snippet_files()]]

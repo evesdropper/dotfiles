@@ -103,16 +103,14 @@ return packer.startup(function(use)
     'nvim-lualine/lualine.nvim',
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
     }
-    use {'akinsho/bufferline.nvim', tag = "v2.*", requires = 'kyazdani42/nvim-web-devicons'}
-    require("bufferline").setup{
-        options = {
-            show_buffer_icons = true
-        }
-    }
+    use {'akinsho/bufferline.nvim', tag = "v3.*", requires = 'kyazdani42/nvim-web-devicons'}
 
     use { 'fgheng/winbar.nvim' }
 
     use 'andweeb/presence.nvim' -- to remind discord users that i am a superior being
+
+    use { 'glacambre/firenvim',
+    run = function() vim.fn['firenvim#install'](0) end }
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
