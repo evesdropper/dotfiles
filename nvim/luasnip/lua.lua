@@ -27,14 +27,14 @@ return {
     { delimiters='<>' }
     )),
     -- add snippet conditions
-    s('scond', fmt([[{ condition=<>, show_condition=<> }]],
+    autosnippet('scond', fmt([[{ condition=<>, show_condition=<> }]],
     { i(1, "math"), rep(1) },
     { delimiters='<>' }
     )),
     -- special stuff - snippet regex, hide, switch priority
     autosnippet('sreg', {t('regTrig=true, hidden=true')}
     ),
-    s({ trig='sprio', name='snip priority', dscr='Autosnippet to set snippet priority' },
+    autosnippet({ trig='sprio', name='snip priority', dscr='Autosnippet to set snippet priority' },
     fmt([[ 
     priority=<>]],
     { i(1, '1000') },
