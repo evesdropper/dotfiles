@@ -4,9 +4,9 @@
 
 ## Table of Contents 
 - [From UltiSnips to LuaSnip: A Comprehensive Guide](#from-ultisnips-to-luasnip--a-comprehensive-guide)
-    - [Acknowledgement/Notes](#acknowledgement%2Fnotes)
+    - [Acknowledgement/Notes](#acknowledgementnotes)
         - [Updates](#updates)
-    - [Intro/Differences](#intro%2Fdifferences)
+    - [Intro/Differences](#introdifferences)
     - [Basic Configuration](#basic-configuration)
         - [Setup](#setup)
         - [Understanding Snippet Anatomy](#understanding-snippet-anatomy)
@@ -15,12 +15,12 @@
     - [Advanced Snippets](#advanced-snippets)
         - [Regex Triggers and Function Nodes: Parsing Auto Subscript Snippets](#regex-triggers-and-function-nodes--parsing-auto-subscript-snippets)
             - [[Extra] Postfix Snippets and Lambdas](#-extra--postfix-snippets-and-lambdas)
-        - [`LS_SELECT_RAW/LS_SELECT_DEDENT`: Visual Mode Snippets](#ls_select_raw%2Fls_select_dedent%3A-visual-mode-snippets)
-        - [Choice Nodes: Fun Side Utility with Potential](#choice-nodes--fun-side-utility-with-potential)
-            - [Aside: Snippet Nodes](#aside--snippet-nodes)
-        - [Dynamic Nodes: Generating Tables and Matrices](#dynamic-nodes--generating-tables-and-matrices)
-        - [Conditions/Context-Dependent Snippets](#conditions-context-dependent-snippets)
-    - [Additional Resources](#additional-resources)
+        - [`LS_SELECT_RAW/LS_SELECT_DEDENT`: Visual Mode Snippets](#ls_select_rawls_select_dedent-visual-mode-snippets)
+        - [Choice Nodes: Fun Side Utility with Potential](#choice-nodes-fun-side-utility-with-potential)
+            - [Aside: Snippet Nodes](#aside-snippet-nodes)
+        - [Dynamic Nodes: Generating Tables and Matrices](#dynamic-nodes-generating-tables-and-matrices)
+        - [Conditions/Context-Dependent Snippets](#conditionscontext-dependent-snippets)
+    - [Additional Resources](#add
 
 ## Acknowledgement/Notes
 
