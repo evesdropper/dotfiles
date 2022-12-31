@@ -1,5 +1,5 @@
 # dotfiles
-New (and hopefully more organized) dotfiles on Arch Linux. Wayland-based configuration. Inspired by [Kitty Desert Theme](https://github.com/dexpota/kitty-themes/blob/master/themes/Desert.conf).
+New (and hopefully more organized) dotfiles on Arch Linux. Wayland-based configuration.
 
 ## Setup
 Some basic information about my setup.
@@ -13,8 +13,13 @@ Some basic information about my setup.
 No, I don't think so.
 
 ## Serious To Do
-- [ ] Wifi Setup (Eduroam)
-- [x] Get Bluetooth to work with headphones
+- [ ] System: Wifi Setup (Eduroam)
+- [ ] System: Get Bluetooth to work with headphones
+- [ ] System: Get zsh env to be the same as bash, then configure stuff.
+- [ ] LaTeX: update preamble.
+- [ ] Neovim: configure current plugins (nvim-tree, commment, bufferline). 
+- [ ] General (Neovim/LuaSnip): add development plugins (e.g. toggleterm) and create snippets/commands/keybinds for software development.
+- [ ] Waybar: Add Google Calendar integration.
 
 ## Cool Stuff
 Screenshots when I'm done.
