@@ -2,7 +2,28 @@
 
 > <strong>Update:</strong> You can now find this on [my website](https://evesdropper.github.io/files/luasnip/).
 
-#### Acknowledgement/Notes
+## Table of Contents 
+- [From UltiSnips to LuaSnip: A Comprehensive Guide](#from-ultisnips-to-luasnip--a-comprehensive-guide)
+    - [Acknowledgement/Notes](#acknowledgement%2Fnotes)
+        - [Updates](#updates)
+    - [Intro/Differences](#intro%2Fdifferences)
+    - [Basic Configuration](#basic-configuration)
+        - [Setup](#setup)
+        - [Understanding Snippet Anatomy](#understanding-snippet-anatomy)
+        - [Your First Snippets](#your-first-snippets)
+        - [Expediting the Snippet Creating Process](#expediting-the-snippet-creating-process)
+    - [Advanced Snippets](#advanced-snippets)
+        - [Regex Triggers and Function Nodes: Parsing Auto Subscript Snippets](#regex-triggers-and-function-nodes--parsing-auto-subscript-snippets)
+            - [[Extra] Postfix Snippets and Lambdas](#-extra--postfix-snippets-and-lambdas)
+        - [`LS_SELECT_RAW/LS_SELECT_DEDENT`: Visual Mode Snippets](#ls_select_raw%2Fls_select_dedent%3A-visual-mode-snippets)
+        - [Choice Nodes: Fun Side Utility with Potential](#choice-nodes--fun-side-utility-with-potential)
+            - [Aside: Snippet Nodes](#aside--snippet-nodes)
+        - [Dynamic Nodes: Generating Tables and Matrices](#dynamic-nodes--generating-tables-and-matrices)
+        - [Conditions/Context-Dependent Snippets](#conditions-context-dependent-snippets)
+    - [Additional Resources](#additional-resources)
+
+## Acknowledgement/Notes
+
 This is a guide centered around moving snippets from UltiSnips to LuaSnip. While a majority of snippets discussed will be LaTeX snippets, I will not be discussing practices for creating LaTeX snippets or anything of the like - that seems better suited for a future guide.
 
 I'd also like to thank the following people for providing help:
@@ -11,10 +32,12 @@ I'd also like to thank the following people for providing help:
 
 These users' help on figuring out how to start with LuaSnip as well as a group effort to figure out how to create conditional snippets using VimTeX syntax highlighting has been incredibly crucial for this guide.
 
-I also just set up my computer recently, so I haven't really figured out how to do screen capture. I'll do something about this later.
+I have not yet figured out an efficient screen capturing system; once I have that figured out, I will also try to add GIFs for better visual demonstration.
 
-And yes, this is just a random README in the depths of a scuffed Github repository. I'll try to update it to a website when I have time.
-
+### Updates
+- 2022-11-25: Moved to website.
+- 2022-12-19: Added new example for Choice Nodes.
+- 2022-12-31: Added examples for Choice Nodes, improved explanations.
 <hr>
 
 UltiSnips is one of the most well-known snippet engines, and it’s what I was introduced to and often used as I started my Neovim + LaTeX journey. However, as time went on, I decided to switch to a more Lua-based configuration, and UltiSnips, while trusty, was in need of an upgrade. That’s when I found LuaSnip.
@@ -32,7 +55,7 @@ And secondly, as the name implies, LuaSnip is heavily based on Lua parsing, wher
 
 | UltiSnips                          | LuaSnip                                                  |
 |------------------------------------|----------------------------------------------------------|
-| `a` Snippets                       | `autoexpand = true`, put on separate snip table          |
+| `a` Snippets                       | `autoexpand = true`, put on separate snip table or `autosnippet`          |
 | `b` Snippets                       | `require("luasnip.extras.expand_conditions").line_begin` |
 | `i`/`w` Snippets                   | `wordTrig = (true\|false)` Set to true by default        |
 | `r` Snippets                       | `regTrig = true`                                         |
@@ -49,7 +72,7 @@ Now, let’s get started by setting up LuaSnip.
 Setting up LuaSnip is a short process - you can get your snippets going in no time. Start by installing the plugin:
 
 ```lua
-use "L3MON4D3/LuaSnip"
+use "L3MON4D3/LuaSnip" -- assuming you use packer.nvim
 ```
 Then, set up LuaSnip. I have the following options on:
 - `autosnippets = true` for automatically triggering snippets. 
@@ -63,6 +86,7 @@ ls.config.set_config({
     enable_autosnippets = true,})
 require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/luasnip/"})
 ```
+
 Feel free to adjust the configuration to your needs by taking a look at [official documentation](https://github.com/L3MON4D3/LuaSnip).
 
 Of course, make sure to set up some keybinds so that you can quickly navigate through snippets. A common choice is to use something like `<Tab>` and `<S-Tab>` to go forwards and backwards respectively.
@@ -118,6 +142,8 @@ This can be easily remedied by introducing the `fmt` utility and the repeat node
 s(<trigger>, fmt(<formatted snippet>, {<nodes>}, <options>), <condition,callbacks>)
 ```
 
+> **Note:** `fmta` also works but sets default delimiters to angled brackets.
+
 As for the repeat node, it should be pretty self-explanatory: `rep(<num>)` repeats the node specified. With this, we have our new snippet:
 
 ```lua
@@ -137,22 +163,25 @@ Well, that was a lot of work to write a first snippet. Writing dozens of differe
 ```lua
 -- format snippet 
 s("snipf", fmt([[ 
-    s({ trig='<>', name='<>', dscr='<>'},
+    <>({ trig='<>', name='<>', dscr='<>'},
     fmt(<>,
     { <> },
     { delimiters='<>' }
     )<>)<>,]],
-    { i(1, "trig"), i(2, "trig"), i(3, "dscr"), i(4, "fmt"), i(5, "inputs"), i(6, "<>"), i(7, "opts"), i(0)},
+    { c(1, {t("s"), t("autosnippet")}), i(2, "trig"), i(3, "trig"), i(4, "dscr"), i(5, "fmt"), i(6, "inputs"), i(7, "<>"), i(8, "opts"), i(0)},
     { delimiters='<>' }
-)),
+    )),
+
 -- simple text snippet 
 s("snipt", fmt([[ 
-    s('<>', {t('<>')}<>
+    <>(<>, {t('<>')}<>
     <>)<>,]],
-    { i(1, "trig"), i(2, "text"), i(3, "opts"), i(4), i(0)},
+    { c(1, {t("s"), t("autosnippet")}), c(2, {i(nil, "trig"), sn(nil, {t("{trig='"), i(1), t("'}")})}), i(3, "text"), i(4, "opts"), i(5), i(0)},
     { delimiters='<>' }
-))
+    )),
 ```
+
+> The current version adds a choice node feature; we'll get to that later on in this guide. You can also find more snippet-creating snippets [in my Lua snippets file](https://github.com/evesdropper/dotfiles/blob/main/nvim/luasnip/lua.lua).
 
 With the knowledge of text, insert, and repeat nodes as well as the snippet-creating snippets to speed up the snippet-writing process, you should be able to quickly implement a majority of the snippets you will ever want to use.
 
@@ -216,7 +245,7 @@ For certain snippets, LuaSnip has some perfect edge case functions in postfix sn
 local postfix = require("luasnip.extras.postfix").postfix
 
 -- fast implementation
-postfix("hat", {l("\\hat{" .. l.POSTFIX_MATCH .. "}")}, { condition=math })
+postfix("hat", {l("\\hat{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }) -- lambdas are basically function nodes but perform very simple tasks, e.g. string concatenation/modification
 
 -- a possible implementation using regex triggers and function nodes
 s({ trig='(%a)+hat', regTrig=true, name='hats', dscr='hats'},
@@ -249,24 +278,57 @@ s({ trig='lrv', name='left right', dscr='left right'},
       end, {}), i(0) },
     { delimiters='<>' }
     ), { condition=math, show_condition=math }),
-
 ```
 
-> <strong>Warning:</strong> With this part of the guide, my knowledge starts to fade. I'll be posting updates once I have more time to understand how the more complex nodes work.
+### Choice Nodes: A Neat Utility and Modularity Maker
 
-### Choice Nodes: Fun Side Utility with Potential
+> There isn't much that parallels with UltiSnips in this section, but nevertheless, this is a great utility to learn and implement.
+
 With choice nodes and the next topic, dynamic nodes, we start moving away from simple inputs and towards even more complex functions. Through this, the extensibility and customizability of LuaSnip really starts to shine. However, the more complex and awe-inducing the plugin gets, the harder it gets to understand - because these nodes lack concrete output, it can be difficult to visualize and experiment with. Fortunately, for most use cases, everything from before should be more than sufficient, but it’s nice to learn more and have some truly powerful snippets.
 
-Let's focus on choice nodes. As the name suggests, this node allows you to select between a list of nodes. Of course, you can just use text nodes to emulate station values, but the option to include more complex nodes - the possibilities are endless.
+Let's focus on choice nodes. As the name suggests, this node allows you to select between a list of nodes. Of course, you can just use text nodes to emulate stationary values, but with the option to include more complex nodes - the possibilities are endless.
 
-Personally, I haven’t found much use through my LaTeX typesetting (yet - maybe some use cases for TikZ will eventually catch my eye), but here’s a small example I made that allows you to change between some preset `\minipage` sizes and accept user input.
+A simple example is the usage of choice nodes is a snippet that toggles between different delimiters with `minted/lstlistings` code listings. If you want to use code highlighting in LaTeX, trying to highlight something like `{code}` is a hassle as LaTeX ends the command with the bracket delimiter, so in those cases, it might be wise to switch over to the upright delimiter.
 
-```lua
+The main part of the snippet is in the choice node - let's define our choices:
+- Use default delimiters `{}` and insert code in the middle.
+- Use alternate delimiters `||` and insert code in the middle.
+
+Now, to execute our choices, we'll need to know a bit more about the snippet node.
+
+#### Aside: Snippet Nodes
+
+Snippet nodes are pretty crucial in choice nodes and the next topic, dynamic nodes. While the concept may seem a bit strange at first, it might be easier to think of a snippet as a "nested snippet" or a way to express multiple inputs with one node. For instance, in the above choices, a choice node provides us one space for an action (before the comma separation pushes us to the next choice), but we have three snippet actions: add opening delimiter as text, add code listing as input, add closing delimiter as text. The solution is to nest them all in a snippet node which allows all three actions to be processed with one choice.
+
+A snippet node has the following formatting: `sn(index, {nodes})`. Typically in choice (and dynamic) nodes, the jump index will be `nil` as it is often nested within a function/choice.
+
+Now that we have our choices and a way to execute them using the snippet node, the snippet comes together pretty quickly:
+```lua 
 s({ trig='qw', name='inline code', dscr='inline code, ft escape'},
     fmt([[\mintinline{<>}<>]],
     { i(1, "text"), c(2, {sn(nil, {t("{"), i(1), t("}")}), sn(nil, {t("|"), i(1), t("|")})})},
     { delimiters='<>' }
     )),
+```
+
+Along with being an incredibly useful side tool, choice nodes also introduce modularity into snippets, which allows them to adapt to your needs. Previously, in UltiSnips, to implement some form of modularity, it would make sense to make one more general snippet (e.g. one for the `figure` environment), and a more specific snippet to be inputted inside the more general snippet (e.g. `tikzpicture` or `\includegraphics` defaults).
+
+Although I don't have that snippet written out right now, another nice example is a snippet I showcased earlier - the snippet to make a short text snippet. For some snippets, I might only need the trigger keyword to initialize a snippet, while other times, I might want to add other information to the trigger table, such as snippet priority values to prevent the snippet from improperly triggering. 
+
+As with the previous snippet, we have the main snippet body and the choice: 
+- Snippet Body: `<>(<>, {t('<>')}<> <>)<>,`, where each `<>` denotes the following: snippet type (tab-triggered or autosnippet), choice of trigger or trigger table, text entry, options.
+- Choices: either just the snippet trigger or a full trigger table.
+    - Default: most of the time we only need a trigger, which only requires an insert node.
+    - Trigger Table: we need a table of the form `{trig=<>, <>}`, where the `<>` denote the trigger word and other possible trigger options we might want. This is done through a combination of text and insert nodes, which can be implemented with a snippet node.
+
+Combining the choices with the snippet setup, we have our finished snippet here:
+```lua 
+s("snipt", fmt([[ 
+    <>(<>, {t('<>')}<>
+    <>)<>,]],
+    { c(1, {t("s"), t("autosnippet")}), c(2, {i(nil, "trig"), sn(nil, {t("{trig='"), i(1), t("'}")})}), i(3, "text"), i(4, "opts"), i(5), i(0)},
+    { delimiters='<>' }
+    ))
 ```
 
 If you want to use choice nodes often, make sure to include this in your config for quick and easy mapping.
@@ -277,6 +339,19 @@ smap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-prev-choice' 
 ```
 
 ### Dynamic Nodes: Generating Tables and Matrices
+
+<!--We've made it to the grand finale of the snippet node types: the dynamic nodes. In essence, these powerful nodes allow for custom snippet node return values (think text/insert nodes depending on user input), building upon function nodes (limited to string nodes), and choice nodes (limited to only the choices defined by the user) to offer a more generalized output.
+
+Let's rectify the sloppy introduction in v1 of this guide with a simple example before we build up to the matrix snippet example. Recently, I was updating my snippets and felt the need to make some calculus-based snippets, which extended to multiple integrals. As I updated my single integral snippet, I realized that a simple set of text and insert nodes would not cut it would multiple integrals. For instance, a single integral looks like so:
+
+$$\int_0^1 x dx$$
+
+Compare to a double and triple integral:
+
+$$\int_0^1 \int_0^1 x^2 y^2 dx dy \quad \iiint_0^1 x^2 y^2 z^2 dx dy dz$$
+
+Since the content for a single integral is only `\(o)int_{lower}^{upper} <expr> d <variable>`; however for multiple integrals, while the integral, bounds, and expression stay as one constant expression, the amount of `\int_{lower}^{upper}` (for the iterated integral)  and `d <variable>` clauses changes depending on the integral. -->
+
 A constant complaint of LaTeX users is generating something like tables and matrices, which can often be very tedious to typeset by hand. Previously, this was done using auto-expand snippets with UltiSnips, but what about with LuaSnip?
 
 ```python
@@ -320,7 +395,7 @@ end)
 d(idx, function(args)
     nodes = {} -- make a table of nodes to make things a little more clear
     -- do some more cool stuff 
-    return sn(nil, nodes)
+    return sn(nil, nodes))
 ```
 
 To create the matrix, the dynamic node comes into play as we construct the body of the matrix. A basic matrix in LaTeX looks something like this:
@@ -403,7 +478,7 @@ s('tikztest', {t('this works only in tikz')},
 { condition=tikz, show_condition=tikz}),
 ```
 
-It’s important to note how snippet engines differ in their ways of evaluating a condition - UltiSnips passes in the function call and verifies the return value, while LuaSnip only accepts the function to evaluate it on its own. So to check for environments, instead of doing something like `context("env(name)")` with UltiSnips, you need to define your own helpers.
+It’s important to note how snippet engines differ in their ways of evaluating a condition - UltiSnips passes in the function call and verifies the return value, while LuaSnip only accepts the function to evaluate it on its own. So to check for environments, instead of doing something like `context("env(name)")` with UltiSnips, you need to define your own helpers. However, to alleviate things, LuaSnip has condition objects, which allow you to use boolean algebra to combine different conditions.
 
 > <strong>Note:</strong> If you are also using a working completion engine that integrates with LuaSnip such as `nvim-cmp`, make sure to also set the `show_condition` parameter for tab-triggered snippets so that the completion engine does not show invalid snippets.
 
@@ -418,3 +493,4 @@ Here are some resources I found incredibly helpful for learning more about how L
 <hr>
 
 And that’s a wrap! Hopefully this guide was helpful as an introduction to LuaSnip and a reference for moving your snippets over. If you want to check out some of my snippets, they are linked [here](https://github.com/evesdropper/dotfiles/tree/main/nvim/luasnip).
+

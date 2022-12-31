@@ -132,8 +132,21 @@ local tr = function(args, snip)
 end
 
 
--- integral function 
-local int = function(args, snip)
+-- integral functions 
+local int1 = function(args, snip)
+    local vars = tonumber(snip.captures[1])
+    local nodes = {}
+    for j = 1, vars do 
+        table.insert(nodes, t" \\int_{")
+        table.insert(nodes, r(j, "lb"..tostring(j), i(1)))
+        table.insert(nodes, t"}^{")
+        table.insert(nodes, r(j, "ub"..tostring(j), i(1)))
+        table.insert(nodes, t"}")
+    end
+    return sn(nil, nodes)
+end 
+
+local int2 = function(args, snip)
     local vars = tonumber(snip.captures[1])
     local nodes = {}
     for j = 1, vars do 
@@ -510,21 +523,29 @@ return {
     \begin{itemize}<>
     \item <>
     \end{itemize}]],
-    { c(1, {t(""), sn(nil, {t("[label="), i(1), t(",ref="), i(2), t("]")}) }), i(0) },
+    { i(1), i(0) },
     { delimiters='<>' }
     )),
-    autosnippet({ trig='-e', name='enumerate', dscr='numbered list (enumerate)'},
+    s({ trig='-e', name='enumerate', dscr='numbered list (enumerate)'},
     fmt([[ 
     \begin{enumerate}<>
     \item <>
     \end{enumerate}]],
-    { c(1, {t(""), sn(nil, {t("[label="), i(1), t(",ref="), i(2), t("]")}) }), i(0) },
+    { i(1), i(0) },
     { delimiters='<>' }
     )),
+    -- label n stuff 
+    autosnippet({ trig='-l', name='add label', dscr='add labeling'},
+    fmt([[
+    [label=<>]
+    ]],
+    { i(1) },
+    { delimiters='<>' }
+    ), { condition=bp, show_condition=bp }),
     -- generate new bullet points 
-    s({trig="--", hidden=true}, {t('\\item')},
+    autosnippet({trig="--", hidden=true}, {t('\\item')},
     { condition=bp * line_begin, show_condition=bp * line_begin }),
-    s({ trig='!-', name='bp custom', dscr='bullet point'},
+    autosnippet({ trig='!-', name='bp custom', dscr='bullet point'},
     fmt([[ 
     \item [<>]<>
     ]],
@@ -889,7 +910,7 @@ return {
         inum = tonumber(snip.captures[1])
         res = string.rep("i", inum)
         return res
-        end), i(2, "-\\infty"), i(3, "\\infty"), i(4), d(5, int), i(0)},
+        end), i(2, "-\\infty"), i(3, "\\infty"), i(4), d(5, int2), i(0)},
     { delimiters='<>' }
     ), { condition=math, show_condition=math }), 
     autosnippet({ trig='elr', name='eval left right', dscr='eval left right'},
@@ -970,6 +991,8 @@ return {
     { condition=math, show_condition=math }),
     autosnippet({trig='->', priority=250}, {t('\\to')},
     { condition=math }),
+    autosnippet({trig='-->', priority=400}, {t('\\longrightarrow')},
+    { condition=math }),
     autosnippet({trig='<->', priority=500}, {t('\\leftrightarrow')},
     { condition=math }),
     autosnippet('!>', {t('\\mapsto')},
@@ -1022,12 +1045,14 @@ return {
     { condition=math, show_condition=math }),
     autosnippet('dnar', {t('\\downarrow')},
     { condition=math, show_condition=math }),
+    autosnippet('dag', {t('\\dagger')},
+    { condition=math, show_condition=math }),
 
 }, {
     -- hats and bars (postfixes) 
     postfix({trig="bar", snippetType = "autosnippet"}, {l("\\bar{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
     postfix("hat", {l("\\hat{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
-    postfix("sym", {l("\\" .. l.POSTFIX_MATCH)}, { condition=math, show_condition=math }),
+    postfix(".ss", {l("\\" .. l.POSTFIX_MATCH)}, { condition=math, show_condition=math }),
     postfix({trig=",.", priority=500}, {l("\\vec{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
     postfix(",,.", {l("\\mat{" .. l.POSTFIX_MATCH .. "}")}, { condition=math }),
     postfix("vr", {l("$" .. l.POSTFIX_MATCH .. "$")}),
