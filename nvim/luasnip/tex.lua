@@ -252,6 +252,25 @@ return {
     { t("Homework"), i(1), i(2), i(3), rep(1), rep(2), t(os.date("%d-%m-%Y")), rep(2), rep(1), i(0) },
     { delimiters='<>' }
     )),
+    s({ trig='texbook', name='tex book', dscr='make a new tex book', hidden=true},
+    fmt([[
+    \documentclass[twoside]{book}
+    \usepackage[utf8]{inputenc}
+    \usepackage{makeidx}
+    \usepackage[totoc]{idxlayout}
+    \makeindex
+    \usepackage{tocbibind} 
+    \input{pre/preamble}
+    \input{pre/operators[preamble]}
+    \usepackage{xurl}
+
+    \begin{document}
+    <>
+    \end{document}
+    ]],
+    { i(1) },
+    { delimiters='<>' }
+    )),
     s({ trig='draft', name='draft', dscr='draft', hidden=true},
     fmt([[ 
     \documentclass{article}
@@ -292,21 +311,21 @@ return {
     -- sections from LaTeX
     s({trig="#", hidden=true, priority=250},
     fmt([[
-    \section{<>}
+    \section{<>}\label{sec:<>}
     <>]],
-    { i(1), i(0) },
+    { i(1), i(2), i(0) },
     { delimiters="<>" }
     )),
     s({trig="#*", hidden=true, priority=250},
     fmt([[
-    \section*{<>}
+    \section*{<>}\label{sec:<>}
     <>]],
-    { i(1), i(0) },
+    { i(1), i(2), i(0) },
     { delimiters='<>' }
     )),
     s({trig="##", hidden=true, priority=500},
     fmt([[
-    \subsection{<>}
+    \subsection{<>}\label{
     <>]],
     { i(1), i(0) },
     { delimiters='<>' }
@@ -411,6 +430,9 @@ return {
     { delimiters='<>' }
     )),
 
+    -- Book Club
+
+
     --[
     -- Text Commands: formatting you'd click a button to do in word for
     --]
@@ -453,6 +475,22 @@ return {
     { delimiters='<>' }
     )),
 
+    -- references 
+    autosnippet({ trig='alab', name='labels', dscr='add a label'},
+    fmt([[
+    \label{<>:<>}<>
+    ]],
+    { i(1), i(2), i(0) },
+    { delimiters='<>' }
+    )),
+    autosnippet({ trig='aref', name='references', dscr='add a reference'},
+    fmt([[
+    \ref{<>:<>}<>
+    ]],
+    { i(1), i(2), i(0) },
+    { delimiters='<>' }
+    )),
+
     --[
     -- Environments
     --]
@@ -467,20 +505,20 @@ return {
     )),
 
     -- Bullet Points
-    autosnippet({ trig='-i', name='itemize', dscr='bullet points (itemize)'},
+    s({ trig='-i', name='itemize', dscr='bullet points (itemize)'},
     fmt([[ 
-    \begin{itemize}
+    \begin{itemize}<>
     \item <>
     \end{itemize}]],
-    { i(1) },
+    { c(1, {t(""), sn(nil, {t("[label="), i(1), t(",ref="), i(2), t("]")}) }), i(0) },
     { delimiters='<>' }
     )),
     autosnippet({ trig='-e', name='enumerate', dscr='numbered list (enumerate)'},
     fmt([[ 
-    \begin{enumerate}
+    \begin{enumerate}<>
     \item <>
     \end{enumerate}]],
-    { i(1) },
+    { c(1, {t(""), sn(nil, {t("[label="), i(1), t(",ref="), i(2), t("]")}) }), i(0) },
     { delimiters='<>' }
     )),
     -- generate new bullet points 
@@ -747,6 +785,14 @@ return {
     { delimiters='<>' }
     ),{ condition=math, show_condition=math }),
     autosnippet('!+', {t('\\oplus')},
+    { condition=math, show_condition=math }),
+    autosnippet('!*', {t('\\otimes')},
+    { condition=math, show_condition=math }),
+    autosnippet({trig='!!+', priority=500}, {t('\\bigoplus')},
+    { condition=math, show_condition=math }),
+    autosnippet({trig='!!*', priority=500}, {t('\\bigotimes')},
+    { condition=math, show_condition=math }),
+    autosnippet({trig='Oo', priority=50}, {t('\\circ')},
     { condition=math, show_condition=math }),
 
     -- sub super scripts
