@@ -20,7 +20,7 @@
             - [Aside: Snippet Nodes](#aside-snippet-nodes)
         - [Dynamic Nodes: Generating Tables and Matrices](#dynamic-nodes-generating-tables-and-matrices)
         - [Conditions/Context-Dependent Snippets](#conditionscontext-dependent-snippets)
-    - [Additional Resources](#add
+    - [Additional Resources](#additional-resources)
 
 ## Acknowledgement/Notes
 
