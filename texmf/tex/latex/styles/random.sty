@@ -108,7 +108,8 @@
 
 % Graphics
 \RequirePackage{graphicx}  % External graphics
-\RequirePackage[labelfont={bf}]{caption}
+\RequirePackage{caption, subcaption}  % subfigures
+\captionsetup{labelfont+=bf,format=hang}
 \numberwithin{figure}{section}
 \ifluatex
     \RequirePackage{luatex85}
@@ -390,7 +391,16 @@
 \RequirePackage{cleveref}  % better references
 \RequirePackage{bookmark}  % hyperref extension
 
+\usepackage[ISO]{diffcoeff}  % derivatives
+% change evaluation bar to |
+\diffdef{}{left-delim=\left., right-delim=\right|, subscr-nudge=0mu}
+\diffdef{p}{op-symbol=\partial, left-delim=\left., right-delim=\right|, subscr-nudge=0mu}
+\RenewDocumentCommand\diffp{}{\diff.p.}
+
 % ----- Math -----
+\renewcommand{\Re}{\operatorname{Re}}  % real part
+\renewcommand{\Im}{\operatorname{Im}}  % imaginary part
+
 \DeclareMathOperator{\proj}{proj}  % Projection
 \DeclareMathOperator{\spn}{span}
 \DeclareMathOperator{\range}{range}  % Range (span of columns)
@@ -408,6 +418,9 @@
 \DeclareMathOperator{\erf}{erf}  % Gauss error function
 \DeclareMathOperator{\corr}{corr}  % correlation
 \DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\diam}{diam}  % diameter
+\DeclareMathOperator{\length}{length}  % length
+\DeclareMathOperator{\Residue}{Res}  % residue
 
 \DeclareMathOperator{\from}{\colon}
 \newcommand{\divides}{\mid}
@@ -426,6 +439,9 @@
 \WithSuffix\newcommand\Exp*{\operatorname{\mathbb{E}}\mathopen{}}  % Expected value (no qty)
 \newcommand{\LLSE}{\operatorname{\mathbb{L}}\mathopen{}\opbraces{}}  % Linear least squares estimator
 \WithSuffix\newcommand\LLSE*{\operatorname{\mathbb{L}}\mathopen{}}  % Linear least squares estimator (no qty)
+\newcommand{\Span}{\operatorname{span}\mathopen{}\opbraces{}}  % Vector/Matrix Span
+\WithSuffix\newcommand\Span*{\operatorname{span}\mathopen{}}  % Vector/Matrix Span (no qty)
+\DeclareMathOperator{\Char}{char}  % characteristic polynomial
 \DeclareMathOperator{\Var}{Var}  % Variance
 \DeclareMathOperator{\Cov}{Cov}  % Covariance
 \DeclareMathOperator{\Corr}{Corr}  % Correlation
@@ -434,7 +450,8 @@
 \DeclareMathOperator*{\argmin}{argmin}
 
 \newcommand{\va}[1]{\vec{\bm{#1}}}  % Vector with italic bold
-\newcommand{\mat}[1]{\mathbf{#1}}  % Matrix variable
+\newcommand{\vecbar}[1]{\,\overline{\!#1}}
+\newcommand{\mat}[1]{\ifluatex\symbf{#1}\else\mathbf{#1}\fi}  % Matrix variable
 \newcommand{\dd}{\dl3}
 \newcommand{\ddel}{\dl.delta.3}
 \newcommand{\ddp}{\dl.p.3}
@@ -489,6 +506,42 @@
     \IfValueT{#1}{_{\!#1}}% tuck in the subscript
     \IfValueT{#2}{^{#2}}% possible superscript
 }
+
+% Zero-pad
+\ExplSyntaxOn%
+\NewExpandableDocumentCommand{\padinteger}{mm}{%
+    \int_compare:nNnTF{#2}<{0}{%
+        - \kuttens_padinteger:nn { #1 } { -#2 }
+        }{%
+        \kuttens_padinteger:nn { #1 } { #2 }
+    }
+}
+\cs_new:Nn \kuttens_padinteger:nn{%
+    \prg_replicate:nn{#1-\tl_count:f{\int_to_arabic:n{#2}}}{0}
+    \int_to_arabic:n{#2}
+}
+\cs_generate_variant:Nn \tl_count:n{f}
+\ExplSyntaxOff%
+
+% include subfiles, with a prefix, in a range of numbers, zero-padded to the left
+\newcommand\seqsubfile[4][0]{%
+    \ifnum #1=0%
+        \def\endidx{#4}
+        \StrLen{\endidx}[\endidxlen]
+    \else
+        \def\endidxlen{#1}
+    \fi
+    \foreach \idx in {#3, ..., #4}{%
+        \def\formatidx{\padinteger{\endidxlen}{\idx}}
+        \subfile{#2\formatidx.tex}
+    }
+}
+
+% system of equations with systeme, but aligning on the right side
+\NewDocumentCommand{\systemeright}{ >{\SplitList{,}} m m }{%
+    \left\{\begin{aligned}\ProcessList{#1}{\systemeright@aligned}\end{aligned}\sysdelim..\systeme{#2}\right.
+}
+\NewDocumentCommand{\systemeright@aligned}{m}{#1&=\\}
 
 % dumb commands 
 \newcommand{\cmark}{\ding{51}}
@@ -765,14 +818,10 @@ ctiondesc}}}
     \begin{adjustwidth}{1.25em}{1.25em}
         \color{answercolor}
         \tikzset{color=answercolor}
-        \ifopt@minted
-            \setminted{bgcolor=mintedanswercolor}
-        \fi
+        \setminted{bgcolor=mintedanswercolor}
         }{%
         \tikzset{color=black}
-        \ifopt@minted
-            \setminted{bgcolor=lstbgcolor}
-        \fi
+        \setminted{bgcolor=lstbgcolor}
     \end{adjustwidth}
 }
 
