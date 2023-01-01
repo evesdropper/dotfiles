@@ -97,9 +97,13 @@ return packer.startup(function(use)
     }
     use 'Mofiqul/vscode.nvim' -- code dark scheme
     use {"petertriho/nvim-scrollbar"}
-    use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true } }
-    use {'akinsho/bufferline.nvim', tag = "v3.*", requires = 'kyazdani42/nvim-web-devicons'}
+    use { 'nvim-lualine/lualine.nvim',
+        requires = { 'kyazdani42/nvim-web-devicons', opt = true } }
+    use {'akinsho/bufferline.nvim',
+        tag = "v3.*", requires = 'kyazdani42/nvim-web-devicons'}
     use { 'fgheng/winbar.nvim' }
+    use { "SmiteshP/nvim-navic",
+        requires = "neovim/nvim-lspconfig" }
     use { 'glepnir/dashboard-nvim' }
     use 'andweeb/presence.nvim' -- to remind discord users that i am a superior being
 
