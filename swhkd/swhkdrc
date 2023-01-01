@@ -10,3 +10,5 @@ ctrl + f10
 ctrl + print
     ~/figures.sh
 
+ctrl + alt + shift + R 
+    wf-recorder -g "$(slurp)"

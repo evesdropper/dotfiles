@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 import argparse
 import logging
 import sys
@@ -47,6 +47,7 @@ def on_metadata(player, metadata, manager):
 
 
 def on_player_appeared(manager, player, selected_player=None):
+    print("found player ", player)
     if player is not None and (selected_player is None or player.name == selected_player):
         init_player(manager, player)
     else:
@@ -90,27 +91,38 @@ def parse_arguments():
 
 def main():
     arguments = parse_arguments()
+    print("done parsing args")
 
     # Initialize logging
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
                         format='%(name)s %(levelname)s %(message)s')
+    print("done init logs")
 
     # Logging is set by default to WARN and higher.
     # With every occurrence of -v it's lowered by one
     logger.setLevel(max((3 - arguments.verbose) * 10, 0))
+    print("done setting logs")
 
     # Log the sent command line arguments
     logger.debug('Arguments received {}'.format(vars(arguments)))
+    print("done logging set args")
 
     manager = Playerctl.PlayerManager()
+    print("done getting manager")
     loop = GLib.MainLoop()
+    print("done getting loop")
 
     manager.connect('name-appeared', lambda *args: on_player_appeared(*args, arguments.player))
+    print("done connecting appeared")
     manager.connect('player-vanished', on_player_vanished)
+    print("done connecting vanished", manager.props.player_names)
 
     signal.signal(signal.SIGINT, signal_handler)
+    print("done signal 1")
     signal.signal(signal.SIGTERM, signal_handler)
+    print("done signal 2")
     signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+    print("done signal 3")
 
     for player in manager.props.player_names:
         if arguments.player is not None and arguments.player != player.name:

@@ -137,11 +137,11 @@ local int1 = function(args, snip)
     local vars = tonumber(snip.captures[1])
     local nodes = {}
     for j = 1, vars do 
-        table.insert(nodes, t" \\int_{")
+        table.insert(nodes, t"\\int_{")
         table.insert(nodes, r(j, "lb"..tostring(j), i(1)))
         table.insert(nodes, t"}^{")
         table.insert(nodes, r(j, "ub"..tostring(j), i(1)))
-        table.insert(nodes, t"}")
+        table.insert(nodes, t"} ")
     end
     return sn(nil, nodes)
 end 
@@ -913,6 +913,21 @@ return {
         end), i(2, "-\\infty"), i(3, "\\infty"), i(4), d(5, int2), i(0)},
     { delimiters='<>' }
     ), { condition=math, show_condition=math }), 
+    autosnippet({ trig='(%d)test', name='multi integrals', dscr='please work', regTrig=true, hidden=true},
+    fmt([[ 
+    <> <> <> <>
+    ]],
+    { c(1, { 
+    fmta([[
+    \<><>nt_{<>}
+    ]], {c(1, {t(""), t("o")}), f(function(_, parent, snip)
+        inum = tonumber(parent.parent.captures[1])  -- this guy's lineage looking like a research lab's 
+        res = string.rep("i", inum)
+        return res
+        end), i(2)}), d(nil, int1)}) 
+    , i(2), d(3, int2), i(0)},
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
     autosnippet({ trig='elr', name='eval left right', dscr='eval left right'},
     fmt([[ 
     \eval{<>}<>
