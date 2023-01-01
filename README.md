@@ -2,7 +2,7 @@
 
 ## Note
 
-If you're looking for the LuaSnip Guide: [https://evesdropper.dev/files/luasnip/](website) or [readme](https://github.com/evesdropper/dotfiles/tree/main/nvim/luasnip)
+If you're looking for the LuaSnip Guide: [website](https://evesdropper.dev/files/luasnip/) or [readme](https://github.com/evesdropper/dotfiles/tree/main/nvim/luasnip)
 
 New (and hopefully more organized) dotfiles on Arch Linux. Wayland-based configuration.
 
