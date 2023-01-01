@@ -41,7 +41,9 @@ keymap("n", "J", ":m .+1<CR>==", opts)
 
 -- misc
 keymap("n", "zz", ":w<CR>", opts) -- save
-keymap("n", "zq", ":q!<CR>", opts) -- save
+keymap("n", "zq", ":q!<CR>", opts) -- saven't
+keymap("n", "<leader>h", "<cmd>nohlsearch<CR>", opts) -- nohl
+keymap("v", "p", '"_dP', opts) -- paste 
 
 -- Insert --
 -- Press jk fast to enter
@@ -85,11 +87,7 @@ keymap("n", "<C-s>", ":MarkdownPreview<CR>", opts)
 keymap("n", "<M-s>", ":MarkdownPreviewStop<CR>", opts)
 keymap("n", "<C-p>", ":MarkdownPreviewToggle<CR>", opts)
 
--- Comment
-keymap("n", "<C-/>", "<cmd>lua require('Comment.api').toggle_current_linewise()<CR>", opts)
-keymap("x", "<C-/>", '<ESC><CMD>lua require("Comment.api").toggle_linewise_op(vim.fn.visualmode())<CR>', opts)
 
-keymap("n", "<leader><leader>s", "<cmd>source ~/.config/nvim/luasnip/tex.lua<CR>", opts)
 keymap("i", "<C-f>", "<Plug>luasnip-next-choice", {})
 keymap("s", "<C-f>", "<Plug>luasnip-next-choice", {})
 keymap("i", "<C-d>", "<Plug>luasnip-prev-choice", {})
