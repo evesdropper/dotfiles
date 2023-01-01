@@ -1,6 +1,7 @@
 -- load maplocalleaders first
 require "random.vimtex"
 require "random.telescope"
+require "random.dashboard"
 
 -- core
 require "random.options"
@@ -10,6 +11,7 @@ require "random.plugins"
 -- appearance 
 require "random.colorscheme"
 require "random.icons"
+require "random.scrollbar"
 require "random.lualine"
 require "random.bufferline"
 require "random.presence"
@@ -26,6 +28,7 @@ ls.config.set_config({
 	history = true, --keep around last snippet local to jump back
     enable_autosnippets = true,
     store_selection_keys="<Tab>"})
+ls.filetype_extend("tex", { "lua", "python" })
 require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/luasnip/"})
 --require("luasnip.loaders").edit_snippet_files {
 --  extend = function(ft, paths)

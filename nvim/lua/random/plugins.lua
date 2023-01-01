@@ -78,12 +78,6 @@ return packer.startup(function(use)
     use "nvim-telescope/telescope-media-files.nvim"
     use "nvim-treesitter/nvim-treesitter"
     use "windwp/nvim-ts-autotag"
-    require'nvim-treesitter.configs'.setup {
-        autotag = {
-            enable = true,
-        }
-    }
-
 
     -- comments
     use "numToStr/Comment.nvim" -- Easily comment stuff
@@ -97,20 +91,20 @@ return packer.startup(function(use)
     require("nvim-tree").setup()
 
     -- appearance
-    use "jnurmine/Zenburn" -- colorscheme
-    use 'Mofiqul/vscode.nvim' -- code dark scheme
     use {
-    'nvim-lualine/lualine.nvim',
-    requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+    "phha/zenburn.nvim",
+    config = function() require("zenburn").setup() end
     }
+    use 'Mofiqul/vscode.nvim' -- code dark scheme
+    use {"petertriho/nvim-scrollbar"}
+    use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true } }
     use {'akinsho/bufferline.nvim', tag = "v3.*", requires = 'kyazdani42/nvim-web-devicons'}
-
     use { 'fgheng/winbar.nvim' }
-
+    use { 'glepnir/dashboard-nvim' }
     use 'andweeb/presence.nvim' -- to remind discord users that i am a superior being
 
-    use { 'glacambre/firenvim',
-    run = function() vim.fn['firenvim#install'](0) end }
+    -- git good
+    use { 'ThePrimeagen/vim-be-good' }
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
