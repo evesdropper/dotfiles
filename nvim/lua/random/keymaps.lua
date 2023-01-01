@@ -43,7 +43,7 @@ keymap("n", "J", ":m .+1<CR>==", opts)
 keymap("n", "zz", ":w<CR>", opts) -- save
 keymap("n", "zq", ":q!<CR>", opts) -- saven't
 keymap("n", "<leader>h", "<cmd>nohlsearch<CR>", opts) -- nohl
-keymap("v", "p", '"_dP', opts) -- paste 
+keymap("v", "p", '"_dP', opts) -- paste
 
 -- Insert --
 -- Press jk fast to enter
@@ -52,7 +52,7 @@ keymap("i", "jk", "<ESC>", opts)
 -- not an enjoyer of autosave? :nomaidens: & other typesetting utils
 keymap("i", "<C-s>", "<ESC>:update<CR>gi", opts) --save
 keymap("i", "<M-z>", "<Esc>:set wrap! linebreak<cr>gi", opts) --wrap for TeX
-keymap("i", "<C-l>", "<c-g>u<Esc>[s1z=`]a<c-g>u", opts) -- spellcheck 
+keymap("i", "<C-l>", "<c-g>u<Esc>[s1z=`]a<c-g>u", opts) -- spellcheck
 
 -- Visual --
 -- Stay in indent mode
@@ -79,14 +79,13 @@ keymap("n", "<leader>fg", ":Telescope live_grep<CR>", opts)
 keymap("n", "<leader>fb", ":Telescope buffers<CR>", opts)
 keymap("n", "<leader>fh", ":Telescope help_tags<CR>", opts)
 
--- nvim-tree 
+-- nvim-tree
 keymap("n", "<C-e>", ":NvimTreeToggle<CR>", opts)
 
--- mkdp 
+-- mkdp
 keymap("n", "<C-s>", ":MarkdownPreview<CR>", opts)
 keymap("n", "<M-s>", ":MarkdownPreviewStop<CR>", opts)
 keymap("n", "<C-p>", ":MarkdownPreviewToggle<CR>", opts)
-
 
 keymap("i", "<C-f>", "<Plug>luasnip-next-choice", {})
 keymap("s", "<C-f>", "<Plug>luasnip-next-choice", {})
