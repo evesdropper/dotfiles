@@ -5,8 +5,8 @@
     // "width": 1280, // Waybar width
     // Choose the order of the modules
     "modules-left": ["sway/workspaces", "sway/mode", "custom/media"],
-    // "modules-center": ["clock"],
-    "modules-right": ["pulseaudio", "network", "backlight", "cpu", "memory", "sway/language", "battery", "clock", "tray"],
+    "modules-center": ["custom/calendar"],
+    "modules-right": ["pulseaudio", "network", "backlight", "cpu", "memory", "sway/language", "battery", "clock", "custom/powermenu"],
     // Modules configuration
     // "sway/workspaces": {
     //     "disable-scroll": true,
@@ -86,7 +86,8 @@
     "backlight": {
         // "device": "acpi_video1",
         "format": "{percent}% {icon}",
-        "format-icons": ["", ""]
+        "format-icons": ["", ""],
+        // "on-scroll-up": light -A 2.5 
     },
     "battery": {
         "states": {
@@ -146,5 +147,27 @@
         "on-click": "playerctl play-pause",
         "on-scroll-up": "playerctl next",
         "on-scroll-down": "playerctl previous"
-    }
+    },
+    "custom/calendar": {
+        "format": "{icon} {}",
+        "return-type": "json",
+        "max-length": 150,
+        "format-icons": {
+            "default": "",
+            "nomeeting": ""
+        },
+        "escape": true,
+        "exec": "$HOME/.config/waybar/nextmeeting.py --waybar --notify-min-before-events 10 2> /dev/null", // Script in resources folder
+        // "on-click": "$HOME/.config/waybar/nextmeeting.py --open-meet-url",
+        // "on-scroll-up": "playerctl next",
+        // "on-scroll-down": "playerctl previous"
+    }, 
+    "custom/powermenu": {
+        "format": " {icon} ",
+        "format-icons": {
+            "default": "拉"
+        },
+        "escape": true,
+        "on-click": "powermenu"
+    },
 }
