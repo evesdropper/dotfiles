@@ -404,3 +404,7 @@ TSWLatexianTemp*
 
 # Makeindex log files
 *.lpz
+
+# stupid texlive 
+texmf/*
+!texmf/tex/latex/styles
