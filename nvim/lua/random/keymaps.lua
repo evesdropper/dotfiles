@@ -6,6 +6,10 @@ local term_opts = { silent = true }
 -- Shorten function name
 local keymap = vim.api.nvim_set_keymap
 
+--Remap space as leader key
+keymap("", "<Space>", "<Nop>", opts)
+vim.g.mapleader = " "
+
 -- Modes
 --   normal_mode = "n",
 --   insert_mode = "i",
@@ -81,6 +85,10 @@ keymap("n", "<leader>fh", ":Telescope help_tags<CR>", opts)
 
 -- nvim-tree
 keymap("n", "<C-e>", ":NvimTreeToggle<CR>", opts)
+
+-- Comment
+keymap("n", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", term_opts)
+keymap("x", "<leader>/", '<ESC><CMD>lua require("Comment.api").toggle.linewise(vim.fn.visualmode())<CR>', {})
 
 -- mkdp
 keymap("n", "<C-s>", ":MarkdownPreview<CR>", opts)

@@ -48,8 +48,10 @@ return packer.startup(function(use)
 
 	-- lsp
 	use("neovim/nvim-lspconfig")
-	use("williamboman/nvim-lsp-installer")
+	use("williamboman/mason.nvim")
+    use("williamboman/mason-lspconfig.nvim")
 	use("jose-elias-alvarez/null-ls.nvim")
+    use("RRethy/vim-illuminate")
 
 	-- tex/mdp moment
 	use("lervag/vimtex")
@@ -78,7 +80,9 @@ return packer.startup(function(use)
 	-- telescope/treesitter
 	use("nvim-telescope/telescope.nvim")
 	use("nvim-telescope/telescope-media-files.nvim")
-	use("nvim-treesitter/nvim-treesitter")
+    use({'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'})
+    use('nvim-treesitter/playground')
+    use("https://git.sr.ht/~p00f/nvim-ts-rainbow")
 	use("windwp/nvim-ts-autotag")
 
 	-- comments
@@ -89,28 +93,32 @@ return packer.startup(function(use)
 	use({ "lewis6991/gitsigns.nvim" })
 
 	-- extinctifying vscode
-	use({ "kyazdani42/nvim-tree.lua" })
+	use({ "nvim-tree/nvim-tree.lua" })
 	require("nvim-tree").setup()
 	use({ "akinsho/toggleterm.nvim", tag = "*" })
 
 	-- appearance
 	use({
 		"phha/zenburn.nvim",
-		config = function()
-			require("zenburn").setup()
-		end,
 	})
 	use({ "Mofiqul/vscode.nvim" }) -- code dark scheme
 	use({ "petertriho/nvim-scrollbar" })
-	use({ "nvim-lualine/lualine.nvim", requires = { "kyazdani42/nvim-web-devicons", opt = true } })
-	use({ "akinsho/bufferline.nvim", tag = "v3.*", requires = "kyazdani42/nvim-web-devicons" })
+	use({ "nvim-lualine/lualine.nvim", requires = { "nvim-tree/nvim-web-devicons", opt = true } })
+	use({ "akinsho/bufferline.nvim", tag = "v3.*", requires = "nvim-tree/nvim-web-devicons" })
+    use({ 'nvim-tree/nvim-web-devicons' })
 	use({ "fgheng/winbar.nvim" })
 	use({ "SmiteshP/nvim-navic", requires = "neovim/nvim-lspconfig" })
 	use({ "glepnir/dashboard-nvim" })
 	use("andweeb/presence.nvim") -- to remind discord users that i am a superior being
 
-	-- git good
+	-- utils + git good
 	use({ "ThePrimeagen/vim-be-good" })
+	use({
+		"max397574/better-escape.nvim",
+		config = function()
+			require("better_escape").setup({ mapping = { "jk", "kj" } })
+		end,
+	})
 
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
