@@ -3,7 +3,7 @@ indicator
 daemonize
 show-keyboard-layout
 show-failed-attempts
-grace=5
+grace=2
 image=~/dotfiles/swaylock/revise-lock.png
 
 font=monospace
