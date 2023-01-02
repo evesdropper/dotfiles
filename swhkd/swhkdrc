@@ -1,3 +1,4 @@
+/* playerctl stuff */
 ctrl + f8
     playerctl previous
 
@@ -7,14 +8,20 @@ ctrl + f9
 ctrl + f10 
     playerctl play-pause
 
+print 
+    ~/dotfiles/scripts/screen.sh
+
+ctrl + delete
+    powermenu
+
 ctrl + print
-    ~/figures.sh
+    ~/dotfiles/scripts/figures.sh
 
 ctrl + alt + shift + r 
-    ~/record.sh
+    ~/dotfiles/scripts/record.sh
 
 ctrl + alt + shift + g
-    ~/gifrecord.sh
+    ~/dotfiles/scripts/gifrecord.sh
 
 ctrl + f5 
     sudo pkill -HUP swhkd
