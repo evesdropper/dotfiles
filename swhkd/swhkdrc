@@ -10,8 +10,11 @@ ctrl + f10
 ctrl + print
     ~/figures.sh
 
-ctrl + alt + shift + R 
+ctrl + alt + shift + r 
     ~/record.sh
 
-ctrl + alt + shift + G
+ctrl + alt + shift + g
     ~/gifrecord.sh
+
+ctrl + f5 
+    sudo pkill -HUP swhkd
