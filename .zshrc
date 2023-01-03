@@ -1,5 +1,14 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/dotfiles/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 #!/bin/sh
 # pathfinding 
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 export PATH=$PATH:/home/revise/texlive/2022/bin/x86_64-linux
 export PATH=$PATH:/home/revise/.local/share/gem/ruby/3.0.0/bin
 export PATH=$PATH:/home/revise/go/bin
@@ -14,7 +23,7 @@ plug "hlissner/zsh-autopair"
 plug "zap-zsh/vim"
 plug "zap-zsh/fzf"
 plug "zap-zsh/supercharge"
-plug "zap-zsh/exa"
+# plug "romkatv/powerlevel10k"
 plug "zsh-users/zsh-syntax-highlighting"
 
 # completion
@@ -44,8 +53,16 @@ SAVEHIST=10000
 setopt autocd
 bindkey -e
 
+# LSD 
+alias ls='lsd'
+alias l='ls -l'
+alias la='ls -a'
+alias lla='ls -la'
+alias lt='ls --tree'
+
 # aliases 
 # common places to go 
+alias clearcd="clear; cd"
 alias home='cd ~'
 alias root='cd /'
 alias ..='cd ..'
@@ -100,7 +117,9 @@ bindkey "^[[B" down-line-or-beginning-search # ARROW_DOWN
 
 export EDITOR="nvim"
 export TERMINAL="kitty"
-export NVM_INC="/home/revise/.nvm/versions/node/v19.3.0/include/node"
+#export NVM_INC="/home/revise/.nvm/versions/node/v19.3.0/include/node"
+export XDG_CURRENT_DESKTOP=Unity
+
 # git 
 source /usr/share/zsh/scripts/git-prompt.zsh
 ZSH_THEME_GIT_PROMPT_PREFIX=" ("
@@ -114,3 +133,6 @@ PROMPT='%B%F{magenta}[%n:%f%F{blue}%(4~|../|)%3~%f%b$(gitprompt)%B%F{magenta}]%f
 RPROMPT='%B%F{red}%(0?||Exit code: %?)%f%b'
 
 # syntax highlight
+
+# To customize prompt, run `p10k configure` or edit ~/dotfiles/.p10k.zsh.
+[[ ! -f ~/dotfiles/.p10k.zsh ]] || source ~/dotfiles/.p10k.zsh
