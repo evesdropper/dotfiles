@@ -32,7 +32,7 @@ require("random.toggleterm")
 vim.api.nvim_create_autocmd('BufEnter', {
   pattern = {'*.md', "*.tex", "*.sty"},
   group = group,
-  command = 'setlocal wrap'
+  command = 'setlocal wrap linebreak'
 })
 
 -- luasnip
@@ -44,16 +44,19 @@ ls.config.set_config({
 })
 ls.filetype_extend("tex", { "cpp", "python" })
 require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/luasnip/" })
---require("luasnip.loaders").edit_snippet_files {
---  extend = function(ft, paths)
---    if #paths == 0 then
---      return {
---        { "$CONFIG/" .. ft .. ".snippets",
---          string.format("%s/%s.snippets", "~/.config/nvim/luasnip/", ft) }
---      }
---    end
---
---    return {}
---  end
---}
+local types = require("luasnip.util.types")
+-- require'luasnip'.config.setup({
+-- 	ext_opts = {
+-- 		[types.choiceNode] = {
+-- 			active = {
+-- 				virt_text = {{"⊙", "GruvboxOrange"}}
+-- 			}
+-- 		},
+-- 		[types.insertNode] = {
+-- 			active = {
+-- 				virt_text = {{"●", "GruvboxBlue"}}
+-- 			}
+-- 		}
+-- 	},
+-- })
 vim.cmd([[silent command! LuaSnipEdit :lua require("luasnip.loaders").edit_snippet_files()]])
