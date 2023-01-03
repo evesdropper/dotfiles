@@ -33,5 +33,8 @@ Sure. I currently have a nice lockscreen, and that's about it.
 
 ![Lockscreen](./assets/lockscreen.png)
 
+
 ## Serious Stuff
 Startpage is a clone of [hawk](https://github.com/itsvs/hawk) with some personal changes added.
+
+Lockscreen quote from [here](https://academia.stackexchange.com/questions/2219/how-should-i-deal-with-becoming-discouraged-as-a-graduate-student/2221#2221).
