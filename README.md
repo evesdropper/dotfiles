@@ -13,7 +13,7 @@ Some basic information about my setup.
 - OS: Arch Linux
 - Window Manager: Sway
 - Terminal: kitty
-- Shell: Bash (to be replaced by zsh)
+- Shell: zsh
 - Text Editor: Neovim
 
 ### Install?
@@ -22,14 +22,16 @@ No, I don't think so.
 ## Serious To Do
 - [ ] System: Wifi Setup (Eduroam)
 - [ ] System: Get Bluetooth to work with headphones
-- [ ] System: Get zsh env to be the same as bash, then configure stuff.
+- [x] System: Get zsh env to be the same as bash, then configure stuff.
 - [ ] LaTeX: update preamble.
-- [ ] Neovim: configure current plugins (nvim-tree, commment, bufferline). 
+- [x] Neovim: configure current plugins (nvim-tree, commment, bufferline). 
 - [ ] General (Neovim/LuaSnip): add development plugins (e.g. toggleterm) and create snippets/commands/keybinds for software development.
 - [ ] Waybar: Add Google Calendar integration.
 
 ## Cool Stuff
-Screenshots when I'm done.
+Sure. I currently have a nice lockscreen, and that's about it.
+
+![Lockscreen](./assets/lockscreen.png)
 
 ## Serious Stuff
 Startpage is a clone of [hawk](https://github.com/itsvs/hawk) with some personal changes added.
