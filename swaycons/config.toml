@@ -7,6 +7,8 @@ size = "16pt"
 [app_id]
 "dev.alextren.Spot" = { icon = "阮", color = "#1ed760" }
 "org.gnome.Nautilus" = { icon = "", color = "#6291d6" }
+"org.qutebrowser.qutebrowser" = { icon = "" }
+"gnome-mahjongg" = { icon = "" }
 1Password = { icon = "", color = "#0572ec" }
 Alacritty = { icon = "" }
 Deezer = { icon = "", color = "#ef5466" }
@@ -26,6 +28,7 @@ shotwell = { icon = "", color = "#4f7aaf" }
 sioyek = { icon = ""}
 zathura = { icon = ""}
 zoom = { icon = "", color = "#2d8cff" }
+
 
 [title]
 "(cloud|developers)\\.google.com" = { icon = "", color = "#4285f4" }
@@ -77,3 +80,4 @@ vim = { app_id = ["foot","kitty", "Alacritty"], icon = "", color = "#8fff6d" 
 pgcli = { app_id = ["foot", "Alacritty"], icon = "", color = "#c74451" }
 litecli = { app_id = ["foot", "Alacritty"], icon = "", color = "#c74451" }
 aerc = { app_id = ["foot", "Alacritty"], icon = "" }
+neomutt = { app_id = ["kitty"], icon = ""}
