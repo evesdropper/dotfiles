@@ -11,8 +11,14 @@ ctrl + f10
 print 
     ~/dotfiles/scripts/screen.sh
 
+alt + print 
+    ~/dotfiles/scripts/screen.sh --screen
+
 ctrl + delete
-    powermenu
+    ~/dotfiles/scripts/powermenu.sh
+
+alt + s 
+    ~/dotfiles/scripts/mediamenu.sh
 
 ctrl + print
     ~/dotfiles/scripts/figures.sh
@@ -23,5 +29,11 @@ ctrl + alt + shift + r
 ctrl + alt + shift + g
     ~/dotfiles/scripts/gifrecord.sh
 
+ctrl + alt + shift + k 
+    ~/dotfiles/scripts/keys.sh
+
 ctrl + f5 
     sudo pkill -HUP swhkd
+
+super + v
+    clipman pick --tool=CUSTOM --tool-args="rofi -dmenu -i -p 'Clipboard History: '"
