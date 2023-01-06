@@ -996,6 +996,20 @@ return {
 		),
 		{ condition = math }
 	),
+    autosnippet(
+		{ trig = "(\\%a+)(%d)", regTrig = true, name = "auto subscript", dscr = "hi" },
+		fmt(
+			[[<>_<>]],
+			{ f(function(_, snip)
+				return snip.captures[1]
+			end), f(function(_, snip)
+				return snip.captures[2]
+			end) },
+			{ delimiters = "<>" }
+		),
+		{ condition = math }
+	),
+
 	autosnippet(
 		{ trig = "(%a)_(%d%d)", regTrig = true, name = "auto subscript 2", dscr = "auto subscript for 2+ digits" },
 		fmt(
@@ -1088,30 +1102,7 @@ return {
 		{ condition = math, show_condition = math }
 	),
 	autosnippet(
-		{ trig = "(%d)int", name = "multi integrals", dscr = "please work", regTrig = true, hidden = true },
-		fmt(
-			[[ 
-    \<><>nt_{<>}^{<>} <> <> <>
-    ]],
-			{
-				c(1, { t(""), t("o") }),
-				f(function(_, snip)
-					inum = tonumber(snip.captures[1])
-					res = string.rep("i", inum)
-					return res
-				end),
-				i(2, "-\\infty"),
-				i(3, "\\infty"),
-				i(4),
-				d(5, int2),
-				i(0),
-			},
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
-	),
-	s(
-		{ trig = "(%d)aint", name = "multi integrals", dscr = "please work", regTrig = true, hidden = false },
+		{ trig = "(%d)int", name = "multi integrals", dscr = "please work", regTrig = true, hidden = false },
 		fmt(
 			[[ 
     <> <> <> <>

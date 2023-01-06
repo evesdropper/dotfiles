@@ -62,6 +62,7 @@ return packer.startup(function(use)
 		end,
 		ft = "markdown",
 	})
+    use('dkarter/bullets.vim')
 
 	-- cmp plugins
 	use("hrsh7th/nvim-cmp") -- The completion plugin

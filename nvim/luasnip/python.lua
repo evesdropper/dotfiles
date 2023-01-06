@@ -42,21 +42,14 @@ return {
 	s(
 		{ trig = "imp", name = "import", dscr = "import" },
 		fmt(
-			[[
-    <>
-    ]],
-			{
-				c(
-					1,
-					{
+			[[ 
+            <>
+            ]],
+			{c(1,{
 						sn(nil, { t("import "), i(1, "package") }),
 						sn(nil, { t("from "), i(1, "package"), t(" import "), i(2, "*") }),
-					}
-				),
-			},
-			{ delimiters = "<>" }
-		)
-	),
+				}),}, { delimiters = "<>" } )
+    ),
 	autosnippet(
 		"pytest",
 		{ t("this triggers only in python files, or in tex files with minted enabled with python") },

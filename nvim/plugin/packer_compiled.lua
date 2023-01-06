@@ -95,6 +95,11 @@ _G.packer_plugins = {
     path = "/home/revise/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
     url = "https://github.com/akinsho/bufferline.nvim"
   },
+  ["bullets.vim"] = {
+    loaded = true,
+    path = "/home/revise/.local/share/nvim/site/pack/packer/start/bullets.vim",
+    url = "https://github.com/dkarter/bullets.vim"
+  },
   ["cmp-buffer"] = {
     loaded = true,
     path = "/home/revise/.local/share/nvim/site/pack/packer/start/cmp-buffer",
