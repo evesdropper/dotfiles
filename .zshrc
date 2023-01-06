@@ -100,6 +100,8 @@ alias vimrc="nvim ~/.config/nvim/init.lua"
 alias latexmkrc="nvim ~/.latexmkrc"
 alias spellrc="nvim ~/.config/nvim/spell/en.utf-8.add"
 alias preamble="nvim ~/texmf/tex/latex/styles/random.sty"
+alias zshrc="nvim ~/dotfiles/.zshrc"
+alias swhkdrc="nvim ~/dotfiles/swhkd/swhkdrc"
 
 # keybinds 
 bindkey '^I'   complete-word       # tab          | complete
@@ -135,4 +137,18 @@ RPROMPT='%B%F{red}%(0?||Exit code: %?)%f%b'
 # syntax highlight
 
 # To customize prompt, run `p10k configure` or edit ~/dotfiles/.p10k.zsh.
-[[ ! -f ~/dotfiles/.p10k.zsh ]] || source ~/dotfiles/.p10k.zsh
+# [[ ! -f ~/dotfiles/.p10k.zsh ]] || source ~/dotfiles/.p10k.zsh
+
+month="$(date +%m)"
+year="$(date +%y)"
+
+if [ $month -le 5 ]; then
+    sem="sp"
+elif [ $month -ge 8 ]; then 
+    sem="fa"
+else 
+    sem="su"
+fi
+
+export CURRENT_SEM="$sem$year"
+
