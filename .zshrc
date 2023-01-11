@@ -1,23 +1,16 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/dotfiles/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
 #!/bin/sh
+
 # pathfinding 
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 export PATH=$PATH:/home/revise/texlive/2022/bin/x86_64-linux
 export PATH=$PATH:/home/revise/.local/share/gem/ruby/3.0.0/bin
 export PATH=$PATH:/home/revise/go/bin
- 
+
 # plugin manager
 [ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh"
 
-#
-#plugins
+# plugins
 plug "zsh-users/zsh-autosuggestions"
 plug "hlissner/zsh-autopair"
 plug "zap-zsh/vim"
@@ -53,6 +46,9 @@ SAVEHIST=10000
 setopt autocd
 bindkey -e
 
+# tlmgr 
+alias tlmgr='/usr/share/texmf-dist/scripts/texlive/tlmgr.pl --usermode'
+
 # LSD 
 alias ls='lsd'
 alias l='ls -l'
@@ -61,6 +57,20 @@ alias lla='ls -la'
 alias lt='ls --tree'
 
 # aliases 
+# get current sem
+month="$(date +%m)"
+year="$(date +%y)"
+
+if [ $month -le 5 ]; then
+    sem="sp"
+elif [ $month -ge 8 ]; then 
+    sem="fa"
+else 
+    sem="su"
+fi 
+
+CURRENT_SEM="$sem$year"
+
 # common places to go 
 alias clearcd="clear; cd"
 alias home='cd ~'
@@ -69,7 +79,8 @@ alias ..='cd ..'
 alias ...='cd ..; cd ..'
 alias ....='cd ..; cd ..; cd ..'
 alias docs='cd ~/Documents/'
-alias notesdir='cd ~/Documents/university/bachelor-2/fa22/'
+alias notesdir='cd ~/Documents/university/bachelor-2/$CURRENT_SEM/'
+alias ccdir='cd ~/Documents/university/bachelor-2/current-course/'
 alias books='cd ~/Downloads/Documents/books/'
 alias math='cd ~/Documents/university/etc/math/'
 alias texbook="cd ~/Documents/etc/tex/"
@@ -90,6 +101,7 @@ alias gpl="git pull"
 alias tlm="sudo env PATH='$PATH' tlmgr"
 alias s="kitty +kitten ssh"
 alias icat="kitty +kitten icat"
+alias compile-lec="latexmk -pdflatex=lualatex -shell-escape -pdf"
 
 # rc moment
 alias bashrc="nvim ~/.bashrc"
@@ -102,6 +114,7 @@ alias spellrc="nvim ~/.config/nvim/spell/en.utf-8.add"
 alias preamble="nvim ~/texmf/tex/latex/styles/random.sty"
 alias zshrc="nvim ~/dotfiles/.zshrc"
 alias swhkdrc="nvim ~/dotfiles/swhkd/swhkdrc"
+alias newsboatrc="nvim ~/.newsboat/urls"
 
 # keybinds 
 bindkey '^I'   complete-word       # tab          | complete
