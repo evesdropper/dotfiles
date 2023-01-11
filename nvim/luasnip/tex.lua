@@ -313,6 +313,17 @@ return {
 		),
 		{ condition = line_begin, show_condition = line_begin }
 	),
+    s({ trig='lectex', name='lecture template', dscr='lecture template'},
+        fmt([[
+        \documentclass[<>]{subfiles}
+        \begin{document}
+        \lecture[<>]{<>}
+        <>
+        \end{document}
+        ]],
+    { i(1, "./master.tex"), t(os.date("%Y-%m-%d")), i(2), i(0) },
+    { delimiters='<>' }
+    )),
 
 	-- [
 	-- Introductory Stuff: e.g. table of contents, packages, other setup Stuff
@@ -413,7 +424,7 @@ return {
 			[[ 
     \lecture[<>]{<>}
     <>]],
-			{ t(os.date("%d-%m-%Y")), i(1), i(0) },
+			{ t(os.date("%Y-%m-%d")), i(1), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -1302,4 +1313,13 @@ return {
 		s("theta", { t("\\theta") }, { condition = math, show_condition = math }),
 		s("sig", { t("\\sigma") }, { condition = math, show_condition = math }),
 		-- stuff i need for m110
+        autosnippet({ trig='([^\\])(sin)', name='trig', dscr='dscr', regTrig=true, hidden=true},
+        fmt([[
+        \<>
+        ]],
+        { f(function(_, snip)
+            return snip.captures[1] .. snip.captures[2]
+            end) },
+        { delimiters='<>' }
+        ), { condition=math, show_condition=math }),
 	}

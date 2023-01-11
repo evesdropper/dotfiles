@@ -1,4 +1,5 @@
 -- snippets for markdown
+local autosnippet = ls.extend_decorator.apply(s, { snippetType = "autosnippet" })
 local postfix = require("luasnip.extras.postfix").postfix
 
 return {
@@ -13,6 +14,20 @@ return {
 			{ delimiters = "<>" }
 		)
 	),
+    autosnippet({ trig='qw', name='trig', dscr='code'},
+    fmt([[
+    `<>`<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    )),
+    autosnippet({ trig='!-', name='checkbox bp', dscr='checkbox bullet point'},
+    fmt([[
+    - [<>] <>
+    ]],
+    { c(1, {t(" "), t("x")}), i(0) },
+    { delimiters='<>' }
+    )),
 },
 	{
 		s({ trig = "mk", name = "math", dscr = "inline math" }, fmt([[$<>$<>]], { i(1), i(0) }, { delimiters = "<>" })),
@@ -21,6 +36,6 @@ return {
 		-- { i(1), i(0) },
 		-- { delimiters='<>' }
 		-- )),
-		postfix("qw", { l("`" .. l.POSTFIX_MATCH .. "`") }),
+		postfix("vc", { l("`" .. l.POSTFIX_MATCH .. "`") }),
 		postfix("vr", { l("$" .. l.POSTFIX_MATCH .. "$") }),
 	}
