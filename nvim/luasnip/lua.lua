@@ -5,6 +5,10 @@
 --]
 local autosnippet = ls.extend_decorator.apply(s, { snippetType = "autosnippet" })
 
+--[
+-- dynamic setup 
+--]
+
 return {
 	--[
 	-- LuaSnip Snippets

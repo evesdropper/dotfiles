@@ -380,9 +380,9 @@ return {
 		{ trig = "##", hidden = true, priority = 500 },
 		fmt(
 			[[
-    \subsection{<>}\label{
+    \subsection{<>}\label{<>}
     <>]],
-			{ i(1), i(0) },
+			{ i(1), i(2), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -694,6 +694,15 @@ return {
 			{ delimiters = "<>" }
 		)
 	),
+    s({ trig='aprop', name='propbox', dscr='add proposition box'},
+        fmt([[
+        \begin{proposition}[<>]{<>
+        }
+        \end{proposition}
+        ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    )),
 
 	-- tables/matrices
 	s(
