@@ -37,3 +37,12 @@ ctrl + f5
 
 super + v
     clipman pick --tool=CUSTOM --tool-args="rofi -dmenu -i -p 'Clipboard History: '"
+
+super + d 
+    ~/Documents/discord/test.sh 
+
+super + shift + d 
+    ~/Documents/discord/test.sh -a
+
+super + c 
+    ~/Documents/university/scripts/setup.sh -r 
