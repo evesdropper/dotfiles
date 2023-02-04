@@ -48,9 +48,11 @@ griss = {
 
 -- brackets
 brackets = {
-	a = { "<", ">" },
-	b = { "[", "]" },
-	c = { "{", "}" },
+	a = { "angle", "angle" },
+	A = { "Angle", "Angle" },
+	b = { "brack", "brack" },
+	B = { "Brack", "Brack" },
+	c = { "brace", "brace" },
 	m = { "|", "|" },
 	p = { "(", ")" },
 }
@@ -360,9 +362,13 @@ return {
 		{ trig = "#", hidden = true, priority = 250 },
 		fmt(
 			[[
-    \section{<>}\label{sec:<>}
+    \section{<>}<>
     <>]],
-			{ i(1), i(2), i(0) },
+			{ i(1), c(2, {t(""),
+            sn(nil, fmta([[
+            \label{sec:<>}
+            ]], {i(1)}))
+            }), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -370,9 +376,13 @@ return {
 		{ trig = "#*", hidden = true, priority = 250 },
 		fmt(
 			[[
-    \section*{<>}\label{sec:<>}
+    \section*{<>}<>
     <>]],
-			{ i(1), i(2), i(0) },
+			{ i(1), c(2, {t(""),
+            sn(nil, fmta([[
+            \label{sec:<>}
+            ]], {i(1)}))
+            }), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -380,9 +390,13 @@ return {
 		{ trig = "##", hidden = true, priority = 500 },
 		fmt(
 			[[
-    \subsection{<>}\label{<>}
+    \subsection{<>}<>
     <>]],
-			{ i(1), i(2), i(0) },
+			{ i(1), c(2, {t(""),
+            sn(nil, fmta([[
+            \label{subsec:<>}
+            ]], {i(1)}))
+            }), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -390,9 +404,13 @@ return {
 		{ trig = "##*", hidden = true, priority = 500 },
 		fmt(
 			[[
-    \subsection*{<>}
+    \subsection*{<>}<>
     <>]],
-			{ i(1), i(0) },
+			{ i(1), c(2, {t(""),
+            sn(nil, fmta([[
+            \label{subsec:<>}
+            ]], {i(1)}))
+            }), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -458,9 +476,9 @@ return {
 		{ trig = "!i", name = "image", dscr = "Image (no caption, no float)" },
 		fmt(
 			[[ 
-    \begin{center}
+    \begin{Center}
     \includegraphics[width=<>\textwidth]{<>}
-    \end{center}
+    \end{Center}
     <>]],
 			{ i(1, "0.5"), i(2), i(0) },
 			{ delimiters = "<>" }
@@ -604,7 +622,11 @@ return {
     \begin{itemize}<>
     \item <>
     \end{itemize}]],
-			{ i(1), i(0) },
+			{ c(1, {t(""),
+            sn(nil, fmta([[
+            [label=<>]
+            ]], {c(1, {t("(\\alph*)"), t("(\\roman*)"), i(1)})}))
+            }), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -615,7 +637,11 @@ return {
     \begin{enumerate}<>
     \item <>
     \end{enumerate}]],
-			{ i(1), i(0) },
+			{ c(1, {t(""),
+            sn(nil, fmta([[
+            [label=<>]
+            ]], {c(1, {t("(\\alph*)"), t("(\\roman*)"), i(1)})}))
+            }), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -767,11 +793,11 @@ return {
 
 	-- entering math mode
 	autosnippet(
-		{ trig = "mk", name = "math", dscr = "inline math" },
+		{ trig = "([^%a])mk", name = "math", dscr = "inline math", regTrig=true, hidden=true, wordTrig=false },
 		fmt([[$<>$<>]], { i(1), i(0) }, { delimiters = "<>" })
 	),
 	autosnippet(
-		{ trig = "dm", name = "math", dscr = "display math" },
+		{ trig = "dm", name = "math", dscr = "display math", regTrig=true, hidden=true, wordTrig=false },
 		fmt(
 			[[ 
     \[ 
@@ -841,7 +867,7 @@ return {
 		{ trig = "tt", name = "text", dscr = "text in math" },
 		fmt(
 			[[
-    \text{<>}<>
+    \symrm{<>}<>
     ]],
 			{ i(1), i(0) },
 			{ delimiters = "<>" }
@@ -870,29 +896,6 @@ return {
 		),
 		{ condition = math, show_condition = math }
 	),
-	-- fallback for pdftex
-	autosnippet(
-		{ trig = "mbf", name = "bold math", dscr = "unfortunately cannot use this joke" },
-		fmt(
-			[[ 
-    \mathbf{<>}<>
-    ]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
-	),
-	autosnippet(
-		{ trig = "mit", name = "italic math", dscr = "symit" },
-		fmt(
-			[[ 
-    \mathit{<>}<>
-    ]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
-	),
     autosnippet("udd", {t('\\underline')},
     { condition=math, show_condition=math }),
 
@@ -906,7 +909,7 @@ return {
 		{ trig = "lr(%a)", name = "left right", dscr = "left right delimiters", regTrig = true, hidden = true },
 		fmt(
 			[[
-    \left<><>right<><>
+    \left<> <> \right<><>
     ]],
 			{
 				f(function(_, snip)
@@ -1004,7 +1007,7 @@ return {
 
 	-- sub super scripts
 	autosnippet(
-		{ trig = "(%a)(%d)", regTrig = true, name = "auto subscript", dscr = "hi" },
+		{ trig = "([%a%)%]%}])(%d)", regTrig = true, name = "auto subscript", dscr = "hi" },
 		fmt(
 			[[<>_<>]],
 			{ f(function(_, snip)
@@ -1016,22 +1019,8 @@ return {
 		),
 		{ condition = math }
 	),
-    autosnippet(
-		{ trig = "(\\%a+)(%d)", regTrig = true, name = "auto subscript", dscr = "hi" },
-		fmt(
-			[[<>_<>]],
-			{ f(function(_, snip)
-				return snip.captures[1]
-			end), f(function(_, snip)
-				return snip.captures[2]
-			end) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math }
-	),
-
 	autosnippet(
-		{ trig = "(%a)_(%d%d)", regTrig = true, name = "auto subscript 2", dscr = "auto subscript for 2+ digits" },
+		{ trig = "([%a%)%]%}])_(%d%d)", regTrig = true, name = "auto subscript 2", dscr = "auto subscript for 2+ digits" },
 		fmt(
 			[[<>_{<>}]],
 			{ f(function(_, snip)
@@ -1079,6 +1068,13 @@ return {
 		),
 		{ condition = math }
 	),
+    autosnippet({ trig='sbt', name='trig', dscr='dscr'},
+    fmt([[
+    \substack{<>}<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }) ,
 
 	-- (greek) symbols
 	-- TODO: add greek symbol thing
@@ -1094,7 +1090,7 @@ return {
 			[[ 
     \lim<>_{<> \to <>}<>
     ]],
-			{ c(1, { t(""), t("sup") }), i(2, "n"), i(3, "\\infty"), i(0) },
+			{ c(1, { t(""), t("sup"), t("inf") }), i(2, "n"), i(3, "\\infty"), i(0) },
 			{ delimiters = "<>" }
 		),
 		{ condition = math, show_condition = math }
@@ -1227,13 +1223,19 @@ return {
 	autosnippet("inn", { t("\\in") }, { condition = math }),
 	autosnippet("notin", { t("\\not\\in") }, { condition = math }),
 	autosnippet("ooo", { t("\\infty") }, { condition = math }),
+    autosnippet("!-", {t('\\lnot')},
+    { condition=math, show_condition=math }),
+    autosnippet("VV", {t('\\lor')},
+    { condition=math, show_condition=math }),
+    autosnippet("WW", {t('\\land')},
+    { condition=math, show_condition=mathmath }),
 	autosnippet("=>", { t("\\implies") }, { condition = math, show_condition = math }),
 	autosnippet("=<", { t("\\impliedby") }, { condition = math, show_condition = math }),
 	autosnippet("iff", { t("\\iff") }, { condition = math, show_condition = math }),
 	autosnippet("||", { t("\\divides") }, { condition = math }),
 	autosnippet("!|", { t("\\notdivides") }, { condition = math, show_condition = math }),
 	autosnippet({ trig = "->", priority = 250 }, { t("\\to") }, { condition = math }),
-	autosnippet({ trig = "-->", priority = 400 }, { t("\\longrightarrow") }, { condition = math }),
+	autosnippet({ trig = "-->", priority= 500 }, { t("\\longrightarrow") }, { condition = math }),
 	autosnippet({ trig = "<->", priority = 500 }, { t("\\leftrightarrow") }, { condition = math }),
     autosnippet({trig='2>', priority=400}, {t('\\rightrightarrows')},
     { condition=math, show_condition=math }),
@@ -1247,9 +1249,26 @@ return {
 	),
 	autosnippet("cc", { t("\\subset") }, { condition = math }),
 	autosnippet("cq", { t("\\subseteq") }, { condition = math }),
+	autosnippet("qq", { t("\\supset") }, { condition = math }),
+	autosnippet("qc", { t("\\supseteq") }, { condition = math }),
 	autosnippet("\\\\\\", { t("\\setminus") }, { condition = math }),
 	autosnippet("Nn", { t("\\cap") }, { condition = math }),
 	autosnippet("UU", { t("\\cup") }, { condition = math }),
+    autosnippet({ trig='nnn', name='bigcap', dscr='bigcaps'},
+    fmt([[
+    \bigcap_{<>}^{<>} <>
+    ]],
+    { i(1, "i=0"), i(2, "\\infty"), i(0) },
+    { delimiters='<>' }
+    ),{ condition=math, show_condition=math }),
+    autosnippet({ trig='uuu', name='bigcup', dscr='bigcaps'},
+    fmt([[
+    \bigcup_{<>}^{<>} <>
+    ]],
+    { i(1, "i=0"), i(2, "\\infty"), i(0) },
+    { delimiters='<>' }
+    ),{ condition=math, show_condition=math }),
+
 
 	-- counting, probability
 	autosnippet(
@@ -1271,7 +1290,7 @@ return {
 		{ condition = math, show_condition = math }
 	),
 	autosnippet(
-		{ trig = "([clvd])%.", regTrig = true, name = "dots", dscr = "generate some dots" },
+		{ trig = "([clvda])%.", regTrig = true, name = "dots", dscr = "generate some dots" },
 		fmt([[\<>dots]], { f(function(_, snip)
 			return snip.captures[1]
 		end) }, { delimiters = "<>" }),
@@ -1298,7 +1317,7 @@ return {
 		postfix("vr", { l("$" .. l.POSTFIX_MATCH .. "$") }),
 		postfix("mbb", { l("\\mathbb{" .. l.POSTFIX_MATCH .. "}") }, { condition = math }),
 		postfix("vc", { l("\\mintinline{text}{" .. l.POSTFIX_MATCH .. "}") }),
-		postfix("te", { l("\\tilde{" .. l.POSTFIX_MATCH .. "}") }, { condition=math, show_condition=math }),
+		postfix("tld", { l("\\tilde{" .. l.POSTFIX_MATCH .. "}") }, { condition=math, show_condition=math }),
 		-- etc
 		-- a living nightmare worth of greek symbols
 		-- TODO: replace with regex
