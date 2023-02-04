@@ -547,11 +547,11 @@ return {
 	-- quotes
 	s(
 		{ trig = "sq", name = "single quotes", dscr = "single quotes", hidden = true },
-		fmt([[`<>'<>]], { i(1), i(0) }, { delimiters = "<>" })
+		fmt([[\enquote*{<>}<>]], { i(1), i(0) }, { delimiters = "<>" })
 	),
 	s(
 		{ trig = "qq", name = "double quotes", dscr = "double quotes", hidden = true },
-		fmt([[``<>''<>]], { i(1), i(0) }, { delimiters = "<>" })
+		fmt([[\enquote{<>}<>]], { i(1), i(0) }, { delimiters = "<>" })
 	),
 
 	-- text changes
@@ -619,14 +619,12 @@ return {
 		{ trig = "-i", name = "itemize", dscr = "bullet points (itemize)" },
 		fmt(
 			[[ 
-    \begin{itemize}<>
+    \begin{itemize}
     \item <>
     \end{itemize}]],
-			{ c(1, {t(""),
-            sn(nil, fmta([[
-            [label=<>]
-            ]], {c(1, {t("(\\alph*)"), t("(\\roman*)"), i(1)})}))
-            }), i(0) },
+			{ c(1, {i(0), sn(nil, fmta([[
+            [<>] <>
+            ]], {i(1), i(0)}))}) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -641,7 +639,9 @@ return {
             sn(nil, fmta([[
             [label=<>]
             ]], {c(1, {t("(\\alph*)"), t("(\\roman*)"), i(1)})}))
-            }), i(0) },
+            }), c(2, {i(0), sn(nil, fmta([[
+            [<>] <>
+            ]], {i(1), i(0)}))}) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -680,10 +680,12 @@ return {
 		{ trig = "adef", name = "add definition", dscr = "add definition box" },
 		fmt(
 			[[ 
-    \begin{definition}[<>]{<>
+    \begin{definition}[<>]<>{<>
     }
     \end{definition}]],
-			{ i(1), i(0) },
+			{ i(1), c(2, {t(""), fmta([[
+    [<>]
+    ]], {i(1)})}), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -691,10 +693,12 @@ return {
 		{ trig = "aex", name = "add example", dscr = "add example box" },
 		fmt(
 			[[ 
-    \begin{example}[<>]{<>
+    \begin{example}[<>]<>{<>
     }
     \end{example}]],
-			{ i(1), i(0) },
+			{ i(1), c(2, {t(""), fmta([[
+    [<>]
+    ]], {i(1)})}), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -702,10 +706,12 @@ return {
 		{ trig = "athm", name = "add theorem", dscr = "add theorem box" },
 		fmt(
 			[[ 
-    \begin{theorem}[<>]{<>
+    \begin{theorem}[<>]<>{<>
     }
     \end{theorem}]],
-			{ i(1), i(0) },
+			{ i(1), c(2, {t(""), fmta([[
+    [<>]
+    ]], {i(1)})}),  i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -713,13 +719,26 @@ return {
 		{ trig = "nb", name = "notebox", dscr = "add notebox idk why this format is diff" },
 		fmt(
 			[[ 
-    \begin{notebox}[<>]
-    <>
+    \begin{notebox}[<>]<>{<>
+    }
     \end{notebox}]],
-			{ i(1), i(0) },
+			{ i(1), c(2, {t(""), fmta([[
+    [<>]
+    ]], {i(1)})}), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
+    s({ trig='rmb', name='remarkbox', dscr='ahsjd'},
+    fmt([[
+    \begin{remark}[<>]<>{<>
+    }
+    \end{remark}
+    ]],
+    { i(1, "title"), c(2, {t(""), fmta([[
+    [<>]
+    ]], {i(1)})}), i(0) },
+    { delimiters='<>' }
+    )),
     s({ trig='aprop', name='propbox', dscr='add proposition box'},
         fmt([[
         \begin{proposition}[<>]{<>
@@ -919,7 +938,7 @@ return {
 					end -- set default to parentheses
 					return brackets[cap][1]
 				end),
-				i(1),
+				d(1, get_visual),
 				f(function(_, snip)
 					cap = snip.captures[1]
 					if brackets[cap] == nil then
@@ -927,24 +946,6 @@ return {
 					end
 					return brackets[cap][2]
 				end),
-				i(0),
-			},
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
-	),
-	s(
-		{ trig = "lrv", name = "left right", dscr = "left right" }, -- TODO: update visual mode
-		fmt(
-			[[\left(<>\right)<>]],
-			{
-				f(function(args, snip)
-					local res, env = {}, snip.env
-					for _, val in ipairs(env.LS_SELECT_RAW) do
-						table.insert(res, val)
-					end
-					return res
-				end, {}),
 				i(0),
 			},
 			{ delimiters = "<>" }
