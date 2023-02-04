@@ -591,7 +591,7 @@ return {
 		{ trig = "aref", name = "references", dscr = "add a reference" },
 		fmt(
 			[[
-    \ref{<>:<>}<>
+    \Cref{<>:<>}<>
     ]],
 			{ i(1), i(2), i(0) },
 			{ delimiters = "<>" }
@@ -684,7 +684,7 @@ return {
     }
     \end{definition}]],
 			{ i(1), c(2, {t(""), fmta([[
-    [<>]
+    [def:<>]
     ]], {i(1)})}), i(0) },
 			{ delimiters = "<>" }
 		)
@@ -697,7 +697,7 @@ return {
     }
     \end{example}]],
 			{ i(1), c(2, {t(""), fmta([[
-    [<>]
+    [ex:<>]
     ]], {i(1)})}), i(0) },
 			{ delimiters = "<>" }
 		)
@@ -710,7 +710,7 @@ return {
     }
     \end{theorem}]],
 			{ i(1), c(2, {t(""), fmta([[
-    [<>]
+    [thm:<>]
     ]], {i(1)})}),  i(0) },
 			{ delimiters = "<>" }
 		)
@@ -723,7 +723,7 @@ return {
     }
     \end{notebox}]],
 			{ i(1), c(2, {t(""), fmta([[
-    [<>]
+    [note:<>]
     ]], {i(1)})}), i(0) },
 			{ delimiters = "<>" }
 		)
@@ -735,17 +735,19 @@ return {
     \end{remark}
     ]],
     { i(1, "title"), c(2, {t(""), fmta([[
-    [<>]
+    [rmk:<>]
     ]], {i(1)})}), i(0) },
     { delimiters='<>' }
     )),
     s({ trig='aprop', name='propbox', dscr='add proposition box'},
         fmt([[
-        \begin{proposition}[<>]{<>
+        \begin{proposition}[<>]<>{<>
         }
         \end{proposition}
         ]],
-    { i(1), i(0) },
+    { i(1), c(2, {t(""), fmta([[
+    [prop:<>]
+    ]], {i(1)})}), i(0) },
     { delimiters='<>' }
     )),
 
@@ -805,6 +807,8 @@ return {
 			{ delimiters = "<>" }
 		)
 	),
+
+
 
 	--[
 	-- Math Snippets - Environments/Setup Commands
@@ -925,7 +929,7 @@ return {
 		{ condition = math }
 	),
 	autosnippet(
-		{ trig = "lr(%a)", name = "left right", dscr = "left right delimiters", regTrig = true, hidden = true },
+		{ trig = "lr[aAbBcmp]", name = "left right", dscr = "left right delimiters", regTrig = true, hidden = true },
 		fmt(
 			[[
     \left<> <> \right<><>
@@ -971,6 +975,15 @@ return {
 		fmt([[\frac{<>}{<>}<>]], { i(1), i(2), i(0) }, { delimiters = "<>" }),
 		{ condition = math }
 	),
+    autosnippet({ trig='(%d)/', name='fraction 2', dscr='fraction autoexpand 2', regTrig=true, hidden=true},
+    fmt([[
+    \frac{<>}{<>}<>
+    ]],
+    { f(function (_, snip)
+    return snip.captures[1]
+    end), i(1), i(0) },
+    { delimiters='<>' }
+    ), { condition=math, show_condition=math }),
 	autosnippet("==", { t("&="), i(1), t("\\\\") }, { condition = math }),
 	autosnippet("!=", { t("\\neq") }, { condition = math }),
 	autosnippet(
@@ -1245,7 +1258,7 @@ return {
 	-- sets
 	autosnippet(
 		{ trig = "set", name = "set", dscr = "set" }, -- overload with set builder notation
-		fmt([[\{<>\}<>]], { c(1, { i(nil), sn(nil, { i(1), t("\\mid"), i(2) }) }), i(0) }, { delimiters = "<>" }),
+		fmt([[\{<>\}<>]], { c(1, { r(1, ""), sn(nil, { r(1, ""), t("\\mid"), i(2) }) }), i(0) }, { delimiters = "<>" }),
 		{ condition = math }
 	),
 	autosnippet("cc", { t("\\subset") }, { condition = math }),
@@ -1308,7 +1321,7 @@ return {
 		-- hats and bars (postfixes)
 		postfix(
 			{ trig = "bar", snippetType = "autosnippet" },
-			{ l("\\bar{" .. l.POSTFIX_MATCH .. "}") },
+			{ l("\\overline{" .. l.POSTFIX_MATCH .. "}") },
 			{ condition = math }
 		),
 		postfix("hat", { l("\\hat{" .. l.POSTFIX_MATCH .. "}") }, { condition = math }),
@@ -1342,13 +1355,4 @@ return {
 		s("theta", { t("\\theta") }, { condition = math, show_condition = math }),
 		s("sig", { t("\\sigma") }, { condition = math, show_condition = math }),
 		-- stuff i need for m110
-        autosnippet({ trig='([^\\])(sin)', name='trig', dscr='dscr', regTrig=true, hidden=true},
-        fmt([[
-        \<>
-        ]],
-        { f(function(_, snip)
-            return snip.captures[1] .. snip.captures[2]
-            end) },
-        { delimiters='<>' }
-        ), { condition=math, show_condition=math }),
 	}
