@@ -57,6 +57,11 @@ brackets = {
 	p = { "(", ")" },
 }
 
+-- util 
+local function isempty(s) --util 
+  return s == nil or s == ''
+end
+
 -- dynamic stuff
 -- LFG tables and matrices work
 local tab = function(args, snip)
@@ -175,6 +180,25 @@ local get_visual = function(args, parent)
 		return sn(nil, i(1))
 	end
 end
+
+-- cite util 
+local generate_label = function(args, parent, _, user_arg1, user_arg2)
+    if user_arg2 ~= "xargs" then
+        delims = {"\\label{", "}"}
+    else
+        delims = {"[", "]"}
+    end
+    if isempty(user_arg1) then
+        return sn(nil, fmta([[
+        \label{<>}
+        ]], {i(1)}))
+    else
+        return sn(nil, fmta([[
+        <><>:<><>
+        ]], {t(delims[1]), t(user_arg1), i(1), t(delims[2])}))
+    end
+end
+
 
 -- TODO: itemize/enumerate
 --[[ rec_ls = function() ]]
@@ -364,10 +388,7 @@ return {
 			[[
     \section{<>}<>
     <>]],
-			{ i(1), c(2, {t(""),
-            sn(nil, fmta([[
-            \label{sec:<>}
-            ]], {i(1)}))
+			{ i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"sec"}} )
             }), i(0) },
 			{ delimiters = "<>" }
 		)
@@ -378,10 +399,7 @@ return {
 			[[
     \section*{<>}<>
     <>]],
-			{ i(1), c(2, {t(""),
-            sn(nil, fmta([[
-            \label{sec:<>}
-            ]], {i(1)}))
+			{ i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"sec"}} ),
             }), i(0) },
 			{ delimiters = "<>" }
 		)
@@ -392,10 +410,7 @@ return {
 			[[
     \subsection{<>}<>
     <>]],
-			{ i(1), c(2, {t(""),
-            sn(nil, fmta([[
-            \label{subsec:<>}
-            ]], {i(1)}))
+			{ i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"subsec"}} ),
             }), i(0) },
 			{ delimiters = "<>" }
 		)
@@ -406,10 +421,7 @@ return {
 			[[
     \subsection*{<>}<>
     <>]],
-			{ i(1), c(2, {t(""),
-            sn(nil, fmta([[
-            \label{subsec:<>}
-            ]], {i(1)}))
+			{ i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"subsec"}} ),
             }), i(0) },
 			{ delimiters = "<>" }
 		)
@@ -683,9 +695,7 @@ return {
     \begin{definition}[<>]<>{<>
     }
     \end{definition}]],
-			{ i(1), c(2, {t(""), fmta([[
-    [def:<>]
-    ]], {i(1)})}), i(0) },
+			{ i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"def", "xargs"}}) }), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -696,9 +706,7 @@ return {
     \begin{example}[<>]<>{<>
     }
     \end{example}]],
-			{ i(1), c(2, {t(""), fmta([[
-    [ex:<>]
-    ]], {i(1)})}), i(0) },
+            { i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"ex", "xargs"}}) }), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -709,9 +717,7 @@ return {
     \begin{theorem}[<>]<>{<>
     }
     \end{theorem}]],
-			{ i(1), c(2, {t(""), fmta([[
-    [thm:<>]
-    ]], {i(1)})}),  i(0) },
+            { i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"thm", "xargs"}}) }),  i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -722,9 +728,7 @@ return {
     \begin{notebox}[<>]<>{<>
     }
     \end{notebox}]],
-			{ i(1), c(2, {t(""), fmta([[
-    [note:<>]
-    ]], {i(1)})}), i(0) },
+			{ i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"note", "xargs"}}) }), i(0) },
 			{ delimiters = "<>" }
 		)
 	),
@@ -734,9 +738,7 @@ return {
     }
     \end{remark}
     ]],
-    { i(1, "title"), c(2, {t(""), fmta([[
-    [rmk:<>]
-    ]], {i(1)})}), i(0) },
+    { i(1, "title"), c(2, {t(""), d(1, generate_label, {}, {user_args={"rmk", "xargs"}}) }), i(0) },
     { delimiters='<>' }
     )),
     s({ trig='aprop', name='propbox', dscr='add proposition box'},
@@ -745,9 +747,7 @@ return {
         }
         \end{proposition}
         ]],
-    { i(1), c(2, {t(""), fmta([[
-    [prop:<>]
-    ]], {i(1)})}), i(0) },
+    { i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"rmk", "xargs"}}) }), i(0) },
     { delimiters='<>' }
     )),
 
