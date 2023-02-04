@@ -102,6 +102,7 @@
 \RequirePackage{thmtools}
 \RequirePackage{kbordermatrix}  % border text on matrices
 \RequirePackage{widebar}
+\RequirePackage{xfrac}
 
 % Tables
 \RequirePackage{booktabs}  % Improved tables
@@ -137,6 +138,8 @@
 \RequirePackage{oubraces}  % better over/under braces
 \RequirePackage{textcomp}
 \RequirePackage{topsection} % topsection 
+\RequirePackage{ragged2e}
+\RequirePackage{csquotes}
 
 % multicols columnbreak vertical fill
 \let\oldcolumnbreak\columnbreak
@@ -393,8 +396,8 @@
 
 \usepackage[ISO]{diffcoeff}  % derivatives
 % change evaluation bar to |
-\diffdef{}{left-delim=\left., right-delim=\right|, subscr-nudge=0mu}
-\diffdef{p}{op-symbol=\partial, left-delim=\left., right-delim=\right|, subscr-nudge=0mu}
+\difdef{f}{}{lvwrap-Ldelim=\left., lvwrap-Rdelim=\right|, lvwrap-sup-nudge=0mu}
+\difdef{f}{p}{op-symbol=\partial, lvwrap-Ldelim=\left., lvwrap-Rdelim=\right|, lvwrap-sup-nudge=0mu}
 \RenewDocumentCommand\diffp{}{\diff.p.}
 
 % ----- Math -----
@@ -432,6 +435,8 @@
 \newcommand{\Q}{\mathbb{Q}}
 \newcommand{\U}{\mathbb{U}}
 \newcommand{\C}{\mathbb{C}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand*{\simsym}{\mathord\sim}
 
 \renewcommand{\Pr}{\operatorname{\mathbb{P}}\mathopen{}\opbraces{}}  % Probability
 \WithSuffix\newcommand\Pr*{\operatorname{\mathbb{P}}\mathopen{}}  % Probability (no qty)
@@ -547,6 +552,20 @@
 \newcommand{\cmark}{\ding{51}}
 \newcommand{\xmark}{\ding{55}}
 
+\DeclareFontFamily{U}{mathb}{}
+\DeclareFontShape{U}{mathb}{m}{n}{
+  <-5.5> mathb5
+  <5.5-6.5> mathb6
+  <6.5-7.5> mathb7
+  <7.5-8.5> mathb8
+  <8.5-9.5> mathb9
+  <9.5-11.5> mathb10
+  <11.5-> mathbb12
+}{}
+\DeclareRobustCommand{\sqcdot}{%
+  \mathbin{\text{\usefont{U}{mathb}{m}{n}\symbol{"0D}}}%
+}
+
 % ----- Commands -----
 \def\packagename{random.sty}
 
@@ -567,40 +586,40 @@
     \tcbset{listing engine=minted}
 
     % definition
-    \newtcbtheorem[number within=section, list inside=definitionlist]{tcbdefinition}{Definition}{%
+    \newtcbtheorem[number within=section, list inside=definitionlist, crefname={definition}{definitions}]{tcbdefinition}{Definition}{%
         colback=red!5, colbacktitle=red!20, coltitle=black,
         frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
         fonttitle=\bfseries, breakable, enhanced, parbox=false
     }{def}
-    \newenvironmentx{definition}[2][1={},2={}]{%
-        \begin{tcbdefinition}{#1}{#2}
+    \newenvironmentx{definition}[3][1={},2={},3={}]{%
+        \begin{tcbdefinition}[label={#2}]{#1}{#3}
         }{%
         \end{tcbdefinition}
     }
     % example
-    \newtcbtheorem[number within=section, list inside=examplelist]{tcbexample}{Example}{%
+    \newtcbtheorem[number within=section, list inside=examplelist, crefname={example}{examples}]{tcbexample}{Example}{%
         colback=gray!5, colbacktitle=gray!40, coltitle=black,
         frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
         fonttitle=\bfseries, segmentation style={solid, draw=gray!20, line width=1pt}, breakable, enhanced, parbox=false
     }{ex}
-    \newenvironmentx{example}[2][1={},2={}]{%
-        \begin{tcbexample}{#1}{#2}
+    \newenvironmentx{example}[3][1={},2={},3={}]{%
+        \begin{tcbexample}[label={#2}]{#1}{#3}
         }{%
         \end{tcbexample}
     }
     % exercise
-    \newtcbtheorem[number within=section, list inside=examplelist]{tcbexercise}{Exercise}{%
+    \newtcbtheorem[number within=section, list inside=examplelist, crefname={exercise}{exercises}]{tcbexercise}{Exercise}{%
         colback=green!5, colbacktitle=green!20, coltitle=black,
         frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
         fonttitle=\bfseries, segmentation style={solid, draw=green!20, line width=1pt}, breakable, enhanced, parbox=false
     }{exer}
-    \newenvironmentx{exercise}[2][1={},2={}]{%
-        \begin{tcbexercise}{#1}{#2}
+    \newenvironmentx{exercise}[3][1={},2={},3={}]{%
+        \begin{tcbexercise}[label={#2}]{#1}{#3}
         }{%
         \end{tcbexercise}
     }
     % theorem
-    \newtcbtheorem[number within=section, list inside=theoremlist]{tcbtheorem}{Theorem}{%
+    \newtcbtheorem[number within=section, list inside=theoremlist, crefname={theorem}{theorems}]{tcbtheorem}{Theorem}{%
         enhanced, breakable,
         colback=blue!5, colbacktitle=blue!20, coltitle=black,
         frame hidden, parbox=false,
@@ -608,15 +627,15 @@
         fonttitle=\bfseries,
         segmentation style={solid, draw=blue!20, line width=1pt}
     }{thm}
-    \newenvironmentx{theorem}[2][1={},2={}]{%
+    \newenvironmentx{theorem}[3][1={},2={},3={}]{%
         \intcbthmtrue
-        \begin{tcbtheorem}{#1}{#2}%
-        }{
+        \begin{tcbtheorem}[label={#2}]{#1}{#3}
+        }{%
         \end{tcbtheorem}
         \intcbthmfalse%
     }
     % lemma
-    \newtcbtheorem[number within=section, list inside=lemmalist]{tcblemma}{Lemma}{%
+    \newtcbtheorem[number within=section, list inside=lemmalist, crefname={lemma}{lemmas}]{tcblemma}{Lemma}{%
         enhanced, breakable,
         colback=blue!5, colbacktitle=blue!20, coltitle=black,
         frame hidden, parbox=false,
@@ -624,14 +643,15 @@
         fonttitle=\bfseries,
         segmentation style={solid, draw=blue!20, line width=1pt}
     }{lem}
-    \newenvironmentx{lemma}[2][1={},2={}]{%
+    \newenvironmentx{lemma}[3][1={},2={},3={}]{%
         \intcbthmtrue%
-        \begin{tcblemma}{#1}{#2}
+        \begin{tcblemma}[label={#2}]{#1}{#3}
         }{%
         \end{tcblemma}
         \intcbthmfalse%
     }
-        \newtcbtheorem[use counter from=tcbtheorem, list inside=corollarylist, list type=tcbcorollary]{tcbcorollary}{Corollary}{%
+    % corollary 
+    \newtcbtheorem[use counter from=tcbtheorem, list inside=corollarylist, list type=tcbcorollary, crefname={corollary}{corollaries}]{tcbcorollary}{Corollary}{%
         enhanced, breakable,
         colback=blue!5, colbacktitle=blue!20, coltitle=black,
         frame hidden, parbox=false,
@@ -640,25 +660,56 @@
         segmentation style={solid, draw=blue!20, line width=1pt},
         label type=tcb@cnt@tcbcorollary
     }{cor}
-    \newenvironmentx{corollary}[2][1={},2={}]{%
+    \newenvironmentx{corollary}[3][1={},2={},3={}]{%
         \intcbthmtrue%
-        \begin{tcbcorollary}{#1}{#2}
+        \begin{tcbcorollary}[label={#2}]{#1}{#3}
             }{%
         \end{tcbcorollary}
         \intcbthmfalse%
     }
+    % proposition 
+    \newtcbtheorem[use counter from=tcbtheorem, list inside=propositionlist, list type=tcbproposition, crefname={proposition}{propositions}]{tcbproposition}{Proposition}{%
+        enhanced, breakable,
+        colback=blue!5, colbacktitle=blue!20, coltitle=black,
+        frame hidden, parbox=false,
+        arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+        fonttitle=\bfseries,
+        segmentation style={solid, draw=blue!20, line width=1pt},
+        label type=tcb@cnt@tcbproposition
+    }{cor}
+    \newenvironmentx{proposition}[3][1={},2={},3={}]{%
+        \intcbthmtrue%
+        \begin{tcbproposition}[label={#2}]{#1}{#3}
+            }{%
+        \end{tcbproposition}
+        \intcbthmfalse%
+    }
+
     % note
-    \newtcbtheorem[number within=section, list inside=notelist]{tcbnote}{Note}{%
+    \newtcbtheorem[number within=section, list inside=notelistm, crefname={note}{notes}]{tcbnote}{Note}{%
     colback=violet!5, colbacktitle=violet!20, coltitle=black,
     frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
     fonttitle=\bfseries, breakable, enhanced, parbox=false,
     segmentation style={solid, draw=violet!20, line width=1pt}
-    }{exer}
-    \newenvironmentx{notebox}[2][1={},2={}]{%
-        \begin{tcbnote}{#1}{#2}
+    }{note}
+    \newenvironmentx{notebox}[3][1={},2={},3={}]{%
+        \begin{tcbnote}[label={#2}]{#1}{#3}
             }{%
         \end{tcbnote}
     }
+    % remark
+    \newtcbtheorem[number within=section, list inside=rmklist, crefname={remark}{remarks}]{tcbrmk}{Remark}{%
+    colback=violet!5, colbacktitle=violet!20, coltitle=black,
+    frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+    fonttitle=\bfseries, breakable, enhanced, parbox=false,
+    segmentation style={solid, draw=violet!20, line width=1pt}
+    }{remark}
+    \newenvironmentx{remark}[3][1={},2={},3={}]{%
+    \begin{tcbrmk}[label={#2}]{#1}{#3}
+            }{%
+    \end{tcbrmk}
+    }
+
     % name env 
     \pgfkeysifdefined{/tcb/name}{\fail}{
     \tcbset{
@@ -673,6 +724,7 @@
         }{
         \oldendproof
     }
+    % autorefs 
     % cleveref definitions
     % \crefname{tcb@cnt@tcbexample}{example}{examples}
     \Crefname{tcb@cnt@tcbexample}{Example}{Examples}
@@ -683,7 +735,11 @@
     % \crefname{tcb@cnt@tcblemma}{lemma}{lemmas}
     \Crefname{tcb@cnt@tcblemma}{Lemma}{Lemmas}
     % \crefname{tcb@cnt@tcbcorollary}{corollary}{corollaries}
-    \Crefname{tcb@cnt@tcbcorollary}{Corollary}{Corollaries}\else
+    \Crefname{tcb@cnt@tcbcorollary}{Corollary}{Corollaries}
+    \Crefname{tcb@cnt@tcbcorollary}{Proposition}{Propositions}
+    \Crefname{tcb@cnt@tcbcorollary}{Note}{Notes}
+    \Crefname{tcb@cnt@tcbcorollary}{Remark}{Remarks}
+    \else
     % plain theorems
     \newtheorem{theorem}{Theorem}[section]
     \newtheorem{lemma}{Lemma}[section]
