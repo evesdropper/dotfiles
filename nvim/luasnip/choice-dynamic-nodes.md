@@ -36,18 +36,18 @@ Fortunately, `minted` provides an alternate set of delimiters - the upright deli
 
 You'll notice that for this choice node, we're dealing with multiple nodes - some text nodes and an insert node. As a choice node has the structure `c(index, {nodes})`, if we just directly insert the nodes, we would just be inserting a list of choices rather than a complete collection of nodes we want in the snippet.
 
-Enter the **Snippet Node** - with `sn(nil, {nodes})`, you can comfortably fit all the nodes in the snippet node's node tables and have your choice be presented as the entire collection of nodes rather than have it degenerate into a scattered list of options. Additionally, since a Snippet Node is essentially a snippet, formatting with `fmt(a)` is also supported to keep your snippet looking nice and neat. 
+Enter the **Snippet Node** - with `sn(nil, {nodes})`, we can comfortably fit all the nodes in the snippet node's node tables and have each choice be presented as the entire collection of nodes rather than have it degenerate into a scattered list of options. Additionally, since a Snippet Node is essentially a snippet, formatting with `fmt(a)` is also supported to keep your snippet looking nice and neat. 
 
 With that being said, here's the final code:
 
 ```lua
 -- idc if stylua doesn't like my code looking like this it's neat to me 
 s({ trig = "qw", name = "inline code", dscr = "inline code, ft escape" },
-	fmt([[
+    fmt([[
     \mintinline{<>}<>
     ]], { i(1, "text"), c(2, { sn(nil, { t("{"), i(1), t("}") }), sn(nil, { t("|"), i(1), t("|") }) }) },
-	{ delimiters = "<>" }
-	)),
+    { delimiters = "<>" }
+    )),
 ```
 
 ### Example 2: Set Overloading - Adding Restore Nodes
@@ -62,11 +62,26 @@ Another common snippet is creating a set in LaTeX math mode. There are a few way
 \]
 ```
 
-$$\{ 2, 3, \ldots \} \quad \{x \in \N \mid x > 1\}$$
+$$\{ 2, 3, \ldots \} \quad \{x \in \mathbb{N} \mid x > 1\}$$
 
 Thus we have two choices:
 
 - [Default Choice]: Create a blank set with the power to insert anything, so a single insert node `i(1)`.
+- Create a set with set builder notation with `\mid`, or something like this: `i(1), t(" \\mid "), i(2)`.
+
+If we create a snippet using our current knowledge, and try to change choices midway through the insert node (e.g. we decide to list out the elements, then realize we could use set-builder instead), we lose the progress we made and have to start from scratch. How can we get this information back?
+
+Use the **Restore Node**, which (re)stores text after the snippet has been updated. This is best used with Choice or Dynamic Nodes - all we need to do is replace the insert nodes with `r(1, "")` for everything to take effect. And with that, we have the final code:
+
+```lua
+autosnippet({ trig = "set", name = "set", dscr = "set" }, -- overload with set builder notation
+	fmt([[
+    \{<>\}<>
+    ]], { c(1, { r(1, ""), sn(nil, { r(1, ""), t(" \\mid "), i(2) }) }), i(0) },
+    { delimiters = "<>" }),
+    { condition = math }
+    ),
+```
 
 As a quick summary, here's a short list of when (not) to use Choice Nodes:
 - **Do**: Use for adding a few optional choices, or when trying to build on to a more generalized snippet (e.g. docstrings, optional arguments are some solid choices).
@@ -85,9 +100,118 @@ Well, in that case, how can we create and modify snippet nodes to our liking? Tw
 
 ### Example 1: Matrix Snippets - Regex Dynamic Snippets 
 
+The reason I quit using LaTeX to typeset my homework back in Fall 2021 (when I had just started learning how to use LaTeX) was because of the endless matrices my linear algebra class had in its homework assignments. I later picked up (Neo)vim and UltiSnips and ended up finding snippets to create matrices to my liking. When I switched to LuaSnip last year, I was back to square one - no matrix snippets and another linear algebra course to deal with.
+
+To combat this, I sought out to create a similar snippet to what I had in UltiSnips. The general idea of the snippet goes as follows:
+
+- Use capture groups to determine the following: type of matrix (`bBpPv`), number of rows and columns, and augmented/regular matrix.
+    * Type of matrix can be easily inserted, so it just uses a Function Node to append the argument to the matrix.
+    * Similarly, augments can be easily programmed with a Function Node - just add the optional argument `[ccc|c]` for 4 columns.
+    * However, the number of rows/columns not only directly affects the text output, it also affects the number of ~~insert~~ restore nodes - thus it needs a Dynamic Node. For example, a 3-column row would be something like `r(1), t(" & "), r(2), t(" & "), r(3), t(" \\\\")`, and if it were to have 3 rows, this would need to be repeated 3 times.
+        + Our generating function should take in the row/column capture input, and create rows according to the number of columns, then repeat this process for the number of rows.
+
+Filling in the implementation details, our snippet looks like this:
+
+```lua
+-- generating function
+local mat = function(args, snip)
+    local rows = tonumber(snip.captures[2])
+    local cols = tonumber(snip.captures[3])
+    local nodes = {}
+    local ins_indx = 1 
+    for j = 1, rows do 
+        table.insert(nodes, r(ins_indx, tostring(j) .. "x1", i(1)))
+        ins_indx = ins_indx + 1 
+        for k = 2, cols do 
+            table.insert(nodes, t(" & "))
+            table.insert(nodes, r(ins_indx, tostring(j) .. "x" .. tostring(k), i(1))) 
+            ins_indx = ins_indx + 1 
+        end 
+        table.insert(nodes, t({ " \\\\", "" }))
+    end
+    -- fix last node.
+    nodes[#nodes] = t(" \\\\")
+    return sn(nil, nodes)
+end
+
+s({ trig = "([bBpvV])mat(%d+)x(%d+)([ar])", regTrig = true, name = "matrix", dscr = "matrix trigger lets go", hidden = true },
+    fmt([[
+    \begin{<>}<>
+    <>
+    \end{<>}]], 
+    {f(function(_, snip)
+        return snip.captures[1] .. "matrix" -- captures matrix type
+    end),
+    f(function(_, snip)
+        if snip.captures[4] == "a" then
+            out = string.rep("c", tonumber(snip.captures[3]) - 1) -- array for augment 
+            return "[" .. out .. "|c]"
+        end
+        return "" -- otherwise return nothing
+    end),
+    d(1, mat),
+    f(function(_, snip)
+        return snip.captures[1] .. "matrix" -- i think i could probably use a repeat node but whatever
+    end),},
+    { delimiters = "<>" }),
+    { condition = math, show_condition = math }
+),
+```
+
 ### Example 2: Visual Python For Loop - Utilizing `user_args`
 
 > Special thanks to [@medwatt](https://github.com/medwatt) for the inspiration behind this snippet.
+
+Visual Mode snippets largely depend on the selected text. A while back, [@ejmastnak](https://github.com/ejmastnak) made a nice Dynamic Node snippet which allows the user to either use selected text or use an insert node. Let's build on that idea with custom preset text for the insert node depending on the context; which we can accomplish by adding `user_args`.
+
+Here's the original function: 
+```lua
+local get_visual = function(args, parent)
+    if (#parent.snippet.env.SELECT_RAW > 0) then
+        return sn(nil, i(1, parent.snippet.env.SELECT_RAW))
+    else  -- If SELECT_RAW is empty, return a blank insert node
+        return sn(nil, i(1))
+    end
+end
+```
+
+All we need to do is add the `user_args` argument and add the following logic:
+
+- If we have no `user_args` input, we can either input an empty string or a dummy string.
+- Otherwise, we pass in the `user_args` input as default text, e.g. if we had `user_args={"luasnip"}`, then the resulting node would be `i(1, "luasnip")` instead.
+
+This creates the following:
+
+```lua
+local get_visual = function(args, parent, _, user_args) -- third argument is old_state, which we don't use
+    if isempty(user_args) then
+        ret = "" -- edit if needed
+    else
+        ret = user_args
+    end
+    if #parent.snippet.env.SELECT_RAW > 0 then
+        return sn(nil, i(1, parent.snippet.env.SELECT_RAW))
+    else -- If SELECT_RAW is empty, return a blank insert node
+        return sn(nil, i(1, ret))
+    end
+end
+```
+
+A possible use case is a visual for loop in Python. If something is selected, then it gets placed in a for loop; otherwise, the default for Python statements is `pass`, which can be passed in as the default string. All we need to do is place in the Dynamic Node and change `user_args` to what we want, and we have the final snippet:
+
+```lua
+autosnippet({ trig='vfor', name='trig', dscr='dscr'},
+    fmt([[
+    for <> in <>: 
+        <>
+    ]],
+    { i(1), i(2), d(3, get_visual, {}, {user_args = {"pass"}}) }, -- leave the first table blank; that's for args which we are not using
+    { delimiters='<>' }
+    )),
+```
+
+
+![Python For Loop GIF](./assets/dynamic_user_args.gif)
 
 As you've seen, Dynamic Nodes can unlock a whole new dimension in creating snippets. Let's expand on this even further by adding Choice Nodes back into the equation.
 
@@ -97,8 +221,8 @@ Now that we have two of the most powerful nodes in LuaSnip, let’s combine them
 ### Example 1: Integral Snippets
 I honestly don't know why I came up with this snippet - I was working on something during break and thought to add snippets to help me with multiple integrals despite the fact that I don't think I'll be using multivariable calculus for a while. In general, I wanted a regex capture to take in the number of integrals we needed in total, then have it deal with two choices: iterated integrals and multiple integrals. Let's break down the cases:
 
-- Iterated Integrals: We want something like `\int_{<>}^{<>}` repeated as many times as the user wants (call that $n$), as well as $n$ iterations of `\dd <>` for the differential.
-    * Since the number of text/insert nodes changes with $n$, we want to use a dynamic node to generate each of these outputs.
+- Iterated Integrals: We want something like `\int_{<>}^{<>}` repeated as many times as the user wants (call that `n`), as well as `n` iterations of `\dd <>` for the differential.
+    * Since the number of text/insert nodes changes with `n`, we want to use a dynamic node to generate each of these outputs.
 - Multiple Integrals: We want something like `\<>nt_{<>}`, where the first blank repeats `i` a total of $n$ times.
     * This can be easily resolved with a function node.
 
