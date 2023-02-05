@@ -1099,7 +1099,7 @@ return {
 	autosnippet("nabl", { t("\\nabla") }, { condition = math, show_condition = math }),
 	autosnippet("grad", { t("\\grad") }, { condition = math, show_condition = math }),
 	autosnippet(
-		{ trig = "lim", name = "lim(sup)", dscr = "lim(sup)" },
+		{ trig = "lim", name = "lim(sup|inf)", dscr = "lim(sup|inf)" },
 		fmt(
 			[[ 
     \lim<>_{<> \to <>}<>
