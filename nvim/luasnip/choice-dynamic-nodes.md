@@ -24,7 +24,49 @@ Not sure what I mean? Let's go through a couple examples. Since these snippets a
 
 ### Example 1: `minted` Delimiters - Modularity with Snippet Nodes
 
+I like using the `minted` package to add code snippets into my LaTeX documents; however, sometimes we have something like the following:
+
+```LaTeX
+\mintinline{text}{this {} does not work!} % the } will cut off, and using \} will not work either
+```
+Fortunately, `minted` provides an alternate set of delimiters - the upright delimiters. So in most cases, I can just default to the first option, but if I know my code contains braces, I can switch over to the upright delimiters and have everything be fine. So here are my choices when creating this snippet:
+
+- [Default Choice] Use `{<>}`, where the angle brackets denote an insert node, or `t("{"), i(1), t("}")`.
+- Use `|<>|` as the alternate choice, or `t("|"), i(1), t("|")`.
+
+You'll notice that for this choice node, we're dealing with multiple nodes - some text nodes and an insert node. As a choice node has the structure `c(index, {nodes})`, if we just directly insert the nodes, we would just be inserting a list of choices rather than a complete collection of nodes we want in the snippet.
+
+Enter the **Snippet Node** - with `sn(nil, {nodes})`, you can comfortably fit all the nodes in the snippet node's node tables and have your choice be presented as the entire collection of nodes rather than have it degenerate into a scattered list of options. Additionally, since a Snippet Node is essentially a snippet, formatting with `fmt(a)` is also supported to keep your snippet looking nice and neat. 
+
+With that being said, here's the final code:
+
+```lua
+-- idc if stylua doesn't like my code looking like this it's neat to me 
+s({ trig = "qw", name = "inline code", dscr = "inline code, ft escape" },
+	fmt([[
+    \mintinline{<>}<>
+    ]], { i(1, "text"), c(2, { sn(nil, { t("{"), i(1), t("}") }), sn(nil, { t("|"), i(1), t("|") }) }) },
+	{ delimiters = "<>" }
+	)),
+```
+
 ### Example 2: Set Overloading - Adding Restore Nodes
+
+Another common snippet is creating a set in LaTeX math mode. There are a few ways to represent a set, as demonstrated below:
+
+```LaTeX
+\[
+\{ 2, 3, \ldots \} % listing out the elements
+\quad 
+\{x \in \N \mid x > 1\} % set builder notation; one of my classes uses \colon and the other uses \mid which is another bridge we'll cross later
+\]
+```
+
+$$\{ 2, 3, \ldots \} \quad \{x \in \N \mid x > 1\}$$
+
+Thus we have two choices:
+
+- [Default Choice]: Create a blank set with the power to insert anything, so a single insert node `i(1)`.
 
 As a quick summary, here's a short list of when (not) to use Choice Nodes:
 - **Do**: Use for adding a few optional choices, or when trying to build on to a more generalized snippet (e.g. docstrings, optional arguments are some solid choices).
