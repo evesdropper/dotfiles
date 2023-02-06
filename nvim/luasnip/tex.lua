@@ -199,6 +199,47 @@ local generate_label = function(args, parent, _, user_arg1, user_arg2)
     end
 end
 
+-- jokar arc of luasnip breaking
+local generate_label_snode = function(label_head, xargs)
+    if xargs == false then
+        delims = {"\\label{", "}"}
+    else
+        delims = {"[", "]"}
+    end
+    if isempty(label_head) then
+        return sn(nil, fmta([[
+        \label{<>}
+        ]], {i(1)}))
+    else
+        return sn(nil, fmta([[
+        <><>:<><>
+        ]], {t(delims[1]), t(label_head), i(1), t(delims[2])}))
+    end
+end
+
+-- single command \cmd{$1}$0 
+local single_command = function(cmd)
+    if cmd.slash == false then
+        cmd.slash = ""
+    else
+        cmd.slash = "\\"
+    end
+    if cmd.ast == true then
+        cmd.ast = "*"
+    else
+        cmd.ast = ""
+    end
+    return sn(1, fmta([[
+    <>{<>}<>
+    ]], {t(cmd.slash .. cmd.string .. cmd.ast), i(1), i(0)}))
+end
+
+-- return arbitrary snip captures
+local get_capture = function(_, snip, user_arg1)
+    idx = user_arg1 or 1
+    return snip.captures[idx]
+end
+
 
 -- TODO: itemize/enumerate
 --[[ rec_ls = function() ]]
@@ -388,7 +429,7 @@ return {
 			[[
     \section{<>}<>
     <>]],
-			{ i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"sec"}} )
+			{ i(1), c(2, {t(""), generate_label_snode("sec", false)
             }), i(0) },
 			{ delimiters = "<>" }
 		)
@@ -559,33 +600,33 @@ return {
 	-- quotes
 	s(
 		{ trig = "sq", name = "single quotes", dscr = "single quotes", hidden = true },
-		fmt([[\enquote*{<>}<>]], { i(1), i(0) }, { delimiters = "<>" })
+            { single_command({string = "enquote", ast = true}) }
 	),
 	s(
 		{ trig = "qq", name = "double quotes", dscr = "double quotes", hidden = true },
-		fmt([[\enquote{<>}<>]], { i(1), i(0) }, { delimiters = "<>" })
+		    { single_command({string = "enquote"}) }
 	),
 
 	-- text changes
 	s(
 		{ trig = "bf", name = "bold", dscr = "bold text", hidden = true },
-		fmt([[\textbf{<>}<>]], { i(1), i(0) }, { delimiters = "<>" })
+            { single_command({string = "textbf"}) }
 	),
 	s(
 		{ trig = "it", name = "italic", dscr = "italic text", hidden = true },
-		fmt([[\textit{<>}<>]], { i(1), i(0) }, { delimiters = "<>" })
+		    { single_command({string = "textit"}) }
 	),
 	s(
 		{ trig = "tu", name = "underline", dscr = "underline text", hidden = true },
-		fmt([[\underline{<>}<>]], { i(1), i(0) }, { delimiters = "<>" })
+	        { single_command({string = "underline"}) }
 	),
 	s(
 		{ trig = "sc", name = "small caps", dscr = "small caps text", hidden = true },
-		fmt([[\textsc{<>}<>]], { i(1), i(0) }, { delimiters = "<>" })
-	),
+		    { single_command({string = "textsc"}) }
+    ),
 	s(
 		{ trig = "tov", name = "overline", dscr = "overline text" },
-		fmt([[\overline{<>}<>]], { i(1), i(0) }, { delimiters = "<>" })
+		    { single_command({string = "overline"})}
 	),
 
 	-- references
@@ -888,36 +929,18 @@ return {
 	-- text in math
 	autosnippet(
 		{ trig = "tt", name = "text", dscr = "text in math" },
-		fmt(
-			[[
-    \symrm{<>}<>
-    ]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		),
+        { single_command({string="text"}) },
 		{ condition = math, show_condition = math }
 	),
 	autosnippet(
 		{ trig = "sbf", name = "bold math", dscr = "sam bankrupt fraud" },
-		fmt(
-			[[ 
-    \symbf{<>}<>
-    ]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		),
+        { single_command({string="symbf"})},
 		{ condition = math, show_condition = math }
 	),
 	autosnippet(
 		{ trig = "syi", name = "italic math", dscr = "symit" },
-		fmt(
-			[[ 
-    \symit{<>}<>
-    ]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
+        { single_command({string="symit"})},
+        { condition = math, show_condition = math }
 	),
     autosnippet("udd", {t('\\underline')},
     { condition=math, show_condition=math }),
@@ -958,12 +981,12 @@ return {
 	),
 	s(
 		{ trig = "floor", name = "math floor", dscr = "math floor" },
-		fmt([[\floor{<>}<>]], { i(1), i(0) }, { delimiters = "<>" }),
+        { single_command({string="floor"})},
 		{ condition = math }
 	),
 	s(
 		{ trig = "ceil", name = "math ceiling", dscr = "math ceiling" },
-		fmt([[\ceil{<>}<>]], { i(1), i(0) }, { delimiters = "<>" }),
+        { single_command({string="ceil"})},
 		{ condition = math }
 	),
 
@@ -988,7 +1011,7 @@ return {
 	autosnippet("!=", { t("\\neq") }, { condition = math }),
 	autosnippet(
 		{ trig = "conj", name = "conjugate", dscr = "conjugate would have been useful in eecs 126" },
-		fmt([[\overline{<>}<>]], { i(1), i(0) }, { delimiters = "<>" }, { condition = math })
+        {single_command({string="overline"})}, { condition = math }
 	),
 	autosnippet("<=", { t("\\leq") }, { condition = math }),
 	autosnippet(">=", { t("\\geq") }, { condition = math }),
@@ -1001,7 +1024,7 @@ return {
 	autosnippet(":=", { t("\\definedas") }, { condition = math, show_condition = math }),
 	autosnippet(
 		{ trig = "abs", name = "abs", dscr = "absolute value" },
-		fmt([[\abs{<>}]], { i(1) }, { delimiters = "<>" }),
+        {single_command({string="abs"})},
 		{ condition = math, show_condition = math }
 	),
 	autosnippet("!+", { t("\\oplus") }, { condition = math, show_condition = math }),
@@ -1012,12 +1035,7 @@ return {
     autosnippet("::", {t('\\colon')},
     { condition=math, show_condition=math }),
     autosnippet({ trig='adot', name='dot', dscr='dot above'},
-    fmt([[
-    \dot{<>}<>
-    ]],
-    { i(1), i(0) },
-    { delimiters='<>' }
-    ), { condition=math, show_condition=math }),
+    {single_command({string="dot"})}, { condition=math, show_condition=math }),
 
 	-- sub super scripts
 	autosnippet(
@@ -1048,13 +1066,7 @@ return {
 	),
 	autosnippet(
 		{ trig = "__", name = "subscript iii", dscr = "auto subscript for brackets", wordTrig = false },
-		fmt(
-			[[ 
-    _{<>}<>
-    ]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		),
+        { single_command({string="_", slash=false})},
 		{ condition = math, show_condition = math }
 	),
 	autosnippet("xnn", { t("x_n") }, { condition = math }),
@@ -1083,12 +1095,8 @@ return {
 		{ condition = math }
 	),
     autosnippet({ trig='sbt', name='trig', dscr='dscr'},
-    fmt([[
-    \substack{<>}<>
-    ]],
-    { i(1), i(0) },
-    { delimiters='<>' }
-    ), { condition=math, show_condition=math }) ,
+    { single_command({string = "substack"})}
+    , { condition=math, show_condition=math }) ,
 
 	-- (greek) symbols
 	-- TODO: add greek symbol thing
@@ -1165,13 +1173,7 @@ return {
 	),
 	autosnippet(
 		{ trig = "elr", name = "eval left right", dscr = "eval left right" },
-		fmt(
-			[[ 
-    \eval{<>}<>
-    ]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		),
+        {single_command({string="eval"})},
 		{ condition = math, show_condition = math }
 	),
 	autosnippet(
@@ -1200,24 +1202,12 @@ return {
 	-- linalg stuff minus matrices
 	autosnippet(
 		{ trig = "norm", name = "norm", dscr = "norm" },
-		fmt(
-			[[ 
-    \norm{<>}<>
-    ]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		),
+        {single_command({string="norm"})},
 		{ condition = math, show_condition = math }
 	),
 	autosnippet(
 		{ trig = "iprod", name = "inner product", dscr = "inner product" },
-		fmt(
-			[[
-    \vinner{<>}<>
-    ]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		),
+        {single_command({string="vinner"})},
 		{ condition = math, show_condition = math }
 	),
 
@@ -1242,7 +1232,7 @@ return {
     autosnippet("VV", {t('\\lor')},
     { condition=math, show_condition=math }),
     autosnippet("WW", {t('\\land')},
-    { condition=math, show_condition=mathmath }),
+    { condition=math, show_condition=math }),
 	autosnippet("=>", { t("\\implies") }, { condition = math, show_condition = math }),
 	autosnippet("=<", { t("\\impliedby") }, { condition = math, show_condition = math }),
 	autosnippet("iff", { t("\\iff") }, { condition = math, show_condition = math }),
@@ -1258,7 +1248,7 @@ return {
 	-- sets
 	autosnippet(
 		{ trig = "set", name = "set", dscr = "set" }, -- overload with set builder notation
-		fmt([[\{<>\}<>]], { c(1, { r(1, ""), sn(nil, { r(1, ""), t("\\mid"), i(2) }) }), i(0) }, { delimiters = "<>" }),
+		fmt([[\{<>\}<>]], { c(1, { r(1, ""), sn(nil, { r(1, ""), t(" \\mid "), i(2) }) }), i(0) }, { delimiters = "<>" }),
 		{ condition = math }
 	),
 	autosnippet("cc", { t("\\subset") }, { condition = math }),
@@ -1292,17 +1282,6 @@ return {
 	),
 
 	-- etc: utils and stuff
-	autosnippet(
-		{ trig = "subs", name = "substack", dscr = "if sum two lines" },
-		fmt(
-			[[
-    \substack{<>}
-    ]],
-			{ i(1) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
-	),
 	autosnippet(
 		{ trig = "([clvda])%.", regTrig = true, name = "dots", dscr = "generate some dots" },
 		fmt([[\<>dots]], { f(function(_, snip)
