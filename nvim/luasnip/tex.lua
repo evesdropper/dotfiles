@@ -219,6 +219,13 @@ end
 
 -- single command \cmd{$1}$0 
 local single_command = function(cmd)
+    offset = 0
+    if cmd.opt == true then
+        cmd.opt = c(1, { t(""), sn(nil, { t("["), i(1, "opt"), t("]") }) })
+        offset = offset + 1
+    else
+        cmd.opt = t("")
+    end
     if cmd.slash == false then
         cmd.slash = ""
     else
@@ -230,13 +237,16 @@ local single_command = function(cmd)
         cmd.ast = ""
     end
     return sn(1, fmta([[
-    <>{<>}<>
-    ]], {t(cmd.slash .. cmd.string .. cmd.ast), i(1), i(0)}))
+    <><>{<>}<>
+    ]], {t(cmd.slash .. cmd.string .. cmd.ast), cmd.opt, i(1 + offset), i(0)}))
 end
 
--- return arbitrary snip captures
-local get_capture = function(_, snip, user_arg1)
+-- return arbitrary snip captures + string concatenate
+local get_capture = function(_, snip, user_arg1, user_arg2, user_arg3)
+    -- define arguments 
     idx = user_arg1 or 1
+    pre = user_arg2 or ""
+    post = user_arg3 or ""
     return snip.captures[idx]
 end
 
@@ -398,13 +408,7 @@ return {
 	-- ]
 	s(
 		{ trig = "pac", name = "add package", dscr = "add package" },
-		fmt(
-			[[
-    \usepackage<>{<>}
-    ]],
-			{ c(1, { t(""), sn(nil, { t("["), i(1, "options"), t("]") }) }), i(0, "package") },
-			{ delimiters = "<>" }
-		)
+		single_command({string="usepackage", opt=true})
 	),
 	s(
 		{ trig = "atoc", name = "add toc", dscr = "add this to toc line" },
@@ -816,9 +820,7 @@ return {
     <>
     \end{<>}]],
 			{
-				f(function(_, snip)
-					return snip.captures[1] .. "matrix"
-				end),
+				f(get_capture, {}, {user_args={1, nil, "matrix"}}),
 				f(function(_, snip)
 					if snip.captures[4] == "a" then
 						out = string.rep("c", tonumber(snip.captures[3]) - 1)
@@ -1002,9 +1004,7 @@ return {
     fmt([[
     \frac{<>}{<>}<>
     ]],
-    { f(function (_, snip)
-    return snip.captures[1]
-    end), i(1), i(0) },
+    { f(get_capture, {}, {user_args={1}}), i(1), i(0) },
     { delimiters='<>' }
     ), { condition=math, show_condition=math }),
 	autosnippet("==", { t("&="), i(1), t("\\\\") }, { condition = math }),
@@ -1042,11 +1042,8 @@ return {
 		{ trig = "([%a%)%]%}])(%d)", regTrig = true, name = "auto subscript", dscr = "hi" },
 		fmt(
 			[[<>_<>]],
-			{ f(function(_, snip)
-				return snip.captures[1]
-			end), f(function(_, snip)
-				return snip.captures[2]
-			end) },
+			{ f(get_capture, {}, {user_args = {1}}),
+            f(get_capture, {}, {user_args = {2}}) },
 			{ delimiters = "<>" }
 		),
 		{ condition = math }
@@ -1055,11 +1052,8 @@ return {
 		{ trig = "([%a%)%]%}])_(%d%d)", regTrig = true, name = "auto subscript 2", dscr = "auto subscript for 2+ digits" },
 		fmt(
 			[[<>_{<>}]],
-			{ f(function(_, snip)
-				return snip.captures[1]
-			end), f(function(_, snip)
-				return snip.captures[2]
-			end) },
+            { f(get_capture, {}, {user_args = {1}}),
+            f(get_capture, {}, {user_args = {2}}) },
 			{ delimiters = "<>" }
 		),
 		{ condition = math }
@@ -1087,16 +1081,12 @@ return {
 	),
 	autosnippet(
 		{ trig = "sq", name = "square root", dscr = "square root" },
-		fmt(
-			[[\sqrt<>{<>}<>]],
-			{ c(1, { t(""), sn(nil, { t("["), i(1), t("]") }) }), i(2), i(0) },
-			{ delimiters = "<>" }
-		),
+        { single_command({string="sqrt", opt=true})},
 		{ condition = math }
 	),
     autosnippet({ trig='sbt', name='trig', dscr='dscr'},
     { single_command({string = "substack"})}
-    , { condition=math, show_condition=math }) ,
+    ,{ condition=math, show_condition=math }),
 
 	-- (greek) symbols
 	-- TODO: add greek symbol thing
@@ -1284,9 +1274,7 @@ return {
 	-- etc: utils and stuff
 	autosnippet(
 		{ trig = "([clvda])%.", regTrig = true, name = "dots", dscr = "generate some dots" },
-		fmt([[\<>dots]], { f(function(_, snip)
-			return snip.captures[1]
-		end) }, { delimiters = "<>" }),
+		fmt([[\<>dots]], { f(get_capture, {}, {user_args={1}}) }, { delimiters = "<>" }),
 		{ condition = math }
 	),
 	autosnippet("lb", { t("\\\\") }, { condition = math }),
