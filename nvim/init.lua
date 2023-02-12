@@ -43,7 +43,7 @@ ls.config.set_config({
 	store_selection_keys = "<Tab>",
 })
 ls.filetype_extend("tex", { "cpp", "python" })
-require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/luasnip/" })
+require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/lua/snippets/" })
 local types = require("luasnip.util.types")
 -- require'luasnip'.config.setup({
 -- 	ext_opts = {

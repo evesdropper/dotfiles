@@ -97,6 +97,10 @@ return packer.startup(function(use)
 	use({ "nvim-tree/nvim-tree.lua" })
 	require("nvim-tree").setup()
 	use({ "akinsho/toggleterm.nvim", tag = "*" })
+    use { 'dccsillag/magma-nvim', run = ':UpdateRemotePlugins' } -- data science 
+    use { 'GCBallesteros/jupytext.vim' }
+    use { 'kana/vim-textobj-user' }
+    use { 'GCBallesteros/vim-textobj-hydrogen' }
 
 	-- appearance
 	use({

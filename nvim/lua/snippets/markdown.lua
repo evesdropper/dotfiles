@@ -28,6 +28,13 @@ return {
     { c(1, {t(" "), t("x")}), i(0) },
     { delimiters='<>' }
     )),
+    autosnippet({ trig='dm', name='math 2', dscr='display math'},
+    fmt([[
+    $$<>$$<>
+    ]],
+    { i(1), i(0) },
+    { delimiters='<>' }
+    )),
 },
 	{
 		s({ trig = "mk", name = "math", dscr = "inline math" }, fmt([[$<>$<>]], { i(1), i(0) }, { delimiters = "<>" })),

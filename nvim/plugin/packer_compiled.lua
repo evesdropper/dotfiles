@@ -150,10 +150,20 @@ _G.packer_plugins = {
     path = "/home/revise/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
     url = "https://github.com/lewis6991/gitsigns.nvim"
   },
+  ["jupytext.vim"] = {
+    loaded = true,
+    path = "/home/revise/.local/share/nvim/site/pack/packer/start/jupytext.vim",
+    url = "https://github.com/GCBallesteros/jupytext.vim"
+  },
   ["lualine.nvim"] = {
     loaded = true,
     path = "/home/revise/.local/share/nvim/site/pack/packer/start/lualine.nvim",
     url = "https://github.com/nvim-lualine/lualine.nvim"
+  },
+  ["magma-nvim"] = {
+    loaded = true,
+    path = "/home/revise/.local/share/nvim/site/pack/packer/start/magma-nvim",
+    url = "https://github.com/dccsillag/magma-nvim"
   },
   ["markdown-preview.nvim"] = {
     loaded = false,
@@ -281,6 +291,16 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/revise/.local/share/nvim/site/pack/packer/start/vim-illuminate",
     url = "https://github.com/RRethy/vim-illuminate"
+  },
+  ["vim-textobj-hydrogen"] = {
+    loaded = true,
+    path = "/home/revise/.local/share/nvim/site/pack/packer/start/vim-textobj-hydrogen",
+    url = "https://github.com/GCBallesteros/vim-textobj-hydrogen"
+  },
+  ["vim-textobj-user"] = {
+    loaded = true,
+    path = "/home/revise/.local/share/nvim/site/pack/packer/start/vim-textobj-user",
+    url = "https://github.com/kana/vim-textobj-user"
   },
   vimtex = {
     loaded = true,

@@ -1,5 +1,5 @@
 vim.g.maplocalleader = ","
-vim.g.python3_host_prog = "/usr/bin/python3"
+vim.g.python3_host_prog = "/sbin/python3"
 vim.cmd([[set clipboard+=unnamedplus]])
 
 local options = {
