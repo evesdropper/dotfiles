@@ -18,6 +18,10 @@ local function math()
 	return vim.api.nvim_eval("vimtex#syntax#in_mathzone()") == 1
 end
 
+local function in_text()
+    return not math()
+end
+
 local function env(name)
 	local is_inside = vim.fn["vimtex#env#is_inside"](name)
 	return (is_inside[1] > 0 and is_inside[2] > 0)
@@ -809,8 +813,6 @@ local M = {
 		)
 	),
 
-
-
 	--[
 	-- Math Snippets - Environments/Setup Commands
 	--]
@@ -886,25 +888,6 @@ local M = {
 		{ condition = math, show_condition = math }
 	),
 
-	-- text in math
-	autosnippet(
-		{ trig = "tt", name = "text", dscr = "text in math" },
-        { single_command({string="text"}) },
-		{ condition = math, show_condition = math }
-	),
-	autosnippet(
-		{ trig = "sbf", name = "bold math", dscr = "sam bankrupt fraud" },
-        { single_command({string="symbf"})},
-		{ condition = math, show_condition = math }
-	),
-	autosnippet(
-		{ trig = "syi", name = "italic math", dscr = "symit" },
-        { single_command({string="symit"})},
-        { condition = math, show_condition = math }
-	),
-    autosnippet("udd", {t('\\underline')},
-    { condition=math, show_condition=math }),
-
 	-- delimiters
 	s(
 		{ trig = "lr", name = "left right", dscr = "left right" },
@@ -939,16 +922,6 @@ local M = {
 		),
 		{ condition = math, show_condition = math }
 	),
-	s(
-		{ trig = "floor", name = "math floor", dscr = "math floor" },
-        { single_command({string="floor"})},
-		{ condition = math }
-	),
-	s(
-		{ trig = "ceil", name = "math ceiling", dscr = "math ceiling" },
-        { single_command({string="ceil"})},
-		{ condition = math }
-	),
 
 	-- operators, symbols
 	autosnippet(
@@ -964,15 +937,6 @@ local M = {
     { delimiters='<>' }
     ), { condition=math, show_condition=math }),
 	autosnippet("==", { t("&="), i(1), t("\\\\") }, { condition = math }),
-	autosnippet(
-		{ trig = "conj", name = "conjugate", dscr = "conjugate would have been useful in eecs 126" },
-        {single_command({string="overline"})}, { condition = math }
-	),
-	autosnippet(
-		{ trig = "abs", name = "abs", dscr = "absolute value" },
-        {single_command({string="abs"})},
-		{ condition = math, show_condition = math }
-	),
 	autosnippet("!+", { t("\\oplus") }, { condition = math, show_condition = math }),
 	autosnippet("!*", { t("\\otimes") }, { condition = math, show_condition = math }),
 	autosnippet({ trig = "!!+", priority = 500 }, { t("\\bigoplus") }, { condition = math, show_condition = math }),
@@ -1004,11 +968,6 @@ local M = {
 		),
 		{ condition = math }
 	),
-	autosnippet(
-		{ trig = "__", name = "subscript iii", dscr = "auto subscript for brackets", wordTrig = false },
-        { single_command({string="_", slash=false})},
-		{ condition = math, show_condition = math }
-	),
 	autosnippet("xnn", { t("x_n") }, { condition = math }),
 	autosnippet("xii", { t("x_i") }, { condition = math }),
 	autosnippet("xjj", { t("x_j") }, { condition = math }),
@@ -1025,14 +984,6 @@ local M = {
 		fmt([[^{<>}<>]], { i(1), i(0) }, { delimiters = "<>" }),
 		{ condition = math }
 	),
-	-- autosnippet(
-	-- 	{ trig = "sq", name = "square root", dscr = "square root" },
- --        { single_command({string="sqrt", opt=true})},
-	-- 	{ condition = math }
-	-- ),
-    autosnippet({ trig='sbt', name='trig', dscr='dscr'},
-    { single_command({string = "substack"})}
-    ,{ condition=math, show_condition=math }),
 
 	-- (greek) symbols
 	-- TODO: add greek symbol thing
@@ -1218,6 +1169,85 @@ local M = {
 -- 		-- a living nightmare worth of greek symbols
 -- 		-- stuff i need for m110
 -- }
+--
+--
+
+-- {
+-- Text Mode Scaffolding Snippets
+-- }
+
+local single_command_snippet = require('snippets.tex.utils').scaffolding.single_command_snippet
+
+local single_command_specs = {
+    sq = {
+        context = {
+            name = 'enquote*',
+            dscr = 'single quotes',
+        },
+        command = [[\enquote*]],
+    },
+    qq = {
+        context = {
+            name = 'enquote',
+            dscr = 'double quotes'
+        }, 
+        command = [[\enquote]],
+    },
+    bf = {
+        context = {
+            name = "textbf",
+            dscr = "bold text",
+            hidden = true,
+        },
+        command = [[\textbf]],
+    },
+    it = {
+        context = {
+            name = "textit",
+            dscr = "italic text",
+            hidden = true,
+        },
+        command = [[\textit]],
+    },
+    sc = {
+        context = {
+            name = "textsc",
+            dscr = "small caps",
+            hidden = true,
+        },
+        command = [[\textsc]]
+    },
+    tu = {
+        context = {
+            name = "underline (text)",
+            dscr = "underlined text in non-math mode",
+            hidden = true,
+        },
+        command = [[\underline]],
+    },
+    tov = {
+        context = {
+            name = "overline (text)",
+            dscr = "overline text in non-math mode",
+            hidden = true,
+        },
+        command = [[\overline]],
+        ext = { choice = true },
+    },
+}
+
+local single_command_snippets = {}
+for k, v in pairs(single_command_specs) do
+    table.insert(
+        single_command_snippets,
+        single_command_snippet(vim.tbl_deep_extend('keep', { trig = k }, v.context), v.command, { condition = in_text }, v.ext or {} )
+    )
+end
+vim.list_extend(M, single_command_snippets)
+
+--{
+-- Math Mode Snippets
+--}
 
 -- Auto backslashes
 local auto_backslash_snippet = require("snippets.tex.utils").scaffolding.auto_backslash_snippet
@@ -1228,6 +1258,7 @@ local auto_backslash_specs = {
     'perp', "sup", "inf", "det", 'max', 'min', 'argmax',
     'argmin'
 }
+
 local auto_backslash_snippets = {}
 for _, v in ipairs(auto_backslash_specs) do
     table.insert(auto_backslash_snippets, auto_backslash_snippet({ trig = v }, { condition = math }))
@@ -1323,73 +1354,94 @@ for k, v in pairs(symbol_specs) do
 end
 vim.list_extend(M, symbol_snippets)
 
-local single_command_snippet = require('snippets.tex.utils').scaffolding.single_command_snippet
-
-local single_command_specs = {
-    sq = {
+local single_command_math_specs = {
+    tt = {
         context = {
-            name = 'enquote*',
-            dscr = 'single quotes',
+            name = "text (math)",
+            dscr = "text in math mode",
         },
-        command = [[\enquote*]],
+        command = [[\text]],
     },
-    qq = {
+    sbf = {
         context = {
-            name = 'enquote',
-            dscr = 'double quotes'
-        }, 
-        command = [[\enquote]],
-    },
-    bf = {
-        context = {
-            name = "textbf",
-            dscr = "bold text",
-            hidden = true,
+            name = "symbf",
+            dscr = "bold math text",
         },
-        command = [[\textbf]],
+        command = [[\symbf]],
     },
-    it = {
+    syi = {
         context = {
-            name = "textit",
-            dscr = "italic text",
-            hidden = true,
+            name = "symit",
+            dscr = "italic math text",
         },
-        command = [[\textit]],
+        command = [[\symit]],
     },
-    sc = {
+    udd = {
         context = {
-            name = "textsc",
-            dscr = "small caps",
-            hidden = true,
-        },
-        command = [[\textsc]]
-    },
-    tu = {
-        context = {
-            name = "underline (text)",
-            dscr = "underlined text in non-math mode",
-            hidden = true,
+            name = "underline (math)",
+            dscr = "underlined text in math mode",
         },
         command = [[\underline]],
     },
-    tov = {
+    floor = {
         context = {
-            name = "overline (text)",
-            dscr = "overline text in non-math mode",
-            hidden = true,
+            name = "floor",
+            dscr = "math floor",
+        },
+        command = [[\floor]],
+    },
+    ceil = {
+        context = {
+            name = "ceil",
+            dscr = "math ceiling",
+        },
+        command = [[\ceil]],
+    },
+    conj = {
+        context = {
+            name = "conjugate",
+            dscr = "conjugate (overline)",
         },
         command = [[\overline]],
     },
+    abs = {
+        context = {
+            name = "abs",
+            dscr = "absolute value",
+        },
+        command = [[\abs]],
+    },
+    ['__'] = {
+        context = {
+            name = "subscript",
+            dscr = "auto subscript 3",
+        },
+        command = [[_]],
+    },
+    td = {
+        context = {
+            name = "superscript",
+            dscr = "auto superscript alt",
+            wordTrig = false,
+        },
+        command = [[^]]
+    },
+    sbt = {
+        context = {
+            name = "substack",
+            dscr = "substack for sums/products",
+        },
+        command = [[\substack]],
+    },
 }
 
-local single_command_snippets = {}
-for k, v in pairs(single_command_specs) do
+local single_command_math_snippets = {}
+for k, v in pairs(single_command_math_specs) do
     table.insert(
-        single_command_snippets,
-        single_command_snippet(vim.tbl_deep_extend('keep', { trig = k }, v.context), v.command, v.opts, v.ext or {} )
+        single_command_math_snippets,
+        single_command_snippet(vim.tbl_deep_extend('keep', { trig = k, snippetType = "autosnippet" }, v.context), v.command, { condition = math }, v.ext or { } )
     )
 end
-vim.list_extend(M, single_command_snippets)
-
+vim.list_extend(M, single_command_math_snippets)
 
 return M
