@@ -35,18 +35,6 @@ local function beamer()
 	return vim.b.vimtex["documentclass"] == "beamer"
 end
 
--- table of greek symbols
-griss = {
-	alpha = "alpha",
-	beta = "beta",
-	delta = "delta",
-	gam = "gamma",
-	eps = "epsilon",
-	mu = "mu",
-	lmbd = "lambda",
-	sig = "sigma",
-}
-
 -- brackets
 brackets = {
 	a = { "angle", "angle" },
@@ -254,7 +242,6 @@ local get_capture = function(_, snip, user_arg1, user_arg2, user_arg3)
     post = user_arg3 or ""
     return snip.captures[idx]
 end
-
 
 -- TODO: itemize/enumerate
 --[[ rec_ls = function() ]]
@@ -602,42 +589,6 @@ local M = {
 	),
 
 	-- Book Club
-
-	--[
-	-- Text Commands: formatting you'd click a button to do in word for
-	--]
-	-- quotes
-	s(
-		{ trig = "sq", name = "single quotes", dscr = "single quotes", hidden = true },
-            { single_command({string = "enquote", ast = true}) }
-	),
-	s(
-		{ trig = "qq", name = "double quotes", dscr = "double quotes", hidden = true },
-		    { single_command({string = "enquote"}) }
-	),
-
-	-- text changes
-	s(
-		{ trig = "bf", name = "bold", dscr = "bold text", hidden = true },
-            { single_command({string = "textbf"}) }
-	),
-	s(
-		{ trig = "it", name = "italic", dscr = "italic text", hidden = true },
-		    { single_command({string = "textit"}) }
-	),
-	s(
-		{ trig = "tu", name = "underline", dscr = "underline text", hidden = true },
-	        { single_command({string = "underline"}) }
-	),
-	s(
-		{ trig = "sc", name = "small caps", dscr = "small caps text", hidden = true },
-		    { single_command({string = "textsc"}) }
-    ),
-	s(
-		{ trig = "tov", name = "overline", dscr = "overline text" },
-		    { single_command({string = "overline"})}
-	),
-
 	-- references
 	autosnippet(
 		{ trig = "alab", name = "labels", dscr = "add a label" },
@@ -708,17 +659,17 @@ local M = {
 		)
 	),
 	-- label n stuff
-	autosnippet(
-		{ trig = "-l", name = "add label", dscr = "add labeling" },
-		fmt(
-			[[
-    [label=<>]
-    ]],
-			{ i(1) },
-			{ delimiters = "<>" }
-		),
-		{ condition = bp, show_condition = bp }
-	),
+	-- autosnippet(
+	-- 	{ trig = "-l", name = "add label", dscr = "add labeling" },
+	-- 	fmt(
+	-- 		[[
+ --    [label=<>]
+ --    ]],
+	-- 		{ i(1) },
+	-- 		{ delimiters = "<>" }
+	-- 	),
+	-- 	{ condition = bp, show_condition = bp }
+	-- ),
 	-- generate new bullet points
 	autosnippet(
 		{ trig = "--", hidden = true },
@@ -797,7 +748,7 @@ local M = {
         }
         \end{proposition}
         ]],
-    { i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"rmk", "xargs"}}) }), i(0) },
+    { i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"prop", "xargs"}}) }), i(0) },
     { delimiters='<>' }
     )),
 
@@ -825,7 +776,9 @@ local M = {
     <>
     \end{<>}]],
 			{
-				f(get_capture, {}, {user_args={1, nil, "matrix"}}),
+				f(function(_, snip)
+					return snip.captures[1] .. "matrix"
+				end),
 				f(function(_, snip)
 					if snip.captures[4] == "a" then
 						out = string.rep("c", tonumber(snip.captures[3]) - 1)
@@ -864,7 +817,7 @@ local M = {
 
 	-- entering math mode
 	autosnippet(
-		{ trig = "([^%a])mk", name = "math", dscr = "inline math", regTrig=true, hidden=true, wordTrig=false },
+		{ trig = "mk", name = "math", dscr = "inline math", regTrig=true, hidden=true, wordTrig=false },
 		fmt([[$<>$<>]], { i(1), i(0) }, { delimiters = "<>" })
 	),
 	autosnippet(
@@ -959,7 +912,7 @@ local M = {
 		{ condition = math }
 	),
 	autosnippet(
-		{ trig = "lr[aAbBcmp]", name = "left right", dscr = "left right delimiters", regTrig = true, hidden = true },
+		{ trig = "lr([aAbBcmp])", name = "left right", dscr = "left right delimiters", regTrig = true, hidden = true },
 		fmt(
 			[[
     \left<> <> \right<><>
@@ -998,8 +951,6 @@ local M = {
 	),
 
 	-- operators, symbols
-	autosnippet({ trig = "**", priority = 100 }, { t("\\cdot") }, { condition = math }),
-	autosnippet("xx", { t("\\times") }, { condition = math }),
 	autosnippet(
 		{ trig = "//", name = "fraction", dscr = "fraction (autoexpand)" },
 		fmt([[\frac{<>}{<>}<>]], { i(1), i(2), i(0) }, { delimiters = "<>" }),
@@ -1013,20 +964,10 @@ local M = {
     { delimiters='<>' }
     ), { condition=math, show_condition=math }),
 	autosnippet("==", { t("&="), i(1), t("\\\\") }, { condition = math }),
-	autosnippet("!=", { t("\\neq") }, { condition = math }),
 	autosnippet(
 		{ trig = "conj", name = "conjugate", dscr = "conjugate would have been useful in eecs 126" },
         {single_command({string="overline"})}, { condition = math }
 	),
-	autosnippet("<=", { t("\\leq") }, { condition = math }),
-	autosnippet(">=", { t("\\geq") }, { condition = math }),
-	autosnippet(">>", { t("\\gg") }, { condition = math }),
-	autosnippet("<<", { t("\\ll") }, { condition = math }),
-	autosnippet("~~", { t("\\sim") }, { condition = math }),
-	autosnippet("~=", { t("\\approx") }, { condition = math, show_condition = math }),
-	autosnippet("-=", { t("\\equiv") }, { condition = math, show_condition = math }),
-	autosnippet("=~", { t("\\cong") }, { condition = math, show_condition = math }),
-	autosnippet(":=", { t("\\definedas") }, { condition = math, show_condition = math }),
 	autosnippet(
 		{ trig = "abs", name = "abs", dscr = "absolute value" },
         {single_command({string="abs"})},
@@ -1084,11 +1025,11 @@ local M = {
 		fmt([[^{<>}<>]], { i(1), i(0) }, { delimiters = "<>" }),
 		{ condition = math }
 	),
-	autosnippet(
-		{ trig = "sq", name = "square root", dscr = "square root" },
-        { single_command({string="sqrt", opt=true})},
-		{ condition = math }
-	),
+	-- autosnippet(
+	-- 	{ trig = "sq", name = "square root", dscr = "square root" },
+ --        { single_command({string="sqrt", opt=true})},
+	-- 	{ condition = math }
+	-- ),
     autosnippet({ trig='sbt', name='trig', dscr='dscr'},
     { single_command({string = "substack"})}
     ,{ condition=math, show_condition=math }),
@@ -1105,9 +1046,9 @@ local M = {
 		{ trig = "lim", name = "lim(sup|inf)", dscr = "lim(sup|inf)" },
 		fmt(
 			[[ 
-    \lim<>_{<> \to <>}<>
+    \lim<><><>
     ]],
-			{ c(1, { t(""), t("sup"), t("inf") }), i(2, "n"), i(3, "\\infty"), i(0) },
+            { c(1, { t(""), t("sup"), t("inf") }), c(2, {t(""), fmta([[_{<> to <>}]], {i(1, "n"), i(2, "\\infty")})}), i(0) },
 			{ delimiters = "<>" }
 		),
 		{ condition = math, show_condition = math }
@@ -1207,38 +1148,14 @@ local M = {
 	),
 
 	-- discrete maf
-	-- reals and number sets
-	autosnippet("RR", { t("\\mathbb{R}") }, { condition = math }),
-	autosnippet("CC", { t("\\mathbb{C}") }, { condition = math }),
-	autosnippet("ZZ", { t("\\mathbb{Z}") }, { condition = math }),
-	autosnippet("QQ", { t("\\mathbb{Q}") }, { condition = math }),
-	autosnippet("NN", { t("\\mathbb{N}") }, { condition = math, show_condition = math }),
-	autosnippet("OO", { t("\\emptyset") }, { condition = math, show_condition = math }),
-	autosnippet("pwr", { t("\\powerset") }, { condition = math, show_condition = math }),
 
 	-- quantifiers and cs70 n1 stuff
-	autosnippet("AA", { t("\\forall") }, { condition = math }),
-	autosnippet("EE", { t("\\exists") }, { condition = math }),
-	autosnippet("inn", { t("\\in") }, { condition = math }),
-	autosnippet("notin", { t("\\not\\in") }, { condition = math }),
-	autosnippet("ooo", { t("\\infty") }, { condition = math }),
-    autosnippet("!-", {t('\\lnot')},
-    { condition=math, show_condition=math }),
-    autosnippet("VV", {t('\\lor')},
-    { condition=math, show_condition=math }),
-    autosnippet("WW", {t('\\land')},
-    { condition=math, show_condition=math }),
-	autosnippet("=>", { t("\\implies") }, { condition = math, show_condition = math }),
-	autosnippet("=<", { t("\\impliedby") }, { condition = math, show_condition = math }),
-	autosnippet("iff", { t("\\iff") }, { condition = math, show_condition = math }),
 	autosnippet("||", { t("\\divides") }, { condition = math }),
 	autosnippet("!|", { t("\\notdivides") }, { condition = math, show_condition = math }),
-	autosnippet({ trig = "->", priority = 250 }, { t("\\to") }, { condition = math }),
 	autosnippet({ trig = "-->", priority= 500 }, { t("\\longrightarrow") }, { condition = math }),
 	autosnippet({ trig = "<->", priority = 500 }, { t("\\leftrightarrow") }, { condition = math }),
     autosnippet({trig='2>', priority=400}, {t('\\rightrightarrows')},
     { condition=math, show_condition=math }),
-	autosnippet("!>", { t("\\mapsto") }, { condition = math }),
 
 	-- sets
 	autosnippet(
@@ -1246,13 +1163,6 @@ local M = {
 		fmt([[\{<>\}<>]], { c(1, { r(1, ""), sn(nil, { r(1, ""), t(" \\mid "), i(2) }) }), i(0) }, { delimiters = "<>" }),
 		{ condition = math }
 	),
-	autosnippet("cc", { t("\\subset") }, { condition = math }),
-	autosnippet("cq", { t("\\subseteq") }, { condition = math }),
-	autosnippet("qq", { t("\\supset") }, { condition = math }),
-	autosnippet("qc", { t("\\supseteq") }, { condition = math }),
-	autosnippet("\\\\\\", { t("\\setminus") }, { condition = math }),
-	autosnippet("Nn", { t("\\cap") }, { condition = math }),
-	autosnippet("UU", { t("\\cup") }, { condition = math }),
     autosnippet({ trig='nnn', name='bigcap', dscr='bigcaps'},
     fmt([[
     \bigcap_{<>}^{<>} <>
@@ -1306,41 +1216,180 @@ local M = {
 -- 		postfix("tld", { l("\\tilde{" .. l.POSTFIX_MATCH .. "}") }, { condition=math, show_condition=math }),
 -- 		-- etc
 -- 		-- a living nightmare worth of greek symbols
--- 		-- TODO: replace with regex
--- 		s(
--- 			{ trig = "(alpha|beta|delta)", regTrig = true, name = "griss symbol", dscr = "greek letters hi" },
--- 			fmt([[\<>]], { f(function(_, snip)
--- 				return griss[snip.captures[1]]
--- 			end) }, { delimiters = "<>" }),
--- 			{ condition = math }
--- 		),
--- 		--s("alpha", {t("\\alpha")},
--- 		--{condition = math}),
--- 		--s('beta', {t('\\beta')},
--- 		--{ condition=math }),
--- 		s("delta", { t("\\delta") }, { condition = math }),
--- 		s("gam", { t("\\gamma") }, { condition = math }),
--- 		s("eps", { t("\\epsilon") }, { condition = math }),
--- 		s("veps", { t("\\varepsilon") }, { condition = math }),
--- 		s("lmbd", { t("\\lambda") }, { condition = math }),
--- 		s("mu", { t("\\mu") }, { condition = math }),
--- 		s("theta", { t("\\theta") }, { condition = math, show_condition = math }),
--- 		s("sig", { t("\\sigma") }, { condition = math, show_condition = math }),
 -- 		-- stuff i need for m110
 -- }
 
-
+-- Auto backslashes
 local auto_backslash_snippet = require("snippets.tex.utils").scaffolding.auto_backslash_snippet
 
 local auto_backslash_specs = {
-  'arcsin', 'sin', 'arccos', 'cos', 'arctan', 'tan',
-  'cot','csc', 'sec', 'log', 'ln', 'exp', 'ast', 'star',
-  'perp',
+    'arcsin', 'sin', 'arccos', 'cos', 'arctan', 'tan',
+    'cot','csc', 'sec', 'log', 'ln', 'exp', 'ast', 'star',
+    'perp', "sup", "inf", "det", 'max', 'min', 'argmax',
+    'argmin'
 }
 local auto_backslash_snippets = {}
 for _, v in ipairs(auto_backslash_specs) do
-  table.insert(auto_backslash_snippets, auto_backslash_snippet({ trig = v }, { condition = math }))
+    table.insert(auto_backslash_snippets, auto_backslash_snippet({ trig = v }, { condition = math }))
 end
 vim.list_extend(M, auto_backslash_snippets)
+
+-- Symbols/Commands
+local symbol_snippet = require('snippets.tex.utils').scaffolding.symbol_snippet
+
+local greek_specs = {
+    alpha = { context = { name = 'α' }, command = [[\alpha]] },
+    beta = { context = { name = 'β' }, command = [[\beta]] },
+    omega = { context = { name = 'ω' }, command = [[\omega]] },
+    Omega = { context = { name = 'Ω' }, command = [[\Omega]] },
+    delta = { context = { name = 'δ' }, command = [[\delta]] },
+    DD = { context = { name = 'Δ' }, command = [[\Delta]] },
+    eps = { context = { name = 'ε' }, command = [[\epsilon]] },
+    theta = { context = { name = 'θ' }, command = [[\theta]] },
+    lmbd = { context = { name = 'λ' }, command = [[\lambda]] },
+    Lmbd = { context = { name = 'Λ' }, command = [[\Lambda]] },
+    mu = { context = { name = 'μ' }, command = [[\mu]] },
+    pi = { context = { name = 'π' }, command = [[\pi]] },
+    sig = { context = { name = 'σ' }, command = [[\sigma]] },
+    Sig = { context = { name = 'Σ' }, command = [[\Sigma]] },
+    vphi = { context = { name = 'φ' }, command = [[\varphi]] },
+    veps = { context = { name = 'ε' }, command = [[\varepsilon]] },
+}
+
+local greek_snippets = {}
+for k, v in pairs(greek_specs) do
+    table.insert(
+        greek_snippets,
+        symbol_snippet(vim.tbl_deep_extend('keep', { trig = k }, v.context), v.command, { condition = math })
+    )
+end
+vim.list_extend(M, greek_snippets)
+
+local symbol_specs = {
+    -- operators
+    ['!='] = { context = { name = "!=" }, command = [[\neq]] },
+    leq = { context = { name = "≤" }, command = [[\leq]] },
+    geq = { context = { name = "≥" }, command = [[\geq]] },
+    ll = { context = { name = "<<" }, command = [[\ll]] },
+    gg = { context = { name = ">>" }, command = [[\gg]] },
+    ['~~'] = { context = { name = "~" }, command = [[\sim]] },
+    ['~='] = { context = { name = "≈" }, command = [[\approx]] },
+    ['~-'] = { context = { name = "≃" }, command = [[\simeq]] },
+    ['-~'] = { context = { name = "⋍" }, command = [[\backsimeq]] },
+    ['-='] = { context = { name = "≡" }, command = [[\equiv]] },
+    ['=~'] = { context = { name = "≅" }, command = [[\cong]] },
+    [':='] = { context = { name = "≔" }, command = [[\definedas]] },
+    ['**'] = { context = { name = "·", priority = 100 }, command = [[\cdot]] },
+    xx = { context = { name = "×" }, command = [[\times]] },
+    -- sets 
+    NN = { context = { name = "ℕ" }, command = [[\mathbb{N}]] },
+    ZZ = { context = { name = "ℤ" }, command = [[\mathbb{Z}]] },
+    QQ = { context = { name = "ℚ" }, command = [[\mathbb{Q}]] },
+    RR = { context = { name = "ℝ" }, command = [[\mathbb{R}]] },
+    CC = { context = { name = "ℂ" }, command = [[\mathbb{C}]] },
+    OO = { context = { name = "∅" }, command = [[\emptyset]] },
+    pwr = { context = { name = "P" }, command = [[\powerset]] },
+    cc = { context = { name = "⊂" }, command = [[\subset]] },
+    cq = { context = { name = "⊆" }, command = [[\subseteq]] },
+    qq = { context = { name = "⊃" }, command = [[\supset]] },
+    qc = { context = { name = "⊇" }, command = [[\supseteq]] },
+    ['\\\\\\'] = { context = { name = "⧵" }, command = [[\setminus]] },
+    Nn = { context = { name = "∩" }, command = [[\cap]] },
+    UU = { context = { name = "∪" }, command = [[\cup]] },
+    -- quantifiers and logic stuffs 
+    AA = { context = { name = "∀" }, command = [[\forall]] },
+    EE = { context = { name = "∃" }, command = [[\exists]] },
+    inn = { context = { name = "∈" }, command = [[\in]] },
+    notin = { context = { name = "∉" }, command = [[\not\in]] },
+    ['!-'] = { context = { name = "¬" }, command = [[\lnot]] },
+    ['VV'] = { context = { name = "∨" }, command = [[\lor]] },
+    ['WW'] = { context = { name = "∧" }, command = [[\land]] },
+    ['=>'] = { context = { name = "⇒" }, command = [[\implies]] },
+    ['=<'] = { context = { name = "⇐" }, command = [[\impliedby]] },
+    iff = { context = { name = "⟺" }, command = [[\iff]] },
+    ['->'] = { context = { name = "→", priority = 250 }, command = [[\to]] },
+    ['!>'] = { context = { name = "↦" }, command = [[\mapsto]] },
+    -- etc 
+    ooo = { context = { name = "∞" }, command = [[\infty]] },
+    lll = { context = { name = "∞" }, command = [[\ell]] },
+}
+
+local symbol_snippets = {}
+for k, v in pairs(symbol_specs) do
+    table.insert(
+        symbol_snippets,
+        symbol_snippet(vim.tbl_deep_extend('keep', { trig = k }, v.context), v.command, { condition = math })
+    )
+end
+vim.list_extend(M, symbol_snippets)
+
+local single_command_snippet = require('snippets.tex.utils').scaffolding.single_command_snippet
+
+local single_command_specs = {
+    sq = {
+        context = {
+            name = 'enquote*',
+            dscr = 'single quotes',
+        },
+        command = [[\enquote*]],
+    },
+    qq = {
+        context = {
+            name = 'enquote',
+            dscr = 'double quotes'
+        }, 
+        command = [[\enquote]],
+    },
+    bf = {
+        context = {
+            name = "textbf",
+            dscr = "bold text",
+            hidden = true,
+        },
+        command = [[\textbf]],
+    },
+    it = {
+        context = {
+            name = "textit",
+            dscr = "italic text",
+            hidden = true,
+        },
+        command = [[\textit]],
+    },
+    sc = {
+        context = {
+            name = "textsc",
+            dscr = "small caps",
+            hidden = true,
+        },
+        command = [[\textsc]]
+    },
+    tu = {
+        context = {
+            name = "underline (text)",
+            dscr = "underlined text in non-math mode",
+            hidden = true,
+        },
+        command = [[\underline]],
+    },
+    tov = {
+        context = {
+            name = "overline (text)",
+            dscr = "overline text in non-math mode",
+            hidden = true,
+        },
+        command = [[\overline]],
+    },
+}
+
+local single_command_snippets = {}
+for k, v in pairs(single_command_specs) do
+    table.insert(
+        single_command_snippets,
+        single_command_snippet(vim.tbl_deep_extend('keep', { trig = k }, v.context), v.command, v.opts, v.ext or {} )
+    )
+end
+vim.list_extend(M, single_command_snippets)
+
 
 return M

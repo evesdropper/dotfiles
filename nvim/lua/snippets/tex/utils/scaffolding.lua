@@ -29,4 +29,37 @@ M.auto_backslash_snippet = function(context, opts)
     return autosnippet(context, t([[\]] .. context.trig), opts)
 end
 
+-- Auto symbol 
+M.symbol_snippet = function(context, command, opts)
+    opts = opts or {}
+    if not context.trig then
+        error("context doesn't include a `trig` key which is mandatory", 2)
+    end
+    context.dscr = context.dscr or command
+    context.name = context.name or command:gsub([[\]], '')
+    context.docstring = context.docstring or (command .. [[{0}]])
+    context.wordTrig = context.wordTrig or false
+    return autosnippet(context, t(command), opts)
+end
+
+-- single command with option
+M.single_command_snippet = function(context, command, opts, ext)
+    opts, ext = opts or {}, ext or {}
+    if not context.trig then
+        error("context doesn't include a `trig` key which is mandatory", 2)
+    end
+    context.dscr = context.dscr or command
+    context.name = context.name or context.dscr
+    if ext.choice then 
+        docstring = "[" .. [[(<1>)?]] .. "]" .. [[{]] .. [[<2>]] .. [[}]] .. [[<0>]]
+        offset = 1
+        cnode = c(1, { t(""), sn(nil, { t("["), i(1, "opt"), t("]") }) })
+    else 
+        docstring = [[{]] .. [[<1>]] .. [[}]] .. [[<0>]]
+    end
+    context.docstring = context.docstring or (command .. docstring)
+    stype = ext.stype or s
+    return stype(context, fmta(command .. [[<>{<>}<>]], {cnode or t(""), i(1 + (offset or 0)), i(0)}), opts)
+end
+
 return M
