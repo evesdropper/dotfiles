@@ -10,7 +10,6 @@
 local postfix = require("luasnip.extras.postfix").postfix
 local line_begin = require("luasnip.extras.conditions.expand").line_begin
 local autosnippet = ls.extend_decorator.apply(s, { snippetType = "autosnippet" })
-local utils = require("snippets.tex.utils")
 
 -- condition envs
 -- global p! functions from UltiSnips
@@ -27,6 +26,10 @@ local function env(name)
 	return (is_inside[1] > 0 and is_inside[2] > 0)
 end
 
+local function preamble()
+    return not env("document")
+end
+
 local function tikz()
 	return env("tikzpicture")
 end
@@ -40,7 +43,7 @@ local function beamer()
 end
 
 -- brackets
-brackets = {
+local brackets = {
 	a = { "angle", "angle" },
 	A = { "Angle", "Angle" },
 	b = { "brack", "brack" },
@@ -210,34 +213,6 @@ local generate_label_snode = function(label_head, xargs)
     end
 end
 
--- single command \cmd{$1}$0 
-local single_command = function(cmd)
-    offset = 0
-    if cmd.opt == true then
-        cmd.opt = c(1, { t(""), sn(nil, { t("["), i(1, "opt"), t("]") }) })
-        offset = offset + 1
-    else
-        cmd.opt = t("")
-    end
-    if cmd.slash == false then
-        cmd.slash = ""
-    else
-        cmd.slash = "\\"
-    end
-    if cmd.ast == true then
-        cmd.ast = "*"
-    else
-        cmd.ast = ""
-    end
-    return sn(1, fmta([[
-    <><>{<>}<>
-    ]], {t(cmd.slash .. cmd.string .. cmd.ast), cmd.opt, i(1 + offset), i(0)}))
-end
-
-local create_latex_env = function(opts)
-
-end
-
 -- return arbitrary snip captures + string concatenate
 local get_capture = function(_, snip, user_arg1, user_arg2, user_arg3)
     -- define arguments 
@@ -246,19 +221,6 @@ local get_capture = function(_, snip, user_arg1, user_arg2, user_arg3)
     post = user_arg3 or ""
     return snip.captures[idx]
 end
-
--- TODO: itemize/enumerate
---[[ rec_ls = function() ]]
---[[ 	return sn(nil, { ]]
---[[ 		c(1, { ]]
---[[ 			-- important!! Having the sn(...) as the first choice will cause infinite recursion. ]]
---[[ 			t({""}), ]]
---[[ 			-- The same dynamicNode as in the snippet (also note: self reference). ]]
---[[ 			sn(nil, {t({"", "\t\\item "}), i(1), d(2, rec_ls, {})}), ]]
---[[ 		}), ]]
---[[ 	}); ]]
---[[ end ]]
---[[]]
 
 --[
 -- Snippets go here
@@ -402,10 +364,6 @@ local M = {
 	-- Introductory Stuff: e.g. table of contents, packages, other setup Stuff
 	-- think templates but modular
 	-- ]
-	s(
-		{ trig = "pac", name = "add package", dscr = "add package" },
-		single_command({string="usepackage", opt=true})
-	),
 	s(
 		{ trig = "atoc", name = "add toc", dscr = "add this to toc line" },
 		fmt(
@@ -662,18 +620,6 @@ local M = {
 			{ delimiters = "<>" }
 		)
 	),
-	-- label n stuff
-	-- autosnippet(
-	-- 	{ trig = "-l", name = "add label", dscr = "add labeling" },
-	-- 	fmt(
-	-- 		[[
- --    [label=<>]
- --    ]],
-	-- 		{ i(1) },
-	-- 		{ delimiters = "<>" }
-	-- 	),
-	-- 	{ condition = bp, show_condition = bp }
-	-- ),
 	-- generate new bullet points
 	autosnippet(
 		{ trig = "--", hidden = true },
@@ -691,70 +637,6 @@ local M = {
 		),
 		{ condition = bp * line_begin, show_condition = bp * line_begin }
 	),
-
-	-- tcolorboxes
-	s(
-		{ trig = "adef", name = "add definition", dscr = "add definition box" },
-		fmt(
-			[[ 
-    \begin{definition}[<>]<>{<>
-    }
-    \end{definition}]],
-			{ i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"def", "xargs"}}) }), i(0) },
-			{ delimiters = "<>" }
-		)
-	),
-	s(
-		{ trig = "aex", name = "add example", dscr = "add example box" },
-		fmt(
-			[[ 
-    \begin{example}[<>]<>{<>
-    }
-    \end{example}]],
-            { i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"ex", "xargs"}}) }), i(0) },
-			{ delimiters = "<>" }
-		)
-	),
-	s(
-		{ trig = "athm", name = "add theorem", dscr = "add theorem box" },
-		fmt(
-			[[ 
-    \begin{theorem}[<>]<>{<>
-    }
-    \end{theorem}]],
-            { i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"thm", "xargs"}}) }),  i(0) },
-			{ delimiters = "<>" }
-		)
-	),
-	s(
-		{ trig = "nb", name = "notebox", dscr = "add notebox idk why this format is diff" },
-		fmt(
-			[[ 
-    \begin{notebox}[<>]<>{<>
-    }
-    \end{notebox}]],
-			{ i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"note", "xargs"}}) }), i(0) },
-			{ delimiters = "<>" }
-		)
-	),
-    s({ trig='rmb', name='remarkbox', dscr='ahsjd'},
-    fmt([[
-    \begin{remark}[<>]<>{<>
-    }
-    \end{remark}
-    ]],
-    { i(1, "title"), c(2, {t(""), d(1, generate_label, {}, {user_args={"rmk", "xargs"}}) }), i(0) },
-    { delimiters='<>' }
-    )),
-    s({ trig='aprop', name='propbox', dscr='add proposition box'},
-        fmt([[
-        \begin{proposition}[<>]<>{<>
-        }
-        \end{proposition}
-        ]],
-    { i(1), c(2, {t(""), d(1, generate_label, {}, {user_args={"prop", "xargs"}}) }), i(0) },
-    { delimiters='<>' }
-    )),
 
 	-- tables/matrices
 	s(
@@ -937,15 +819,9 @@ local M = {
     { delimiters='<>' }
     ), { condition=math, show_condition=math }),
 	autosnippet("==", { t("&="), i(1), t("\\\\") }, { condition = math }),
-	autosnippet("!+", { t("\\oplus") }, { condition = math, show_condition = math }),
-	autosnippet("!*", { t("\\otimes") }, { condition = math, show_condition = math }),
 	autosnippet({ trig = "!!+", priority = 500 }, { t("\\bigoplus") }, { condition = math, show_condition = math }),
 	autosnippet({ trig = "!!*", priority = 500 }, { t("\\bigotimes") }, { condition = math, show_condition = math }),
 	autosnippet({ trig = "Oo", priority = 50 }, { t("\\circ") }, { condition = math, show_condition = math }),
-    autosnippet("::", {t('\\colon')},
-    { condition=math, show_condition=math }),
-    autosnippet({ trig='adot', name='dot', dscr='dot above'},
-    {single_command({string="dot"})}, { condition=math, show_condition=math }),
 
 	-- sub super scripts
 	autosnippet(
@@ -979,15 +855,7 @@ local M = {
 	autosnippet({ trig = "compl", wordTrig = false }, { t("^{c}") }, { condition = math }),
 	autosnippet({ trig = "vtr", wordTrig = false }, { t("^{T}") }, { condition = math }),
 	autosnippet({ trig = "inv", wordTrig = false }, { t("^{-1}") }, { condition = math }),
-	autosnippet(
-		{ trig = "td", name = "superscript", dscr = "superscript", wordTrig = false },
-		fmt([[^{<>}<>]], { i(1), i(0) }, { delimiters = "<>" }),
-		{ condition = math }
-	),
 
-	-- (greek) symbols
-	-- TODO: add greek symbol thing
-	autosnippet("lll", { t("\\ell") }, { condition = math, show_condition = math }),
 
 	-- stuff i need to do calculus
 	autosnippet("dd", { t("\\dd") }, { condition = math, show_condition = math }),
@@ -1059,11 +927,6 @@ local M = {
 		{ condition = math, show_condition = math }
 	),
 	autosnippet(
-		{ trig = "elr", name = "eval left right", dscr = "eval left right" },
-        {single_command({string="eval"})},
-		{ condition = math, show_condition = math }
-	),
-	autosnippet(
 		{ trig = "sum", name = "summation", dscr = "summation" },
 		fmt(
 			[[
@@ -1086,27 +949,9 @@ local M = {
 		{ condition = math, show_condition = math }
 	),
 
-	-- linalg stuff minus matrices
-	autosnippet(
-		{ trig = "norm", name = "norm", dscr = "norm" },
-        {single_command({string="norm"})},
-		{ condition = math, show_condition = math }
-	),
-	autosnippet(
-		{ trig = "iprod", name = "inner product", dscr = "inner product" },
-        {single_command({string="vinner"})},
-		{ condition = math, show_condition = math }
-	),
-
-	-- discrete maf
-
 	-- quantifiers and cs70 n1 stuff
 	autosnippet("||", { t("\\divides") }, { condition = math }),
 	autosnippet("!|", { t("\\notdivides") }, { condition = math, show_condition = math }),
-	autosnippet({ trig = "-->", priority= 500 }, { t("\\longrightarrow") }, { condition = math }),
-	autosnippet({ trig = "<->", priority = 500 }, { t("\\leftrightarrow") }, { condition = math }),
-    autosnippet({trig='2>', priority=400}, {t('\\rightrightarrows')},
-    { condition=math, show_condition=math }),
 
 	-- sets
 	autosnippet(
@@ -1145,10 +990,6 @@ local M = {
 	),
 	autosnippet("lb", { t("\\\\") }, { condition = math }),
 	autosnippet("tcbl", { t("\\tcbline") }),
-	autosnippet("ctd", { t("%TODO: "), i(1) }),
-	autosnippet("upar", { t("\\uparrow") }, { condition = math, show_condition = math }),
-	autosnippet("dnar", { t("\\downarrow") }, { condition = math, show_condition = math }),
-	autosnippet("dag", { t("\\dagger") }, { condition = math, show_condition = math })
 }
 -- 	{
 -- 		-- hats and bars (postfixes)
@@ -1232,18 +1073,97 @@ local single_command_specs = {
             hidden = true,
         },
         command = [[\overline]],
-        ext = { choice = true },
     },
+    pac = {
+        context = {
+            name = "usepackage",
+            dscr = "usepackage (with option)",
+        },
+        command = [[\usepackage]],
+        opt = { condition = preamble, show_condition = preamble },
+        ext = { choice = true },
+    }
 }
 
 local single_command_snippets = {}
 for k, v in pairs(single_command_specs) do
     table.insert(
         single_command_snippets,
-        single_command_snippet(vim.tbl_deep_extend('keep', { trig = k }, v.context), v.command, { condition = in_text }, v.ext or {} )
+        single_command_snippet(vim.tbl_deep_extend('keep', { trig = k }, v.context), v.command, v.opt or { condition = in_text }, v.ext or {} )
     )
 end
 vim.list_extend(M, single_command_snippets)
+
+-- tcolorboxes *sigh*
+local tcolorbox_snippet = require('snippets.tex.utils').scaffolding.tcolorbox_snippet
+
+local tcolorbox_specs = {
+    adef = {
+        context = {
+            name = "definition",
+            dscr = "add defintion box",
+        },
+        command = [[def]],
+    },
+    aex = {
+        context = {
+            name = 'example',
+            dscr = 'add example box',
+        },
+        command = [[ex]],
+    },
+    athm = {
+        context = {
+            name = 'theorem',
+            dscr = 'add theorem box',
+        },
+        command = [[thm]],
+    },
+    lem = {
+        context = {
+            name = 'lemma',
+            dscr = 'add lemma box',
+        },
+        command = [[lem]],
+    },
+    acr = {
+        context = {
+            name = 'corollary',
+            dscr = 'add corollary box',
+        },
+        command = [[cor]],
+    },
+    aprop = {
+        context = {
+            name = 'proposition',
+            dscr = 'add proposition box',
+        },
+        command = [[prop]],
+    },
+    nb = {
+        context = {
+            name = 'note',
+            dscr = 'add note box',
+        },
+        command = [[note]],
+    },
+    rmb = {
+        context = {
+            name = 'remark',
+            dscr = 'add remark box',
+        },
+        command = [[rmk]]
+    }
+}
+
+local tcolorbox_snippets = {}
+for k, v in pairs(tcolorbox_specs) do
+    table.insert(
+        tcolorbox_snippets,
+        tcolorbox_snippet(vim.tbl_deep_extend('keep', { trig = k }, v.context), v.command, { condition = in_text } )
+    )
+end
+vim.list_extend(M, tcolorbox_snippets)
 
 --{
 -- Math Mode Snippets
@@ -1256,7 +1176,7 @@ local auto_backslash_specs = {
     'arcsin', 'sin', 'arccos', 'cos', 'arctan', 'tan',
     'cot','csc', 'sec', 'log', 'ln', 'exp', 'ast', 'star',
     'perp', "sup", "inf", "det", 'max', 'min', 'argmax',
-    'argmin'
+    'argmin', 'pm'
 }
 
 local auto_backslash_snippets = {}
@@ -1312,6 +1232,8 @@ local symbol_specs = {
     [':='] = { context = { name = "≔" }, command = [[\definedas]] },
     ['**'] = { context = { name = "·", priority = 100 }, command = [[\cdot]] },
     xx = { context = { name = "×" }, command = [[\times]] },
+    ['!+'] = { context = { name = "⊕" }, command = [[\oplus]] },
+    ['!*'] = { context = { name = "⊗" }, command = [[\otimes]] },
     -- sets 
     NN = { context = { name = "ℕ" }, command = [[\mathbb{N}]] },
     ZZ = { context = { name = "ℤ" }, command = [[\mathbb{Z}]] },
@@ -1327,6 +1249,7 @@ local symbol_specs = {
     ['\\\\\\'] = { context = { name = "⧵" }, command = [[\setminus]] },
     Nn = { context = { name = "∩" }, command = [[\cap]] },
     UU = { context = { name = "∪" }, command = [[\cup]] },
+    ['::'] = { context = { name = ":"}, command = [[\colon]] },
     -- quantifiers and logic stuffs 
     AA = { context = { name = "∀" }, command = [[\forall]] },
     EE = { context = { name = "∃" }, command = [[\exists]] },
@@ -1340,9 +1263,16 @@ local symbol_specs = {
     iff = { context = { name = "⟺" }, command = [[\iff]] },
     ['->'] = { context = { name = "→", priority = 250 }, command = [[\to]] },
     ['!>'] = { context = { name = "↦" }, command = [[\mapsto]] },
+    -- arrows
+    ['-->'] = { context = { name = "⟶", priority = 500 }, command = [[\longrightarrow]] },
+    ['<->'] = { context = { name = "↔", priority = 500 }, command = [[\leftrightarrow]] },
+    ['2>'] = { context = { name = "⇉", priority = 400 }, command = [[\rightrightarrows]] },
+    upar = { context = { name = "↑" }, command = [[\uparrow]] },
+    dnar = { context = { name = "↓" }, command = [[\downarrow]] },
     -- etc 
     ooo = { context = { name = "∞" }, command = [[\infty]] },
-    lll = { context = { name = "∞" }, command = [[\ell]] },
+    lll = { context = { name = "ℓ" }, command = [[\ell]] },
+    dag = { context = { name = "†"}, command = [[\dagger]] },
 }
 
 local symbol_snippets = {}
@@ -1433,6 +1363,35 @@ local single_command_math_specs = {
         },
         command = [[\substack]],
     },
+    sq = {
+        context = {
+            name = 'sqrt',
+            dscr = 'sqrt',
+        },
+        command = [[\sqrt]],
+        ext = { choice = true },
+    },
+    elr = {
+        context = {
+            name = 'eval',
+            dscr = 'evaluate bar for integrals',
+        },
+        command = [[\eval]],
+    },
+    norm = {
+        context = {
+            name = 'norm',
+            dscr = 'norm',
+        },
+        command = [[\norm]],
+    },
+    iprod = {
+        context = {
+            name = 'vinner',
+            dscr = 'inner product',
+        },
+        command = [[\vinner]],
+    }
 }
 
 local single_command_math_snippets = {}

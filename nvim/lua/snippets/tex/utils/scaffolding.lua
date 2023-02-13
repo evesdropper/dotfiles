@@ -50,11 +50,12 @@ M.single_command_snippet = function(context, command, opts, ext)
     end
     context.dscr = context.dscr or command
     context.name = context.name or context.dscr
-    if ext.choice == true then 
+    local docstring, offset, cnode
+    if ext.choice == true then
         docstring = "[" .. [[(<1>)?]] .. "]" .. [[{]] .. [[<2>]] .. [[}]] .. [[<0>]]
         offset = 1
         cnode = c(1, { t(""), sn(nil, { t("["), i(1, "opt"), t("]") }) })
-    else 
+    else
         docstring = [[{]] .. [[<1>]] .. [[}]] .. [[<0>]]
     end
     context.docstring = context.docstring or (command .. docstring)
@@ -63,18 +64,38 @@ M.single_command_snippet = function(context, command, opts, ext)
 end
 
 -- TODO: environment 
+-- M.env_snippet = function(context, command, opts, ext)
+--     opts = opts or {}
+--     if not context.trig then
+--         error("context doesn't include a `trig` key which is mandatory", 2)
+--     end
+--     context.dscr = context.dscr or command
+--     context.name = context.name or context.dscr
+--     local docstring, offset, delim, cnode
+--     return s(context, fmta([[
+--     \begin{<>}<>
+--     <>
+--     \end{<>}
+--     ]], {t(command), i(2), i(1), t(command)}), opts)
+-- end
 
 -- tcolorbox snippets
--- M.tcolorbox_snippet = function(context, command, opts, ext)
---     opts, ext = opts or {}, ext or {}
---     context.dscr = context.dscr or command 
---     context.name = context.name or context.dscr 
---     context.docstring = [[\begin{]] .. ext.name .. [[}[<1>][(<2>)?]{<3>]] .. string.char(10) .. [[}]] .. string.char(10) .. [[\end{]] .. ext.name .. [[}]]
---     return s(context, fmta([[
---     \begin{<>}[<>]<>{<>
---     }
---     \end{<>}
---     ]], {t(ext.name), i(1), c(2, {t(""), fmta([[[<>:<>]]], {t(ext.short), i(1)})}), i(0), t(ext.name)}), opts)
--- end
+M.tcolorbox_snippet = function(context, command, opts)
+    opts = opts or {}
+    if not context.trig then
+        error("context doesn't include a `trig` key which is mandatory", 2)
+    end
+    context.dscr = context.dscr or command
+    context.name = context.name or context.dscr
+    context.docstring = ([[\begin{]] .. context.name .. [[}[<1>][]] .. command .. [[(<2>)?]{<3>]] .. string.char(10) .. [[}]] .. string.char(10) .. [[\end{]] .. context.name .. [[}]]) or context.dscr
+    -- return s(context, t(command), opts)
+    return s(context, fmta([[
+    \begin{<>}[<>]<>{<>
+    }
+    \end{<>}
+    ]], {t(context.name), i(1), c(2, {t(""), fmta([[
+    [<>:<>]
+    ]], {t(command), i(1)}) } ), i(0), t(context.name)}), opts)
+end
 
 return M
