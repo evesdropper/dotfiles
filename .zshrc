@@ -80,6 +80,7 @@ alias ...='cd ..; cd ..'
 alias ....='cd ..; cd ..; cd ..'
 alias docs='cd ~/Documents/'
 alias notesdir='cd ~/Documents/university/bachelor-2/$CURRENT_SEM/'
+alias plandir='cd ~/Documents/university/plan'
 alias ccdir='cd ~/Documents/university/bachelor-2/current-course/'
 alias books='cd ~/Downloads/Documents/books/'
 alias math='cd ~/Documents/university/etc/math/'
@@ -107,7 +108,7 @@ alias compile-lec="latexmk -pdflatex=lualatex -shell-escape -pdf"
 alias bashrc="nvim ~/.bashrc"
 alias zathurarc="nvim ~/.config/zathura/zathurarc"
 alias vimdir="cd ~/.config/nvim/"
-alias luasnip="cd ~/.config/nvim/luasnip/"
+alias luasnip="cd ~/.config/nvim/lua/snippets/"
 alias vimrc="nvim ~/.config/nvim/init.lua"
 alias latexmkrc="nvim ~/.latexmkrc"
 alias spellrc="nvim ~/.config/nvim/spell/en.utf-8.add"
