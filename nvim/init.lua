@@ -25,6 +25,7 @@ require("random.lualine")
 require("random.bufferline")
 require("random.winbar")
 require("random.navic")
+-- require("random.dashboard")
 
 -- ft specific 
 require("random.vimtex") -- latex
