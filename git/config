@@ -4,6 +4,10 @@
     username = evesdropper
 [init]
     defaultBranch = main
+[branch "main"]
+    remote = origin
+    merge = refs/heads/main
+    rebase = true
 [core]
     editor = nvim
     whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
