@@ -10,12 +10,12 @@ M.in_math = function()
 end
 
 M.in_text = function()
-    return not math()
+	return not math()
 end
 
 -- comment detection
 M.in_comment = function()
-  return vim.fn['vimtex#syntax#in_comment']() == 1
+	return vim.fn["vimtex#syntax#in_comment"]() == 1
 end
 
 -- document class
@@ -30,7 +30,7 @@ local function env(name)
 end
 
 M.preamble = function()
-    return not env("document")
+	return not env("document")
 end
 
 M.tikz = function()
@@ -42,7 +42,7 @@ M.bp = function()
 end
 
 M.in_align = function()
-    return env("align") or env("align*") or env("aligned")
+	return env("align") or env("align*") or env("aligned")
 end
 
 return M
