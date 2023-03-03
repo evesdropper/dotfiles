@@ -4,8 +4,7 @@ local opts = { noremap = true, silent = true }
 local term_opts = { silent = true }
 
 -- Shorten function name
-local keymap = vim.api.nvim_set_keymap
-
+local keymap = vim.keymap.set 
 --Remap space as leader key
 keymap("", "<Space>", "<Nop>", opts)
 vim.g.mapleader = " "
@@ -44,7 +43,11 @@ keymap("n", "K", ":m .-2<CR>==", opts)
 keymap("n", "J", ":m .+1<CR>==", opts)
 
 -- misc
-keymap("n", "zz", ":w<CR>", opts) -- save
+-- keymap("n", "zz", ":w<CR>", opts) -- save
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
 keymap("n", "zq", ":q!<CR>", opts) -- saven't
 keymap("n", "<leader>h", "<cmd>nohlsearch<CR>", opts) -- nohl
 keymap("v", "p", '"_dP', opts) -- paste

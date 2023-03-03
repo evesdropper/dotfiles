@@ -4,6 +4,14 @@ if not status_ok then
 end
 
 vim.g.localleader = ","
+
+-- Telescope remaps --
+local opts = { noremap = true, silent = true }
+vim.keymap.set("n", "<leader>ff", ":Telescope find_files<CR>", opts)
+vim.keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>", opts)
+vim.keymap.set("n", "<leader>fb", ":Telescope buffers<CR>", opts)
+vim.keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>", opts)
+
 local actions = require("telescope.actions")
 telescope.load_extension("media_files")
 local icons = require("random.icons")
