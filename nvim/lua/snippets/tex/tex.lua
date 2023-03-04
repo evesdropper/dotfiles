@@ -15,6 +15,7 @@ local make_condition = require("luasnip.extras.conditions").make_condition
 
 -- chained conditions 
 local in_preamble = make_condition(tex.in_preamble)
+local in_bullets = make_condition(tex.in_bullets)
 
 -- condition envs
 -- global p! functions from UltiSnips
@@ -658,21 +659,15 @@ local M = {
 		)
 	),
 	-- generate new bullet points
-	autosnippet(
-		{ trig = "--", hidden = true },
-		{ t("\\item") },
-		{ condition = bp * line_begin, show_condition = bp * line_begin }
+	autosnippet({ trig = "--", hidden = true }, { t("\\item") },
+	{ condition = in_bullets * line_begin, show_condition = in_bullets * line_begin }
 	),
-	autosnippet(
-		{ trig = "!-", name = "bp custom", dscr = "bullet point" },
-		fmt(
-			[[ 
+	autosnippet({ trig = "!-", name = "bp custom", dscr = "bullet point" },
+	fmta([[ 
     \item [<>]<>
     ]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = bp * line_begin, show_condition = bp * line_begin }
+	{ i(1), i(0) }),
+	{ condition = in_bullets * line_begin, show_condition = in_bullets * line_begin }
 	),
 
 	-- tables/matrices
@@ -1054,8 +1049,6 @@ local M = {
 	),
 	autosnippet("lb", { t("\\\\") }, { condition = math }),
 	autosnippet("tcbl", { t("\\tcbline") }),
-    autosnippet("condtest", {t('text')},
-    { condition=tex.in_math, show_condition=tex.in_math }),
 }
 -- 	{
 -- 		-- hats and bars (postfixes)
@@ -1154,7 +1147,7 @@ local single_command_specs = {
 			dscr = "usepackage (with option)",
 		},
 		command = [[\usepackage]],
-		opt = { condition = preamble, show_condition = preamble },
+		opt = { condition = tex,in_preamble, show_condition = tex.in_preamble },
 		ext = { choice = true },
 	},
 }
@@ -1166,7 +1159,7 @@ for k, v in pairs(single_command_specs) do
 		single_command_snippet(
 			vim.tbl_deep_extend("keep", { trig = k }, v.context),
 			v.command,
-			v.opt or { condition = in_text },
+			v.opt or { condition = tex.in_text },
 			v.ext or {}
 		)
 	)
@@ -1194,7 +1187,7 @@ for k, v in pairs(env_specs) do
 		env_snippet(
 			vim.tbl_deep_extend("keep", { trig = k }, v.context),
 			v.command,
-			{ condition = in_text },
+			{ condition = tex.in_text },
 			v.ext or {}
 		)
 	)
@@ -1267,7 +1260,7 @@ local tcolorbox_snippets = {}
 for k, v in pairs(tcolorbox_specs) do
 	table.insert(
 		tcolorbox_snippets,
-		tcolorbox_snippet(vim.tbl_deep_extend("keep", { trig = k }, v.context), v.command, { condition = in_text })
+		tcolorbox_snippet(vim.tbl_deep_extend("keep", { trig = k }, v.context), v.command, { condition = tex.in_text })
 	)
 end
 vim.list_extend(M, tcolorbox_snippets)
@@ -1306,7 +1299,7 @@ local auto_backslash_specs = {
 
 local auto_backslash_snippets = {}
 for _, v in ipairs(auto_backslash_specs) do
-    table.insert(auto_backslash_snippets, auto_backslash_snippet({ trig = v }, { condition = math }))
+    table.insert(auto_backslash_snippets, auto_backslash_snippet({ trig = v }, { condition = tex.in_math }))
 end
 vim.list_extend(M, auto_backslash_snippets)
 
@@ -1342,7 +1335,7 @@ local greek_snippets = {}
 for k, v in pairs(greek_specs) do
 	table.insert(
 		greek_snippets,
-		symbol_snippet(vim.tbl_deep_extend("keep", { trig = k }, v.context), v.command, { condition = math })
+		symbol_snippet(vim.tbl_deep_extend("keep", { trig = k }, v.context), v.command, { condition = tex.in_math })
 	)
 end
 vim.list_extend(M, greek_snippets)
@@ -1408,13 +1401,15 @@ local symbol_specs = {
 	ooo = { context = { name = "∞" }, command = [[\infty]] },
 	lll = { context = { name = "ℓ" }, command = [[\ell]] },
 	dag = { context = { name = "†" }, command = [[\dagger]] },
+	["+-"] = { context = { name = "†" }, command = [[\pm]] },
+	["-+"] = { context = { name = "†" }, command = [[\mp]] },
 }
 
 local symbol_snippets = {}
 for k, v in pairs(symbol_specs) do
 	table.insert(
 		symbol_snippets,
-		symbol_snippet(vim.tbl_deep_extend("keep", { trig = k }, v.context), v.command, { condition = math })
+		symbol_snippet(vim.tbl_deep_extend("keep", { trig = k }, v.context), v.command, { condition = tex.in_math })
 	)
 end
 vim.list_extend(M, symbol_snippets)
@@ -1587,7 +1582,7 @@ for k, v in pairs(single_command_math_specs) do
 		single_command_snippet(
 			vim.tbl_deep_extend("keep", { trig = k, snippetType = "autosnippet" }, v.context),
 			v.command,
-			{ condition = math },
+			{ condition = tex.in_math },
 			v.ext or {}
 		)
 	)

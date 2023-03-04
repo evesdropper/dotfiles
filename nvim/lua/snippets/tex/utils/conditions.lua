@@ -5,21 +5,22 @@
 local M = {}
 
 -- math / not math zones
-M.in_math = function()
-	return vim.api.nvim_eval("vimtex#syntax#in_mathzone()") == 1
+
+function M.in_math()
+    return vim.api.nvim_eval("vimtex#syntax#in_mathzone()") == 1
 end
 
-M.in_text = function()
+function M.in_text()
 	return not math()
 end
 
 -- comment detection
-M.in_comment = function()
+function M.in_comment()
 	return vim.fn["vimtex#syntax#in_comment"]() == 1
 end
 
 -- document class
-M.in_beamer = function()
+function M.in_beamer()
 	return vim.b.vimtex["documentclass"] == "beamer"
 end
 
@@ -29,19 +30,19 @@ local function env(name)
 	return (is_inside[1] > 0 and is_inside[2] > 0)
 end
 
-M.in_preamble = function()
+function M.in_preamble()
 	return not env("document")
 end
 
-M.in_tikz = function()
+function M.in_tikz()
 	return env("tikzpicture")
 end
 
-M.in_bullets = function()
+function M.in_bullets()
 	return env("itemize") or env("enumerate")
 end
 
-M.in_align = function()
+function M.in_align()
 	return env("align") or env("align*") or env("aligned")
 end
 

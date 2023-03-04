@@ -26,7 +26,7 @@ local function minted()
 end
 
 local function mintedCpp()
-    return vim.fn['vimtex#syntax#in']("texMintedZoneCpp") == 1
+	return vim.fn["vimtex#syntax#in"]("texMintedZoneCpp") == 1
 end
 
 local cppfile = make_condition(cpp)

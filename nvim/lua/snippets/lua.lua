@@ -6,7 +6,7 @@
 local autosnippet = ls.extend_decorator.apply(s, { snippetType = "autosnippet" })
 
 --[
--- dynamic setup 
+-- dynamic setup
 --]
 
 return {
@@ -77,7 +77,10 @@ return {
 		)
 	),
 	-- add snippet conditions
-	autosnippet("scond", fmt([[{ condition = <>, show_condition = <> }]], { i(1, "math"), rep(1) }, { delimiters = "<>" })),
+	autosnippet(
+		"scond",
+		fmt([[{ condition = <>, show_condition = <> }]], { i(1, "math"), rep(1) }, { delimiters = "<>" })
+	),
 	-- special stuff - snippet regex, hide, switch priority
 	autosnippet("sreg", { t("regTrig = true, hidden = true") }),
 	autosnippet(
