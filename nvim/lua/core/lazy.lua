@@ -37,6 +37,12 @@ require("lazy").setup({
 	{
 		"kylechui/nvim-surround",
 	},
+    {
+        "numToStr/Comment.nvim"
+    },
+    {
+        "JoosepAlviste/nvim-ts-context-commentstring"
+    },
 
 	-- lsp
 	{
@@ -116,9 +122,7 @@ require("lazy").setup({
 		dependencies = "neovim/nvim-lspconfig",
 	},
     {
-        'glepnir/dashboard-nvim',
-        event = 'VimEnter',
-        dependencies = {'nvim-tree/nvim-web-devicons'},
+        'goolord/alpha-nvim',
     },
 
     -- tex / markdown

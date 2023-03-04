@@ -49,6 +49,7 @@ keymap("n", "<C-d>", "<C-d>zz")
 keymap("n", "<C-u>", "<C-u>zz")
 keymap("n", "n", "nzzzv")
 keymap("n", "N", "Nzzzv")
+keymap("n", "zx", ":w<CR>", opts) -- save
 keymap("n", "zq", ":q!<CR>", opts) -- saven't
 keymap("n", "<leader>h", "<cmd>nohlsearch<CR>", opts) -- nohl
 keymap("v", "p", '"_dP', opts) -- paste
