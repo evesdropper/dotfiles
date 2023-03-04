@@ -29,15 +29,15 @@ local function env(name)
 	return (is_inside[1] > 0 and is_inside[2] > 0)
 end
 
-M.preamble = function()
+M.in_preamble = function()
 	return not env("document")
 end
 
-M.tikz = function()
+M.in_tikz = function()
 	return env("tikzpicture")
 end
 
-M.bp = function()
+M.in_bullets = function()
 	return env("itemize") or env("enumerate")
 end
 

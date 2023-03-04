@@ -77,9 +77,9 @@ return {
 		)
 	),
 	-- add snippet conditions
-	autosnippet("scond", fmt([[{ condition=<>, show_condition=<> }]], { i(1, "math"), rep(1) }, { delimiters = "<>" })),
+	autosnippet("scond", fmt([[{ condition = <>, show_condition = <> }]], { i(1, "math"), rep(1) }, { delimiters = "<>" })),
 	-- special stuff - snippet regex, hide, switch priority
-	autosnippet("sreg", { t("regTrig=true, hidden=true") }),
+	autosnippet("sreg", { t("regTrig = true, hidden = true") }),
 	autosnippet(
 		{ trig = "sprio", name = "snip priority", dscr = "Autosnippet to set snippet priority" },
 		fmt(
@@ -89,7 +89,7 @@ return {
 			{ delimiters = "<>" }
 		)
 	),
-	autosnippet("shide", { t("hidden=true") }),
+	autosnippet("shide", { t("hidden = true") }),
 	-- add nvim keybinds
 	s(
 		{ trig = "nkey", name = "nvim keybinds", dscr = "add a nvim keybinds" },

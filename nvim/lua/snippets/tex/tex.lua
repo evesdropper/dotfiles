@@ -7,9 +7,14 @@
 --[
 -- Setup: LuaSnip imports, define conditions/additional functions for function/dynamic nodes.
 --]
-local postfix = require("luasnip.extras.postfix").postfix
 local line_begin = require("luasnip.extras.conditions.expand").line_begin
 local autosnippet = ls.extend_decorator.apply(s, { snippetType = "autosnippet" })
+local postfix = require("luasnip.extras.postfix").postfix
+local tex = require("snippets.tex.utils").conditions -- conditions 
+local make_condition = require("luasnip.extras.conditions").make_condition
+
+-- chained conditions 
+local in_preamble = make_condition(tex.in_preamble)
 
 -- condition envs
 -- global p! functions from UltiSnips
@@ -254,10 +259,8 @@ local M = {
 	--[
 	-- Templates: Stuff for lecture notes, homeworks, and draft documents
 	--]
-	s(
-		{ trig = "texdoc", name = "new tex doc", dscr = "Create a general new tex document" },
-		fmt(
-			[[ 
+	s({ trig = "texdoc", name = "new tex doc", dscr = "Create a general new tex document" },
+	fmta([[ 
     \documentclass{article}
     \usepackage{iftex}
     \ifluatex
@@ -296,14 +299,11 @@ local M = {
     <>
     \end{document}
     ]],
-			{ i(3), i(2), i(7), i(1), rep(2), rep(3), i(4), i(5), rep(5), i(6), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ i(3), i(2), i(7), i(1), rep(2), rep(3), i(4), i(5), rep(5), i(6), i(0) }),
+    { condition = tex.in_preamble, show_condition = tex.in_preamble }
 	),
-	s(
-		{ trig = "hwtex", name = "texdoc for hw", dscr = "tex template for my homeworks" },
-		fmt(
-			[[ 
+	s({ trig = "hwtex", name = "texdoc for hw", dscr = "tex template for my homeworks" },
+	fmta([[ 
     \documentclass{article}
     \usepackage{iftex}
     \ifluatex
@@ -334,14 +334,10 @@ local M = {
     <>
     \end{document}
     ]],
-			{ t("Homework"), i(1), i(2), i(3), rep(1), rep(2), t(os.date("%d-%m-%Y")), rep(2), rep(1), i(0) },
-			{ delimiters = "<>" }
-		)
-	),
-	s(
-		{ trig = "texbook", name = "tex book", dscr = "make a new tex book", hidden = true },
-		fmt(
-			[[
+	{ t("Homework"), i(1), i(2), i(3), rep(1), rep(2), t(os.date("%d-%m-%Y")), rep(2), rep(1), i(0) }),
+	{ condition = tex.in_preamble, show_condition = tex.in_preamble }),
+	s({ trig = "texbook", name = "tex book", dscr = "make a new tex book", hidden = true },
+	fmta([[
     \documentclass[twoside]{book}
     \usepackage[utf8]{inputenc}
     \usepackage{makeidx}
@@ -353,38 +349,31 @@ local M = {
     <>
     \end{document}
     ]],
-			{ i(1) },
-			{ delimiters = "<>" }
-		)
-	),
-	s(
-		{ trig = "draft", name = "draft", dscr = "draft", hidden = true },
-		fmt(
-			[[ 
+	{ i(1) }),
+	{ condition = tex.in_preamble, show_condition = tex.in_preamble }),
+	s({ trig = "draft", name = "draft", dscr = "draft", hidden = true },
+	fmta([[ 
     \documentclass{article}
     \usepackage{random}
     \begin{document}
     <>
     \end{document}
     ]],
-			{ i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = line_begin, show_condition = line_begin }
+	{ i(0) }),
+	{ condition = in_preamble * line_begin, show_condition = in_preamble * line_begin }
 	),
-	s(
-		{ trig = "lectex", name = "lecture template", dscr = "lecture template" },
-		fmt(
-			[[
-        \documentclass[<>]{subfiles}
-        \begin{document}
-        \lecture[<>]{<>}
-        <>
-        \end{document}
-        ]],
-			{ i(1, "./master.tex"), t(os.date("%Y-%m-%d")), i(2), i(0) },
-			{ delimiters = "<>" }
-		)
+	s({ trig = "sftex", name = "subfile", dscr = "subfile template" },
+	fmta([[
+    \documentclass[<>]{subfiles}
+    \begin{document}
+    <>
+    <>
+    \end{document}
+    ]],
+	{ i(1, "./master.tex"), c(2, {i(1), fmta([[
+    \lecture[<>]{<>}
+    ]], {t(os.date("%d-%m-%Y")), i(1)})}), i(0) }),
+    { condition = in_preamble * line_begin, show_condition = in_preamble * line_begin }
 	),
 
 	-- [
@@ -1065,6 +1054,8 @@ local M = {
 	),
 	autosnippet("lb", { t("\\\\") }, { condition = math }),
 	autosnippet("tcbl", { t("\\tcbline") }),
+    autosnippet("condtest", {t('text')},
+    { condition=tex.in_math, show_condition=tex.in_math }),
 }
 -- 	{
 -- 		-- hats and bars (postfixes)
@@ -1602,22 +1593,5 @@ for k, v in pairs(single_command_math_specs) do
 	)
 end
 vim.list_extend(M, single_command_math_snippets)
-
-local dummy_test = require("snippets.tex.utils").scaffolding.dummy_test
-
--- local dummy_test_specs = {
---     "dummy1", "dummy2", "dummy3"
--- }
--- local dummy_snippet_body = {
---     t("this is a dummy test snippet"),
---     i(1), c(2, {t("more text"), i(1)})
---
--- }
---
--- local dummy_test_snippets = {}
--- for _, v in ipairs(dummy_test_specs) do
--- 	table.insert(dummy_test_snippets, dummy_test({ trig = v }, dummy_snippet_body, { condition = in_text }))
--- end
--- vim.list_extend(M, dummy_test_snippets)
 
 return M
