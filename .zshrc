@@ -85,6 +85,7 @@ alias ccdir='cd ~/Documents/university/bachelor-2/current-course/'
 alias books='cd ~/Downloads/Documents/books/'
 alias math='cd ~/Documents/university/etc/math/'
 alias texbook="cd ~/Documents/etc/tex/"
+alias pwv3="cd ~/Documents/code/pwv3/"
 
 # git commands
 alias g='git'

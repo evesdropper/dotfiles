@@ -1,4 +1,4 @@
-#files: 966	version: 5.9
+#files: 981	version: 5.9
 
 _comps=(
 '-' '_precommand'
@@ -95,6 +95,7 @@ _comps=(
 'VBoxHeadless' '_virtualbox'
 'VBoxManage' '_virtualbox'
 '_arguments' '__arguments'
+'_helix' '_helix'
 'a2ps' '_a2ps'
 'aaaa' '_hosts'
 'aap' '_aap'
@@ -252,6 +253,7 @@ _comps=(
 'chattr' '_chattr'
 'chcon' '_chcon'
 'chdir' '_cd'
+'checkupdates' '_checkupdates'
 'chfn' '_users'
 'chgrp' '_chown'
 'chimera' '_webbrowser'
@@ -282,7 +284,7 @@ _comps=(
 'cmp' '_cmp'
 'co' '_rcs'
 'code' '_code'
-'codium' '_codium'
+'code-oss' '_code-oss'
 'coffee' '_coffee'
 'column' '_column'
 'comb' '_sccs'
@@ -713,6 +715,7 @@ _comps=(
 'hd' '_hexdump'
 'head' '_head'
 'heat' '_openstack'
+'helix' '_helix'
 'hello' '_hello'
 'help' '_sccs'
 'hexdump' '_hexdump'
@@ -727,6 +730,7 @@ _comps=(
 'hotjava' '_webbrowser'
 'htop' '_htop'
 'http' '_httpie'
+'hugo' '_hugo'
 'ibus' '_ibus'
 'iceweasel' '_mozilla'
 'icombine' '_ispell'
@@ -805,6 +809,7 @@ _comps=(
 'konqueror' '_webbrowser'
 'kpartx' '_kpartx'
 'kpdf' '_pdf'
+'kscreen-doctor' '_kscreen-doctor'
 'ksh' '_sh'
 'ksh88' '_sh'
 'ksh93' '_sh'
@@ -1054,14 +1059,22 @@ _comps=(
 'p4' '_perforce'
 'p4d' '_perforce'
 'pacat' '_pulseaudio'
+'paccache' '_paccache'
+'pacdiff' '_pacdiff'
 'pack' '_pack'
 'packf' '_mh'
+'paclist' '_paclist'
+'paclog-pkglist' '_paclog-pkglist'
 'pacman' '_pacman'
 'pacman-conf' '_pacman'
 'pacman-key' '_pacman'
 'pacman.static' '_pacman'
 'pacmd' '_pulseaudio'
+'pacscripts' '_pacscripts'
+'pacsearch' '_pacsearch'
+'pacsort' '_pacsort'
 'pactl' '_pulseaudio'
+'pactree' '_pactree'
 'padsp' '_pulseaudio'
 'pandoc' '_pandoc'
 'paplay' '_pulseaudio'
@@ -1207,6 +1220,7 @@ _comps=(
 'rails' '_rails'
 'rake' '_rake'
 'ralio' '_ralio'
+'rankmirrors' '_rankmirrors'
 'ranlib' '_ranlib'
 'rar' '_rar'
 'rc' '_sh'
@@ -1532,6 +1546,7 @@ _comps=(
 'unwrapdiff' '_patchutils'
 'unxz' '_xz'
 'unzip' '_zip'
+'updpkgsums' '_updpkgsums'
 'uptime' '_uptime'
 'urxvt' '_urxvt'
 'urxvt256c' '_urxvt'
@@ -1843,40 +1858,43 @@ autoload -Uz _zap _afew _android _archlinux-java _artisan \
             _atach _bat _bitcoin-cli _bluetoothctl _bootctl \
             _bower _bundle _busctl _bwrap _caffeinate \
             _calibre _cap _cask _ccache _cf \
-            _choc _chromium _clight _cmake _codium \
-            _coffee _composer _conan _concourse _console \
-            _coredumpctl _cppcheck _curl _dad _debuild \
-            _dget _dhcpcd _diana _docpad _drush \
-            _ecdsautil _email-notmuch _emulator _envdir _exportfs \
-            _fab _fail2ban-client _fd _ffind _fleetctl \
-            _flutter _force _fwupdmgr _gas _ghc \
-            _gist _git-flow _git-journal _git-pulls _git-revise \
-            _git-wtf _glances _golang _google _gpgconf \
-            _gtk-launch _hello _hledger _homestead _hostnamectl \
-            _httpie _ibus _include-what-you-use _inxi _jmeter \
-            _jmeter-plugins _jonas _journalctl _jrnl _kak \
-            _kernel-install _kitchen _knife _language_codes _libinput \
+            _checkupdates _choc _chromium _clight _cmake \
+            _code _code-oss _coffee _composer _conan \
+            _concourse _console _coredumpctl _cppcheck _curl \
+            _dad _debuild _dget _dhcpcd _diana \
+            _docpad _drush _ecdsautil _email-notmuch _emulator \
+            _envdir _exportfs _fab _fail2ban-client _fd \
+            _ffind _fleetctl _flutter _force _fwupdmgr \
+            _gas _ghc _gist _git-flow _git-journal \
+            _git-pulls _git-revise _git-wtf _glances _golang \
+            _google _gpgconf _gtk-launch _helix _hello \
+            _hledger _homestead _hostnamectl _httpie _hugo \
+            _ibus _include-what-you-use _inxi _jmeter _jmeter-plugins \
+            _jonas _journalctl _jrnl _kak _kernel-install \
+            _kitchen _knife _kscreen-doctor _language_codes _libinput \
             _lilypond _localectl _loginctl _lsd _luarocks \
             _luarocks-admin _lunchy _machinectl _mc _meson \
             _middleman _mina _mix _mkinitcpio _mpv \
             _mssh _mussh _mvn _nano _nanoc \
             _networkctl _nftables _ninja _node _notmuch \
             _nvm _oomctl _openssl _openvpn3 _optirun \
-            _opustools _pacman _patool _perf _periscope \
-            _pgsql_utils _phing _pixz _pkcon _play \
-            _playerctl _pm2 _port _procs _protoc \
-            _pulseaudio _pygmentize _qmk _rails _ralio \
-            _redis-cli _resolvectl _rfkill _rg _rkt \
-            _rmlint _rslsync _rspec _rsvm _rubocop \
-            _sbt _scala _scrub _sd_hosts_or_user_at_host _sd_machines \
-            _sd_outputmodes _sd_unit_files _sdd _setcap _setup.py \
-            _sfdx _shellcheck _showoff _sqv _srm \
-            _stack _subl _subliminal _supervisorctl _svm \
-            _sway _swayidle _swaylock _swaymsg _systemctl \
-            _systemd _systemd-analyze _systemd-delta _systemd-inhibit _systemd-nspawn \
-            _systemd-path _systemd-run _systemd-tmpfiles _tarsnap _teamocil \
-            _thor _timedatectl _tmuxinator _tmuxp _tox \
-            _udevadm _udisksctl _ufw _vifm _virtualbox \
+            _opustools _paccache _pacdiff _paclist _paclog-pkglist \
+            _pacman _pacscripts _pacsearch _pacsort _pactree \
+            _patool _perf _periscope _pgsql_utils _phing \
+            _pixz _pkcon _play _playerctl _pm2 \
+            _port _procs _protoc _pulseaudio _pygmentize \
+            _qmk _rails _ralio _rankmirrors _redis-cli \
+            _resolvectl _rfkill _rg _rkt _rmlint \
+            _rslsync _rspec _rsvm _rubocop _sbt \
+            _scala _scrub _sd_hosts_or_user_at_host _sd_machines _sd_outputmodes \
+            _sd_unit_files _sdd _setcap _setup.py _sfdx \
+            _shellcheck _showoff _sqv _srm _stack \
+            _subl _subliminal _supervisorctl _svm _sway \
+            _swayidle _swaylock _swaymsg _systemctl _systemd \
+            _systemd-analyze _systemd-delta _systemd-inhibit _systemd-nspawn _systemd-path \
+            _systemd-run _systemd-tmpfiles _tarsnap _teamocil _thor \
+            _timedatectl _tmuxinator _tmuxp _tox _udevadm \
+            _udisksctl _ufw _updpkgsums _vifm _virtualbox \
             _vnstat _wemux _wg-quick _wl-copy _wl-paste \
             _xinput _xsel _yaourt _yarn _yay \
             _zathura _zcash-cli _cdr _all_labels _all_matches \
