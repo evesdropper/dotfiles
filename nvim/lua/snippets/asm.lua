@@ -15,12 +15,11 @@ local load_save_registers = function (_, snip, _, user_args)
     end
     local nodes = {}
     for j = 1, num_registers do
-        -- table.insert(nodes, fmta([[
-        -- <> s<> <>(sp)
-        -- ]],
-        -- { t(command), t(tostring(j-1)), t(tostring((j-1) * 4))}
-        -- ))
-        table.insert(nodes, t(command .. " " .. register_type .. tostring(j-1) .. ", " .. tostring((j-1) * 4) .. "(sp)"))
+        vim.list_extend(nodes, fmta([[
+        <> s<> <>(sp)
+        ]],
+        { t(command), t(tostring(j-1)), t(tostring((j-1) * 4))}
+        ))
         table.insert(nodes, t({"", ""}))
     end
     table.insert(nodes, t(command .. " ra, " .. tostring((num_registers) * 4) .. "(sp)"))
@@ -46,7 +45,7 @@ return {
     { d(1, load_save_registers, {}, { user_args = { "load" } }),
     f(function (_, snip)
         return tostring(tonumber(snip.captures[1], 16) * 4 + 4)
-    end),  }
+    end)}
     )),
 
 }
