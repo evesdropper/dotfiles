@@ -115,4 +115,5 @@ return {
 			{ delimiters = "<>" }
 		)
 	),
+    -- postfix(".cc", {l(l.POSTFIX_MATCH:gsub("(%u)", "_%1"):lower())})
 }
