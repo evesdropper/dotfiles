@@ -59,6 +59,15 @@ local brackets = {
 	p = { "(", ")" },
 }
 
+local reference_snippet_table = {
+    a = "auto",
+    c = "c",
+    C = "C",
+    e = "eq",
+    r = ""
+}
+
+
 -- util
 local function isempty(s) --util
 	return s == nil or s == ""
@@ -252,6 +261,26 @@ local get_capture = function(_, snip, user_arg1, user_arg2, user_arg3)
 	return snip.captures[idx]
 end
 
+-- dynamic postfix
+local dynamic_postfix = function(_, parent, _, user_arg1, user_arg2)
+    local capture = parent.snippet.env.POSTFIX_MATCH
+    if #capture > 0 then
+        return sn(nil, fmta([[
+        <><><><>
+        ]],
+        {t(user_arg1), t(capture), t(user_arg2), i(0)}))
+    else
+        local visual_placeholder = ""
+        if #parent.snippet.env.SELECT_RAW > 0 then
+            visual_placeholder = parent.snippet.env.SELECT_RAW
+        end
+        return sn(nil, fmta([[
+        <><><><>
+        ]],
+        {t(user_arg1), i(1, visual_placeholder), t(user_arg2), i(0)}))
+    end
+end
+
 --[
 -- Snippets go here
 --]
@@ -361,7 +390,7 @@ local M = {
     \end{document}
     ]],
 	{ i(0) }),
-	{ condition = in_preamble * line_begin, show_condition = in_preamble * line_begin }
+	{ condition = tex.in_preamble, show_condition = tex.in_preamble }
 	),
 	s({ trig = "sftex", name = "subfile", dscr = "subfile template" },
 	fmta([[
@@ -374,7 +403,7 @@ local M = {
 	{ i(1, "./master.tex"), c(2, {i(1), fmta([[
     \lecture[<>]{<>}
     ]], {t(os.date("%d-%m-%Y")), i(1)})}), i(0) }),
-    { condition = in_preamble * line_begin, show_condition = in_preamble * line_begin }
+    { condition = tex.in_preamble, show_condition = tex.in_preamble }
 	),
 
 	-- [
@@ -564,27 +593,22 @@ local M = {
 	),
 
 	-- Book Club
-	-- references
-	autosnippet(
-		{ trig = "alab", name = "labels", dscr = "add a label" },
-		fmt(
-			[[
-    \label{<>:<>}<>
+    autosnippet({ trig='alab', name='label', dscr='add a label'},
+    fmta([[
+    \label{<>:<>}
     ]],
-			{ i(1), i(2), i(0) },
-			{ delimiters = "<>" }
-		)
-	),
-	autosnippet(
-		{ trig = "aref", name = "references", dscr = "add a reference" },
-		fmt(
-			[[
-    \Cref{<>:<>}<>
+    { i(1), i(0) }),
+    { condition = tex.in_text, show_condition = tex.in_text }),
+
+    autosnippet({ trig='([acCer])ref', name='(acC|eq)?ref', dscr='add a reference (with autoref, cref, eqref)', regTrig = true, hidden = true},
+    fmta([[
+    \<>ref{<>:<>}
     ]],
-			{ i(1), i(2), i(0) },
-			{ delimiters = "<>" }
-		)
-	),
+    { f(function (_, snip)
+        return reference_snippet_table[snip.captures[1]]
+    end),
+    i(1), i(0) }),
+    { condition = tex.in_text, show_condition = tex.in_text }),
 
 	--[
 	-- Environments
@@ -686,38 +710,27 @@ local M = {
 			{ delimiters = "<>" }
 		)
 	),
-	s(
-		{
-			trig = "([bBpvV])mat(%d+)x(%d+)([ar])",
-			regTrig = true,
-			name = "matrix",
-			dscr = "matrix trigger lets go",
-			hidden = true,
-		},
-		fmt(
-			[[
+    s({trig = "([bBpvV])mat(%d+)x(%d+)([ar])", name = "[bBpvV]matrix", dscr = "matrices", regTrig = true, hidden = true},
+	fmta([[
     \begin{<>}<>
     <>
     \end{<>}]],
-			{
-				f(function(_, snip)
-					return snip.captures[1] .. "matrix"
-				end),
-				f(function(_, snip)
-					if snip.captures[4] == "a" then
-						out = string.rep("c", tonumber(snip.captures[3]) - 1)
-						return "[" .. out .. "|c]"
-					end
-					return ""
-				end),
-				d(1, mat),
-				f(function(_, snip)
-					return snip.captures[1] .. "matrix"
-				end),
-			},
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
+	{f(function(_, snip)
+        return snip.captures[1] .. "matrix"
+    end),
+    f(function(_, snip)
+        if snip.captures[4] == "a" then
+            out = string.rep("c", tonumber(snip.captures[3]) - 1)
+            return "[" .. out .. "|c]"
+        end
+        return ""
+    end),
+    d(1, mat),
+    f(function(_, snip)
+        return snip.captures[1] .. "matrix"
+    end)
+    }),
+	{ condition = tex.in_math, show_condition = tex.in_math }
 	),
 
 	-- etc
@@ -737,75 +750,57 @@ local M = {
 	-- Math Snippets - Environments/Setup Commands
 	--]
 
-	-- entering math mode
-	autosnippet(
-		{ trig = "mk", name = "math", dscr = "inline math", regTrig = true, hidden = true, wordTrig = false },
-		fmt([[$<>$<>]], { i(1), i(0) }, { delimiters = "<>" })
+    -- Math modes
+    autosnippet({ trig = "mk", name = "$..$", dscr = "inline math" },
+	fmta([[
+    $<>$<>
+    ]],
+    { i(1), i(0) })
 	),
-	autosnippet(
-		{ trig = "dm", name = "math", dscr = "display math", regTrig = true, hidden = true, wordTrig = false },
-		fmt(
-			[[ 
+    autosnippet({ trig = "dm", name = "\\[...\\]", dscr = "display math" },
+	fmta([[ 
     \[ 
     <>
     .\]
     <>]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = line_begin, show_condition = line_begin }
+	{ i(1), i(0) }),
+    { condition = line_begin, show_condition = line_begin }
 	),
-	autosnippet(
-		{ trig = "ali", name = "align", dscr = "align math" },
-		fmt(
-			[[ 
+    autosnippet({ trig = "ali", name = "align(|*|ed)", dscr = "align math" },
+	fmta([[ 
     \begin{align<>}
     <>
     .\end{align<>}
     ]],
-			{ i(1, "*"), i(2), rep(1) },
-			{ delimiters = "<>" }
-		),
-		{ condition = line_begin, show_condition = line_begin }
+    { c(1, {t("*"), t(""), t("ed")}), i(2), rep(1) }), -- in order of least-most used
+	{ condition = line_begin, show_condition = line_begin }
 	),
-	autosnippet(
-		{ trig = "gat", name = "gather", dscr = "gather math" },
-		fmt(
-			[[ 
+	autosnippet({ trig = "gat", name = "gather(|*|ed)", dscr = "gather math" },
+	fmta([[ 
     \begin{gather<>}
     <>
     .\end{gather<>}
     ]],
-			{ i(1, "*"), i(2), rep(1) },
-			{ delimiters = "<>" }
-		),
-		{ condition = line_begin, show_condition = line_begin }
+	{ c(1, {t("*"), t(""), t("ed")}), i(2), rep(1) }),
+	{ condition = line_begin, show_condition = line_begin }
 	),
-	autosnippet(
-		{ trig = "eqn", name = "equation", dscr = "equation math" },
-		fmt(
-			[[
+	autosnippet({ trig = "eqn", name = "equation(|*)", dscr = "equation math" },
+	fmta([[
     \begin{equation<>}
     <>
     .\end{equation<>}
     ]],
-			{ i(1, "*"), i(2), rep(1) },
-			{ delimiters = "<>" }
-		),
-		{ condition = line_begin, show_condition = line_begin }
+	{ c(1, {t("*"), t("")}), i(2), rep(1) }),
+	{ condition = line_begin, show_condition = line_begin }
 	),
-	autosnippet(
-		{ trig = "(%d?)cases", name = "cases", dscr = "cases", regTrig = true, hidden = true },
-		fmt(
-			[[
+    autosnippet({ trig = "(%d?)cases", name = "cases", dscr = "cases", regTrig = true, hidden = true },
+    fmta([[
     \begin{cases}
     <>
     .\end{cases}
     ]],
-			{ d(1, case) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
+	{ d(1, case) }),
+    { condition = tex.in_math, show_condition = tex.in_math }
 	),
 
 	-- delimiters
@@ -860,7 +855,12 @@ local M = {
 		),
 		{ condition = math, show_condition = math }
 	),
-	autosnippet("==", { t("&="), i(1), t("\\\\") }, { condition = math }),
+    autosnippet({ trig='==', name='&= align', dscr='&= align'},
+    fmta([[
+    &<> <> \\
+    ]],
+    { c(1, {t("="), t("\\leq"), i(1)}), i(2) }
+    ), { condition = tex.in_align, show_condition = tex.in_align }),
 	autosnippet({ trig = "!!+", priority = 500 }, { t("\\bigoplus") }, { condition = math, show_condition = math }),
 	autosnippet({ trig = "!!*", priority = 500 }, { t("\\bigotimes") }, { condition = math, show_condition = math }),
 	autosnippet({ trig = "Oo", priority = 50 }, { t("\\circ") }, { condition = math, show_condition = math }),
@@ -913,24 +913,24 @@ local M = {
     ]],
 			{
 				c(1, { t(""), t("sup"), t("inf") }),
-				c(2, { t(""), fmta([[_{<> to <>}]], { i(1, "n"), i(2, "\\infty") }) }),
+				c(2, { t(""), fmta([[_{<> \to <>}]], { i(1, "n"), i(2, "\\infty") }) }),
 				i(0),
 			},
 			{ delimiters = "<>" }
 		),
 		{ condition = math, show_condition = math }
 	),
-	autosnippet(
-		{ trig = "part", name = "partial derivative", dscr = "partial derivative" },
-		fmt(
-			[[ 
-    \frac{\ddp <>}{\ddp <>}<>
-    ]],
-			{ i(1, "V"), i(2, "x"), i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
-	),
+	-- autosnippet(
+	-- 	{ trig = "part", name = "partial derivative", dscr = "partial derivative" },
+	-- 	fmt(
+	-- 		[[ 
+ --    \frac{\ddp <>}{\ddp <>}<>
+ --    ]],
+	-- 		{ i(1, "V"), i(2, "x"), i(0) },
+	-- 		{ delimiters = "<>" }
+	-- 	),
+	-- 	{ condition = math, show_condition = math }
+	-- ),
 	autosnippet(
 		{ trig = "dint", name = "integrals", dscr = "integrals but cooler" },
 		fmt(
@@ -1015,9 +1015,9 @@ local M = {
 		{ trig = "nnn", name = "bigcap", dscr = "bigcaps" },
 		fmt(
 			[[
-    \bigcap_{<>}^{<>} <>
+    \bigcap<> <>
     ]],
-			{ i(1, "i=0"), i(2, "\\infty"), i(0) },
+			{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) },
 			{ delimiters = "<>" }
 		),
 		{ condition = math, show_condition = math }
@@ -1026,9 +1026,9 @@ local M = {
 		{ trig = "uuu", name = "bigcup", dscr = "bigcaps" },
 		fmt(
 			[[
-    \bigcup_{<>}^{<>} <>
+    \bigcup<> <>
     ]],
-			{ i(1, "i=0"), i(2, "\\infty"), i(0) },
+			{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) },
 			{ delimiters = "<>" }
 		),
 		{ condition = math, show_condition = math }
@@ -1049,6 +1049,11 @@ local M = {
 	),
 	autosnippet("lb", { t("\\\\") }, { condition = math }),
 	autosnippet("tcbl", { t("\\tcbline") }),
+    postfix({ trig="vec", snippetType = "autosnippet"},
+    {d(1, dynamic_postfix, {}, { user_args = {"\\vec{", "}"} })},
+    { condition = tex.in_math, show_condition = tex.in_math }
+    ),
+
 }
 -- 	{
 -- 		-- hats and bars (postfixes)
@@ -1064,7 +1069,6 @@ local M = {
 -- 		postfix("vr", { l("$" .. l.POSTFIX_MATCH .. "$") }),
 -- 		postfix("mbb", { l("\\mathbb{" .. l.POSTFIX_MATCH .. "}") }, { condition = math }),
 -- 		postfix("vc", { l("\\mintinline{text}{" .. l.POSTFIX_MATCH .. "}") }),
--- 		postfix("tld", { l("\\tilde{" .. l.POSTFIX_MATCH .. "}") }, { condition=math, show_condition=math }),
 -- 		-- etc
 -- 		-- a living nightmare worth of greek symbols
 -- 		-- stuff i need for m110
@@ -1443,27 +1447,6 @@ local single_command_math_specs = {
 		},
 		command = [[\underline]],
 	},
-    mbb = {
-        context = {
-            name = "mathbb",
-            dscr =  "math blackboard bold",
-        },
-        command = [[\mathbb]],
-    },
-    mcal = {
-        context = {
-            name = "mathcal",
-            dscr =  "math calligraphic",
-        },
-        command = [[\mathcal]],
-    },
-    mscr = {
-        context = {
-            name = "mathscr",
-            dscr =  "math script",
-        },
-        command = [[\mathscr]],
-    },
 	floor = {
 		context = {
 			name = "floor",
@@ -1544,35 +1527,6 @@ local single_command_math_specs = {
 		},
 		command = [[\vinner]],
 	},
-	hat = {
-		context = {
-			name = "hat",
-			dscr = "hat",
-		},
-		command = [[\hat]],
-	},
-	bar = {
-		context = {
-			name = "bar",
-			dscr = "bar (overline)",
-		},
-		command = [[\overline]],
-	},
-	tld = {
-		context = {
-			name = "tilde",
-            priority = 500,
-			dscr = "tilde",
-		},
-		command = [[\tilde]],
-	},
-	xtld = {
-		context = {
-			name = "xtilde",
-			dscr = "tilde (wide)",
-		},
-		command = [[\xtilde]],
-	},
 }
 
 local single_command_math_snippets = {}
@@ -1588,5 +1542,123 @@ for k, v in pairs(single_command_math_specs) do
 	)
 end
 vim.list_extend(M, single_command_math_snippets)
+
+local postfix_snippet = require("snippets.tex.utils").scaffolding.postfix_snippet
+local postfix_math_specs = {
+    [',.'] = {
+        context = {
+            name = "vec",
+            dscr = "vec"
+        },
+        command = {
+            pre = [[\vec{]],
+            post = [[}]]
+        },
+    },
+    mbb = {
+        context = {
+            name = "mathbb",
+            dscr =  "math blackboard bold",
+        },
+        command = {
+            pre = [[\mathbb{]],
+            post = [[}]],
+        }
+    },
+    mcal = {
+        context = {
+            name = "mathcal",
+            dscr =  "math calligraphic",
+        },
+        command = {
+            pre = [[\mathcal{]],
+            post = [[}]],
+        }
+    },
+    mscr = {
+        context = {
+            name = "mathscr",
+            dscr =  "math script",
+        },
+        command = {
+            pre = [[\mathscr{]],
+            post = [[}]],
+        },
+    hat = {
+		context = {
+			name = "hat",
+			dscr = "hat",
+		},
+		command = {
+            pre = [[\hat{]],
+            post = [[}]],
+        }
+	},
+	bar = {
+		context = {
+			name = "bar",
+			dscr = "bar (overline)",
+		},
+		command = {
+            pre = [[\overline{]],
+            post = [[}]]
+        }
+	},
+    xbr = {
+        context = {
+            name = "bar",
+            dscr = "bar (xoverline)",
+        },
+		command = {
+            pre = [[\xoverline{]],
+            post = [[}]]
+        }
+    },
+	tld = {
+		context = {
+			name = "tilde",
+            priority = 500,
+			dscr = "tilde",
+		},
+		command = {
+            pre = [[\tilde{]],
+            post = [[}]]
+        }
+	},
+	xtld = {
+		context = {
+			name = "xtilde",
+			dscr = "tilde (wide)",
+		},
+		command = {
+            pre = [[\xtilde{]],
+            post = [[}]]
+        }
+	},
+    ucat = {
+        context = {
+            name = "ucat",
+            dscr = "ucat"
+        },
+		command = {
+            pre = [[\ucat{]],
+            post = [[}]]
+        }
+    }
+    },
+}
+
+local postfix_math_snippets = {}
+for k, v in pairs(postfix_math_specs) do
+table.insert(
+    postfix_math_snippets,
+    postfix_snippet(
+        vim.tbl_deep_extend("keep", { trig = k, snippetType = "autosnippet" }, v.context),
+        v.command,
+        { condition = tex.in_math }
+    )
+)
+end
+vim.list_extend(M, postfix_math_snippets)
 
 return M

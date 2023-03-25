@@ -16,6 +16,7 @@ local rep = extras.rep
 local fmt = require("luasnip.extras.fmt").fmt
 local fmta = require("luasnip.extras.fmt").fmta
 local autosnippet = ls.extend_decorator.apply(s, { snippetType = "autosnippet" })
+local postfix = require("luasnip.extras.postfix").postfix
 
 -- brackets
 local brackets = {
@@ -24,6 +25,25 @@ local brackets = {
 	m = { "|", "|" },
 	p = { "(", ")" },
 }
+
+local dynamic_postfix = function(_, parent, _, user_arg1, user_arg2)
+    local capture = parent.snippet.env.POSTFIX_MATCH
+    if #capture > 0 then
+        return sn(nil, fmta([[
+        <><><><>
+        ]],
+        {t(user_arg1), t(capture), t(user_arg2), i(0)}))
+    else
+        local visual_placeholder = ""
+        if #parent.snippet.env.SELECT_RAW > 0 then
+            visual_placeholder = parent.snippet.env.SELECT_RAW
+        end
+        return sn(nil, fmta([[
+        <><><><>
+        ]],
+        {t(user_arg1), i(1, visual_placeholder), t(user_arg2), i(0)}))
+    end
+end
 
 -- Auto backslash - thanks kunzaatko! (ref: https://github.com/kunzaatko/nvim-dots/blob/trunk/lua/snippets/tex/utils/snippet_templates.lua)
 M.auto_backslash_snippet = function(context, opts)
@@ -167,12 +187,26 @@ M.tcolorbox_snippet = function(context, command, opts)
 	)
 end
 
-M.dummy_test = function(context, snippet, opts)
+M.dummy_test = function(context, snippet, opts, ext)
 	opts = opts or {}
 	if not context.trig then
 		error("context doesn't include a `trig` key which is mandatory", 2)
 	end
 	return s(context, snippet, opts)
+end
+
+M.postfix_snippet = function (context, command, opts)
+    opts = opts or {}
+	if not context.trig then
+		error("context doesn't include a `trig` key which is mandatory", 2)
+	end
+	if not context.trig then
+		error("context doesn't include a `trig` key which is mandatory", 2)
+	end
+	context.dscr = context.dscr
+	context.name = context.name or context.dscr
+    context.docstring = command.pre .. [[(POSTFIX_MATCH|VISUAL|<1>)]] .. command.post
+    return postfix(context, {d(1, dynamic_postfix, {}, { user_args = {command.pre, command.post} })}, opts)
 end
 
 return M

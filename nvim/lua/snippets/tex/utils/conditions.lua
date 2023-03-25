@@ -10,10 +10,6 @@ function M.in_math()
     return vim.api.nvim_eval("vimtex#syntax#in_mathzone()") == 1
 end
 
-function M.in_text()
-	return not math()
-end
-
 -- comment detection
 function M.in_comment()
 	return vim.fn["vimtex#syntax#in_comment"]() == 1
@@ -32,6 +28,10 @@ end
 
 function M.in_preamble()
 	return not env("document")
+end
+
+function M.in_text()
+	return env("document") and not M.in_math()
 end
 
 function M.in_tikz()
