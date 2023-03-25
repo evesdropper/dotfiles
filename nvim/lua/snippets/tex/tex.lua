@@ -1055,26 +1055,7 @@ local M = {
     ),
 
 }
--- 	{
--- 		-- hats and bars (postfixes)
--- 		postfix(
--- 			{ trig = "bar", snippetType = "autosnippet" },
--- 			{ l("\\overline{" .. l.POSTFIX_MATCH .. "}") },
--- 			{ condition = math }
--- 		),
--- 		postfix("hat", { l("\\hat{" .. l.POSTFIX_MATCH .. "}") }, { condition = math }),
--- 		postfix("..", { l("\\" .. l.POSTFIX_MATCH .. " ") }, { condition = math, show_condition = math }),
--- 		postfix({ trig = ",.", priority = 500 }, { l("\\vec{" .. l.POSTFIX_MATCH .. "}") }, { condition = math }),
--- 		postfix(",,.", { l("\\mat{" .. l.POSTFIX_MATCH .. "}") }, { condition = math }),
--- 		postfix("vr", { l("$" .. l.POSTFIX_MATCH .. "$") }),
--- 		postfix("mbb", { l("\\mathbb{" .. l.POSTFIX_MATCH .. "}") }, { condition = math }),
--- 		postfix("vc", { l("\\mintinline{text}{" .. l.POSTFIX_MATCH .. "}") }),
--- 		-- etc
--- 		-- a living nightmare worth of greek symbols
--- 		-- stuff i need for m110
--- }
---
---
+
 
 -- {
 -- Text Mode Scaffolding Snippets
@@ -1543,15 +1524,53 @@ for k, v in pairs(single_command_math_specs) do
 end
 vim.list_extend(M, single_command_math_snippets)
 
+-- postfixes
 local postfix_snippet = require("snippets.tex.utils").scaffolding.postfix_snippet
+
+local postfix_specs = {
+    vc = {
+        context = {
+            name = "mintinline",
+            dscr = "mintinline",
+        },
+        command = {
+            pre = [[\mintinline{text}{]],
+            post = [[}]],
+        }
+    }
+}
+
+local postfix_snippets = {}
+for k, v in pairs(postfix_specs) do
+table.insert(
+    postfix_snippets,
+    postfix_snippet(
+        vim.tbl_deep_extend("keep", { trig = k, snippetType = "autosnippet" }, v.context),
+        v.command,
+        { condition = tex.in_text }
+    )
+)
+end
+vim.list_extend(M, postfix_snippets)
+
 local postfix_math_specs = {
     [',.'] = {
         context = {
             name = "vec",
-            dscr = "vec"
+            dscr = "vector"
         },
         command = {
             pre = [[\vec{]],
+            post = [[}]]
+        },
+    },
+    [',,.'] = {
+        context = {
+            name = "mat",
+            dscr = "matrix"
+        },
+        command = {
+            pre = [[\mat{]],
             post = [[}]]
         },
     },
@@ -1584,6 +1603,7 @@ local postfix_math_specs = {
             pre = [[\mathscr{]],
             post = [[}]],
         },
+    },
     hat = {
 		context = {
 			name = "hat",
@@ -1644,7 +1664,6 @@ local postfix_math_specs = {
             pre = [[\ucat{]],
             post = [[}]]
         }
-    }
     },
 }
 
