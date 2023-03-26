@@ -261,26 +261,6 @@ local get_capture = function(_, snip, user_arg1, user_arg2, user_arg3)
 	return snip.captures[idx]
 end
 
--- dynamic postfix
-local dynamic_postfix = function(_, parent, _, user_arg1, user_arg2)
-    local capture = parent.snippet.env.POSTFIX_MATCH
-    if #capture > 0 then
-        return sn(nil, fmta([[
-        <><><><>
-        ]],
-        {t(user_arg1), t(capture), t(user_arg2), i(0)}))
-    else
-        local visual_placeholder = ""
-        if #parent.snippet.env.SELECT_RAW > 0 then
-            visual_placeholder = parent.snippet.env.SELECT_RAW
-        end
-        return sn(nil, fmta([[
-        <><><><>
-        ]],
-        {t(user_arg1), i(1, visual_placeholder), t(user_arg2), i(0)}))
-    end
-end
-
 --[
 -- Snippets go here
 --]
@@ -597,8 +577,7 @@ local M = {
     fmta([[
     \label{<>:<>}
     ]],
-    { i(1), i(0) }),
-    { condition = tex.in_text, show_condition = tex.in_text }),
+    { i(1), i(0) })),
 
     autosnippet({ trig='([acCer])ref', name='(acC|eq)?ref', dscr='add a reference (with autoref, cref, eqref)', regTrig = true, hidden = true},
     fmta([[
@@ -786,11 +765,11 @@ local M = {
 	),
 	autosnippet({ trig = "eqn", name = "equation(|*)", dscr = "equation math" },
 	fmta([[
-    \begin{equation<>}
+    \begin{equation<>}<>
     <>
     .\end{equation<>}
     ]],
-	{ c(1, {t("*"), t("")}), i(2), rep(1) }),
+	{ c(1, {t("*"), t("")}), c(2, {t(""), fmta([[\tag{<>}<>]], {i(1), i(0)})}), i(3), rep(1) }),
 	{ condition = line_begin, show_condition = line_begin }
 	),
     autosnippet({ trig = "(%d?)cases", name = "cases", dscr = "cases", regTrig = true, hidden = true },
@@ -976,23 +955,31 @@ local M = {
 	),
 	autosnippet(
 		{ trig = "sum", name = "summation", dscr = "summation" },
-		fmt(
+		fmta(
 			[[
     \sum<> <>
     ]],
-            { c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) },
-			{ delimiters = "<>" }
+            { c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }
 		),
 		{ condition = math, show_condition = math }
 	),
 	autosnippet(
 		{ trig = "prod", name = "product", dscr = "summation" },
-		fmt(
+		fmta(
 			[[
-    \prod_{<>}^{<>} <>
+    \prod<> <>
     ]],
-			{ i(1, "i = 0"), i(2, "\\infty"), i(0) },
-			{ delimiters = "<>" }
+			 { c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }
+		),
+		{ condition = math, show_condition = math }
+	),
+	autosnippet(
+		{ trig = "cprod", name = "product", dscr = "summation" },
+		fmta(
+			[[
+    \coprod<> <>
+    ]],
+			 { c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }
 		),
 		{ condition = math, show_condition = math }
 	),
@@ -1049,10 +1036,6 @@ local M = {
 	),
 	autosnippet("lb", { t("\\\\") }, { condition = math }),
 	autosnippet("tcbl", { t("\\tcbline") }),
-    postfix({ trig="vec", snippetType = "autosnippet"},
-    {d(1, dynamic_postfix, {}, { user_args = {"\\vec{", "}"} })},
-    { condition = tex.in_math, show_condition = tex.in_math }
-    ),
 
 }
 
