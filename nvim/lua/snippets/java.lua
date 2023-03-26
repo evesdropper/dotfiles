@@ -7,7 +7,7 @@ local autosnippet = ls.extend_decorator.apply(s, { snippetType = "autosnippet" }
 return {
     s({ trig='imp', name='import', dscr='import package'},
     fmta([[
-    import <>
+    import <>;
     ]],
     { i(1) }
     )),
@@ -22,7 +22,7 @@ return {
     )),
     s({ trig='class', name='class', dscr='class'},
     fmta([[
-    class <> {
+    public class <> {
         <>
     }
     ]],

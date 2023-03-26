@@ -27,7 +27,7 @@ end
 --]
 
 return {
-	s({ trig = "imp", name = "import", dscr = "import" },
+ 	s({ trig = "imp", name = "import", dscr = "import" },
 	fmta([[ 
     <>
     ]],
@@ -36,4 +36,13 @@ return {
 		sn(nil, { t("from "), i(1, "package"), t(" import "), i(2, "*") }),
 	})}),
     { condition = is_pyfile + (is_texfile * is_mintedPython), show_condition = is_pyfile + (is_texfile * is_mintedPython) }),
+    s({ trig='def', name='define function', dscr='define function'},
+    fmta([[
+    def <>(<>)<>:
+        <>
+    ]],
+    { i(1), i(2), c(3, {t(""), sn(nil, {t(" -> "), i(1)})}), i(0) }),
+    { condition = is_texfile, show_condition = is_texfile }),
+   s("testpy", {t('text')},
+    { condition = is_mintedPython, show_condition = is_mintedPython }),
 }

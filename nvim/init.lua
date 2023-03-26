@@ -1,5 +1,3 @@
--- -- load maplocalleaders first
-
 -- core 
 require("core.options")
 require("core.keymaps")
@@ -14,6 +12,7 @@ require("random.telescope")
 require("random.treesitter")
 require("random.autopairs")
 require("random.surround")
+require("random.comments")
 
 -- code editing 
 require("random.nvim-tree")
@@ -25,7 +24,7 @@ require("random.lualine")
 require("random.bufferline")
 require("random.winbar")
 require("random.navic")
--- require("random.dashboard")
+require("random.alpha") -- alpha >>>>>> dashboard bc it actually works
 
 -- ft specific 
 require("random.vimtex") -- latex

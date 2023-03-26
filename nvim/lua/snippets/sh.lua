@@ -21,4 +21,12 @@ return {
 			{ delimiters = "<>" }
 		)
 	),
+    s({ trig='func', name='function', dscr='define a function'},
+    fmta([[
+    <>() {
+        <>
+    }
+    ]],
+    { i(1), i(0) }
+    )),
 }

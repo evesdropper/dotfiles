@@ -19,9 +19,8 @@ return {
 		fmt(
 			[[ 
     <>({ trig='<>', name='<>', dscr='<>'},
-    fmt(<>,
-    { <> },
-    { delimiters='<>' }
+    fmta(<>,
+    { <> }
     )<>)<>,]],
 			{
 				c(1, { t("s"), t("autosnippet") }),
@@ -30,8 +29,7 @@ return {
 				i(4, "dscr"),
 				i(5, "fmt"),
 				i(6, "inputs"),
-				i(7, "<>"),
-				i(8, "opts"),
+				i(7, "opts"),
 				i(0),
 			},
 			{ delimiters = "<>" }
