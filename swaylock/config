@@ -1,11 +1,12 @@
 clock
 indicator
 daemonize
-show-keyboard-layout
-show-failed-attempts
 grace=2
 image=~/dotfiles/swaylock/revise-lock.png
 
+effect-blur=2x2
+effect-vignette=-0.5x0.5
+fade-in=0.2
 font=monospace
 
 indicator-x-position=240

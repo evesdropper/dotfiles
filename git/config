@@ -15,3 +15,5 @@
 [rerere]
     enabled = 1
     autoupdate = 1
+[pull]
+	rebase = true

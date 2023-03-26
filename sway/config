@@ -40,12 +40,12 @@ output * bg ~/dotfiles/sway/revise.png fill
 #$lb_time  15
 
 exec_always pgrep swayidle || swayidle -w \
-    timeout 300 'swaylock --effect-blur 2x2 --effect-vignette -0.25:0.25 --fade-in 0.2 -d' \
+    timeout 300 'swaylock -d' \
     timeout 600 'swaymsg "output * dpms off"' \
     resume 'swaymsg "output * dpms on"' \
     timeout 15 'pgrep swaylock && swaymsg "output * dpms off"' \
     resume 'pgrep swaylock && swaymsg "output * dpms on"' \
-    before-sleep 'swaylock --effect-blur 2x2 --effect-vignette -0.75:0.75 --fade-in 0.2 -d'
+    before-sleep 'swaylock -d'
 
 # bindsym $mod+escape exec killall -s SIGUSR1 swayidle && killall -s SIGUSR1 swayidle
 
@@ -249,7 +249,7 @@ exec_always /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec_always wl-paste -t text --watch clipman store
 exec_always wl-paste -p -t text --watch clipman store -P --histpath="~/.local/share/clipman-primary.json"
 # exec_always /usr/lib/polkit-1/polkit-agent-helper-1 
-exec_always $HOME/start-swhkd.sh
+exec_always $HOME/dotfiles/scripts/start-swhkd.sh
 # exec_always ydotoold
 
 
