@@ -7,7 +7,7 @@ ls.config.set_config({
     enable_autosnippets = true,
     store_selection_keys = "<Tab>",
 })
-require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/lua/snippets/" })
+require("luasnip.loaders.from_lua").load({ paths = {"~/.config/nvim/lua/snippets/", "~/.config/nvim/lua/localsnippets/"} })
 ls.filetype_extend("tex", { "cpp", "python" })
 vim.cmd([[silent command! LuaSnipEdit :lua require("luasnip.loaders").edit_snippet_files()]])
 
