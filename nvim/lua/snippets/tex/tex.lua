@@ -1356,6 +1356,7 @@ local symbol_specs = {
 	iff = { context = { name = "⟺" }, command = [[\iff]] },
 	["->"] = { context = { name = "→", priority = 250 }, command = [[\to]] },
 	["!>"] = { context = { name = "↦" }, command = [[\mapsto]] },
+	["<-"] = { context = { name = "↦", priority = 250}, command = [[\gets]] },
     -- differentials 
 	-- dd = { context = { name = "⇒" }, command = [[\dl]] },
 	dp = { context = { name = "⇐" }, command = [[\partial]] },
