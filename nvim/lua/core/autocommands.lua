@@ -6,5 +6,6 @@ vim.api.nvim_create_autocmd("FileType", {
 	callback = function()
 		vim.cmd.setlocal("spell")
 		vim.cmd.setlocal("wrap linebreak")
+        vim.cmd.setlocal("conceallevel=2")
 	end,
 })

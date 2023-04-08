@@ -31,4 +31,12 @@ return {
         return filestring
     end), i(0)}
     )),
+    s({ trig='func', name='function', dscr='function'},
+    fmta([[
+    <> <> <> <>(<>) {
+        <>
+    }
+    ]],
+    { c(1, {t("public"), t("private")}), c(2, {t("") , t("static")}), i(3, "void"), i(4, "main"), i(5), i(0) }
+    )),
 }
