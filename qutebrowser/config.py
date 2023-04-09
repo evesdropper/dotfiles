@@ -56,7 +56,7 @@ c.url.searchengines = {
 }
 
 # fingerprinting--;
-c.content.headers.user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'
+c.content.headers.user_agent = 'Mozilla/5.0 (X11; Linux x86_64) Chrome/108.0'
 c.content.headers.accept_language = 'en-US,en;q=0.5'
 c.content.headers.custom = {"accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"}
 c.content.geolocation = False
@@ -78,3 +78,5 @@ c.spellcheck.languages = ['en-US']
 c.content.pdfjs = True
 c.downloads.remove_finished = 5000
 c.qt.args = ['disable-accelerated-2d-canvas']
+
+# domainwise? help me :sob:
