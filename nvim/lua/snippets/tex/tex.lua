@@ -1588,6 +1588,16 @@ local postfix_math_specs = {
             post = [[}]],
         },
     },
+    mfr = {
+        context = {
+            name = "mathfrak",
+            dscr =  "mathfrak",
+        },
+        command = {
+            pre = [[\mathfrak{]],
+            post = [[}]],
+        },
+    },
     hat = {
 		context = {
 			name = "hat",
