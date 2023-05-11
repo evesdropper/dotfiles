@@ -18,8 +18,22 @@ local is_texfile = make_condition(ft_conds.is_texfile)
 local is_mintedPython = make_condition(mintedPython)
 
 -- personal utils / dynamics 
-local function isempty(s)
-	return s == nil or s == ""
+local generate_matchcase_dynamic = function(args, snip)
+    if not snip.num_cases then
+        snip.num_cases = tonumber(snip.captures[1]) or 1
+    end
+    local nodes = {}
+    local ins_idx = 1
+    for j = 1, snip.num_cases do
+        vim.list_extend(nodes, fmta([[
+        case <>:
+            <>
+        ]], {r(ins_idx, "var" .. j, i(1)), r(ins_idx+1, "next" .. j, i(0))}))
+        table.insert(nodes, t({"", ""}))
+        ins_idx = ins_idx + 2
+    end
+    table.remove(nodes, #nodes)
+    return isn(nil, nodes, "$PARENT_INDENT\t")
 end
 
 --[
@@ -34,15 +48,31 @@ return {
 	{c(1, {
 		sn(nil, { t("import "), i(1, "package"), c(2, {t(""), sn(nil, t(" as "), i(1))}) }),
 		sn(nil, { t("from "), i(1, "package"), t(" import "), i(2, "*") }),
-	})}),
-    { condition = is_pyfile + (is_texfile * is_mintedPython), show_condition = is_pyfile + (is_texfile * is_mintedPython) }),
+	})})
+    ),
     s({ trig='def', name='define function', dscr='define function'},
     fmta([[
     def <>(<>)<>:
         <>
     ]],
-    { i(1), i(2), c(3, {t(""), sn(nil, {t(" -> "), i(1)})}), i(0) }),
-    { condition = is_texfile, show_condition = is_texfile }),
-   s("testpy", {t('text')},
-    { condition = is_mintedPython, show_condition = is_mintedPython }),
+    { i(1), i(2), c(3, {t(""), sn(nil, {t(" -> "), i(1)})}), i(0) })
+    ),
+    -- TODO: add external update dynamic node
+    s({ trig='mc(%d*)', name='match case', dscr='match n cases', regTrig = true, hidden = true},
+    fmta([[
+    match <>:
+        <>
+        <>
+    ]],
+    { i(1), d(2, generate_matchcase_dynamic, {}, {
+	user_args = {
+		function(snip) snip.num_cases = snip.num_cases + 1 end,
+		function(snip) snip.num_cases = math.max(snip.num_cases - 1, 1) end
+	}
+    }),
+    c(3, {t(""), isn(nil, fmta([[
+    case _:
+        <>
+    ]], {i(1, "pass")}), "$PARENT_INDENT\t")})}
+    )),
 }
