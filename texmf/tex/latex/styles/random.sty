@@ -452,8 +452,16 @@
 \DeclareMathOperator{\Cov}{Cov}  % Covariance
 \DeclareMathOperator{\Corr}{Corr}  % Correlation
 
+\DeclareMathOperator{\lcm}{lcm}
 \DeclareMathOperator{\Aut}{Aut}
 \DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\GL}{GL} % general linear group
+\DeclareMathOperator{\SL}{SL} % special linear group
+\DeclareMathOperator{\PGL}{PGL} % projective general linear group
+\DeclareMathOperator{\PSL}{PSL} % projective special linear group
+\DeclareMathOperator{\Mat}{Mat} % matrix
+\DeclareMathOperator{\Tor}{Tor}
+\DeclareMathOperator{\Ann}{Ann}
 
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\argmin}{argmin}
@@ -589,39 +597,6 @@
     \tcbuselibrary{minted}
     \tcbset{listing engine=minted}
 
-    % definition
-    \newtcbtheorem[number within=section, list inside=definitionlist, crefname={definition}{definitions}]{tcbdefinition}{Definition}{%
-        colback=red!5, colbacktitle=red!20, coltitle=black,
-        frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
-        fonttitle=\bfseries, breakable, enhanced, parbox=false
-    }{def}
-    \newenvironmentx{definition}[3][1={},2={},3={}]{%
-        \begin{tcbdefinition}[label={#2}]{#1}{#3}
-        }{%
-        \end{tcbdefinition}
-    }
-    % example
-    \newtcbtheorem[number within=section, list inside=examplelist, crefname={example}{examples}]{tcbexample}{Example}{%
-        colback=gray!5, colbacktitle=gray!40, coltitle=black,
-        frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
-        fonttitle=\bfseries, segmentation style={solid, draw=gray!20, line width=1pt}, breakable, enhanced, parbox=false
-    }{ex}
-    \newenvironmentx{example}[3][1={},2={},3={}]{%
-        \begin{tcbexample}[label={#2}]{#1}{#3}
-        }{%
-        \end{tcbexample}
-    }
-    % exercise
-    \newtcbtheorem[number within=section, list inside=examplelist, crefname={exercise}{exercises}]{tcbexercise}{Exercise}{%
-        colback=green!5, colbacktitle=green!20, coltitle=black,
-        frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
-        fonttitle=\bfseries, segmentation style={solid, draw=green!20, line width=1pt}, breakable, enhanced, parbox=false
-    }{exer}
-    \newenvironmentx{exercise}[3][1={},2={},3={}]{%
-        \begin{tcbexercise}[label={#2}]{#1}{#3}
-        }{%
-        \end{tcbexercise}
-    }
     % theorem
     \newtcbtheorem[number within=section, list inside=theoremlist, crefname={theorem}{theorems}]{tcbtheorem}{Theorem}{%
         enhanced, breakable,
@@ -638,8 +613,41 @@
         \end{tcbtheorem}
         \intcbthmfalse%
     }
+    % definition
+    \newtcbtheorem[use counter from=tcbtheorem, list inside=definitionlist, crefname={definition}{definitions}]{tcbdefinition}{Definition}{%
+        colback=red!5, colbacktitle=red!20, coltitle=black,
+        frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+        fonttitle=\bfseries, breakable, enhanced, parbox=false
+    }{def}
+    \newenvironmentx{definition}[3][1={},2={},3={}]{%
+        \begin{tcbdefinition}[label={#2}]{#1}{#3}
+        }{%
+        \end{tcbdefinition}
+    }
+    % example
+    \newtcbtheorem[use counter from=tcbtheorem, list inside=examplelist, crefname={example}{examples}]{tcbexample}{Example}{%
+        colback=gray!5, colbacktitle=gray!40, coltitle=black,
+        frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+        fonttitle=\bfseries, segmentation style={solid, draw=gray!20, line width=1pt}, breakable, enhanced, parbox=false
+    }{ex}
+    \newenvironmentx{example}[3][1={},2={},3={}]{%
+        \begin{tcbexample}[label={#2}]{#1}{#3}
+        }{%
+        \end{tcbexample}
+    }
+    % exercise
+    \newtcbtheorem[use counter from=tcbtheorem, list inside=examplelist, crefname={exercise}{exercises}]{tcbexercise}{Exercise}{%
+        colback=green!5, colbacktitle=green!20, coltitle=black,
+        frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+        fonttitle=\bfseries, segmentation style={solid, draw=green!20, line width=1pt}, breakable, enhanced, parbox=false
+    }{exer}
+    \newenvironmentx{exercise}[3][1={},2={},3={}]{%
+        \begin{tcbexercise}[label={#2}]{#1}{#3}
+        }{%
+        \end{tcbexercise}
+    }
     % lemma
-    \newtcbtheorem[number within=section, list inside=lemmalist, crefname={lemma}{lemmas}]{tcblemma}{Lemma}{%
+    \newtcbtheorem[use counter from=tcbtheorem, list inside=lemmalist, crefname={lemma}{lemmas}]{tcblemma}{Lemma}{%
         enhanced, breakable,
         colback=blue!5, colbacktitle=blue!20, coltitle=black,
         frame hidden, parbox=false,
@@ -690,7 +698,7 @@
     }
 
     % note
-    \newtcbtheorem[number within=section, list inside=notelistm, crefname={note}{notes}]{tcbnote}{Note}{%
+    \newtcbtheorem[use counter from=tcbtheorem, list inside=notelistm, crefname={note}{notes}]{tcbnote}{Note}{%
     colback=violet!5, colbacktitle=violet!20, coltitle=black,
     frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
     fonttitle=\bfseries, breakable, enhanced, parbox=false,
@@ -702,7 +710,7 @@
         \end{tcbnote}
     }
     % remark
-    \newtcbtheorem[number within=section, list inside=rmklist, crefname={remark}{remarks}]{tcbrmk}{Remark}{%
+    \newtcbtheorem[use counter from=tcbtheorem, list inside=rmklist, crefname={remark}{remarks}]{tcbrmk}{Remark}{%
     colback=violet!5, colbacktitle=violet!20, coltitle=black,
     frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
     fonttitle=\bfseries, breakable, enhanced, parbox=false,
