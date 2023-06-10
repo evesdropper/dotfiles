@@ -85,33 +85,11 @@ return {
 		{ trig = "sprio", name = "snip priority", dscr = "Autosnippet to set snippet priority" },
 		fmt(
 			[[ 
-    priority=<>]],
+    priority = <>]],
 			{ i(1, "1000") },
 			{ delimiters = "<>" }
 		)
 	),
 	autosnippet("shide", { t("hidden = true") }),
-	-- add nvim keybinds
-	s(
-		{ trig = "nkey", name = "nvim keybinds", dscr = "add a nvim keybinds" },
-		fmt(
-			[[keymap("<>", "<>", "<>", "<>")]],
-			{ i(1, "n"), i(2, "keybind"), i(3, "command"), i(4, "options") },
-			{ delimiters = "<>" }
-		)
-	),
-	-- create lua function
-	s(
-		{ trig = "funcl", name = "lua function", dscr = "creates a function in lua" },
-		fmt(
-			[[
-    function(<>) 
-    <>
-    end
-    ]],
-			{ i(1, "args"), i(0) },
-			{ delimiters = "<>" }
-		)
-	),
     -- postfix(".cc", {l(l.POSTFIX_MATCH:gsub("(%u)", "_%1"):lower())})
 }
