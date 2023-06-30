@@ -49,20 +49,27 @@ c.url.searchengines = {
     'aw': 'https://wiki.archlinux.org/?search={}',
     'ap': 'https://archlinux.org/packages/?q={}',
     'aur': 'https://aur.archlinux.org/packages/?K={}',
+    'tp': 'https://ctan.org/search?phrase={}',
+    'tse': 'https://tex.stackexchange.com/search?q={}',
     'sr': 'https://www.reddit.com/r/{}',
-    'map': 'https://maps.google.com/maps/search/{}',
+    'rs': 'https://www.reddit.com/search/?q={}',
+    'gmap': 'https://maps.google.com/maps/search/{}',
+    'gs': 'https://scholar.google.com/scholar?q={}',
     'eb': 'https://www.ebay.com/sch/i.html?_nkw={}',
     'az': 'https://www.amazon.com/s?k={}',
+    'lt': 'https://www.linktr.ee/{}',
+    'tu': 'https://www.tinyurl.com/{}',
+    'gl': 'https://genius.com/search?q={}'
 }
 
 # fingerprinting--;
-c.content.headers.user_agent = 'Mozilla/5.0 (X11; Linux x86_64) Chrome/108.0'
+c.content.headers.user_agent = 'Mozilla/5.0 (X11; Linux x86_64) Chrome/114.0'
 c.content.headers.accept_language = 'en-US,en;q=0.5'
 c.content.headers.custom = {"accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"}
 c.content.geolocation = False
 c.content.canvas_reading = False
 c.content.default_encoding = 'utf-8'
-c.content.proxy = 'socks://localhost:9050/'
+#c.content.proxy = 'socks://localhost:9050/'
 
 # adblock++;
 c.content.blocking.enabled = True
