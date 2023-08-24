@@ -49,6 +49,7 @@ c.url.searchengines = {
     'aw': 'https://wiki.archlinux.org/?search={}',
     'ap': 'https://archlinux.org/packages/?q={}',
     'aur': 'https://aur.archlinux.org/packages/?K={}',
+    'pp': 'https://pypi.org/search/?q={}',
     'tp': 'https://ctan.org/search?phrase={}',
     'tse': 'https://tex.stackexchange.com/search?q={}',
     'sr': 'https://www.reddit.com/r/{}',
@@ -59,7 +60,9 @@ c.url.searchengines = {
     'az': 'https://www.amazon.com/s?k={}',
     'lt': 'https://www.linktr.ee/{}',
     'tu': 'https://www.tinyurl.com/{}',
-    'gl': 'https://genius.com/search?q={}'
+    'gl': 'https://genius.com/search?q={}',
+    'st': 'https://simpletracking.com/track/{}',
+    'bf': 'https://www.bookfinder.com/isbn/{}'
 }
 
 # fingerprinting--;
