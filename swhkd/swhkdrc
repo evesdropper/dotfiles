@@ -32,11 +32,17 @@ ctrl + alt + shift + g
 ctrl + alt + shift + k 
     ~/dotfiles/scripts/keys.sh
 
+ctrl + super + shift + k 
+    ~/dotfiles/scripts/keys.sh -g
+
 ctrl + f5 
     sudo pkill -HUP swhkd
 
+super + x
+    cliphist list | rofi -dmenu -p "Delete Selected Entry: " | cliphist delete
+
 super + v
-    clipman pick --tool=CUSTOM --tool-args="rofi -dmenu -i -p 'Clipboard History: '"
+    cliphist list | rofi -dmenu -p "Copy Selected Entry: " | cliphist decode | wl-copy
 
 super + d 
     ~/Documents/discord/test.sh 
@@ -46,3 +52,6 @@ super + shift + d
 
 super + c 
     ~/Documents/university/scripts/setup.sh -r 
+
+super + s
+    ~/dotfiles/nvim/lua/snippets/localsnippets.sh
