@@ -4,9 +4,9 @@
     "height": 30, // Waybar height (to be removed for auto height)
     // "width": 1280, // Waybar width
     // Choose the order of the modules
-    "modules-left": ["sway/workspaces", "sway/mode", "custom/media"],
+    "modules-left": ["sway/workspaces", "sway/mode", "custom/media", "custom/weather"],
     "modules-center": ["custom/calendar"],
-    "modules-right": ["pulseaudio", "network", "backlight", "cpu", "memory", "sway/language", "battery", "clock", "custom/powermenu"],
+    "modules-right": ["pulseaudio", "network", "backlight", "cpu", "memory", "temperature", "sway/language", "battery", "clock", "custom/powermenu"],
     // Modules configuration
     // "sway/workspaces": {
     //     "disable-scroll": true,
@@ -89,6 +89,9 @@
         "format-icons": ["", ""],
         // "on-scroll-up": light -A 2.5 
     },
+    "sway/language": {
+    "format": "{short} {variant}",
+    },
     "battery": {
         "states": {
             // "good": 95,
@@ -150,6 +153,7 @@
     },
     "custom/calendar": {
         "format": "{icon} {}",
+        "interval": 300,
         "return-type": "json",
         "max-length": 150,
         "format-icons": {
@@ -157,7 +161,7 @@
             "nomeeting": ""
         },
         "escape": true,
-        "exec": "$HOME/.config/waybar/nextmeeting.py --waybar --notify-min-before-events 10 2> /dev/null", // Script in resources folder
+        "exec": "source $HOME/dotfiles/waybar/bin/activate && python $HOME/.config/waybar/nextmeeting.py --waybar --notify-min-before-events 10 2> /dev/null", // Script in resources folder
         // "on-click": "$HOME/.config/waybar/nextmeeting.py --open-meet-url",
         // "on-scroll-up": "playerctl next",
         // "on-scroll-down": "playerctl previous"
@@ -169,5 +173,12 @@
         },
         "escape": true,
         "on-click": "powermenu"
+    },
+    "custom/weather": {
+        "format": "{} °",
+        "tooltip": true,
+        "interval": 3600,
+        "exec": "wttrbar",
+        "return-type": "json"
     },
 }

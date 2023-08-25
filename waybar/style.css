@@ -2,7 +2,7 @@
     border: none;
     border-radius: 4px;
     /* `otf-font-awesome` is required to be installed for icons */
-    font-family: "Inconsolata Nerd Font", "Noto Sans CJK", Helvetica, Arial, sans-serif;
+    font-family: "InconsolataGo Nerd Font", "Noto Sans CJK", Helvetica, Arial, sans-serif;
     /* Recommended font sizes: 720p: ~14px, 1080p: ~18px */
     font-size: 15px;
     min-height: 0;
