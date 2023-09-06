@@ -6,6 +6,10 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 export PATH=$PATH:/home/revise/texlive/2022/bin/x86_64-linux
 export PATH=$PATH:/home/revise/.local/share/gem/ruby/3.0.0/bin
 export PATH=$PATH:/home/revise/go/bin
+export PATH=$PATH:/home/revise/Documents/code/happy-hacking-gnu/bin
+
+# nvim test
+export NVIM_APPNAME="nvim"
 
 # plugin manager
 [ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh"
@@ -79,13 +83,14 @@ alias ..='cd ..'
 alias ...='cd ..; cd ..'
 alias ....='cd ..; cd ..; cd ..'
 alias docs='cd ~/Documents/'
-alias notesdir='cd ~/Documents/university/bachelor-2/$CURRENT_SEM/'
+alias notesdir='cd ~/Documents/university/bachelor-3/$CURRENT_SEM/'
 alias plandir='cd ~/Documents/university/plan'
-alias ccdir='cd ~/Documents/university/bachelor-2/current-course/'
+alias ccdir='cd ~/Documents/university/bachelor-3/current-course/'
 alias books='cd ~/Downloads/Documents/books/'
 alias math='cd ~/Documents/university/etc/math/'
 alias texbook="cd ~/Documents/etc/tex/"
 alias pwv3="cd ~/Documents/code/pwv3/"
+alias ls-plugin="cd ~/Documents/code/luasnip-latex-snippets.nvim/"
 
 # git commands
 alias g='git'
@@ -134,6 +139,7 @@ bindkey "^[[B" down-line-or-beginning-search # ARROW_DOWN
 
 export EDITOR="nvim"
 export TERMINAL="kitty"
+export BROWSER="qutebrowser"
 #export NVM_INC="/home/revise/.nvm/versions/node/v19.3.0/include/node"
 export XDG_CURRENT_DESKTOP=Unity
 
