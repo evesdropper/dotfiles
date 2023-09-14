@@ -1,21 +1,21 @@
 #!/bin/sh
 
 # checks eligibility:
-# all days: can't use after 22:00, before 9:00
-# MWF: can't use from 13:00 to 17:00
-# TR: can't use from 14:00 to 17:00
+# valid times: staff meeting M 3-4, OH T 12-2, Disc WF 5-6, dinner 7-8
 is_valid_time() {
     valid=true
     current_hour=$(date "+%H")
     current_day=$(date "+%u")
-    if [[ $current_hour -ge 23 ]] || [[ $current_hour -le 9 ]]; then 
+    if [[ $current_hour -ne 19 ]]; then 
         valid=false
-    elif [[ $current_day -le 5 ]] && [[ $(expr $current_day % 2) -eq 1 ]]; then
-        if [[ $current_hour -ge 13 ]] && [[ $current_hour -le 16 ]]; then
+    elif [[ $current_day -eq 1 ]] && [[ $current_hour -ne 15 ]]; then
+        valid=false
+    elif [[ $current_day -eq 2 ]]; then
+        if [[ $current_hour -le 12 ]] && [[ $current_hour -ge 13 ]]; then
             valid=false
         fi
-    elif [[ $current_day -eq 2 ]] && [[ $current_day -eq 4 ]]; then
-        if [[ $current_hour -ge 14 ]] && [[ $current_hour -le 16 ]]; then
+    elif [[ $current_day -eq 3 ]] || [[ $current_day -eq 5 ]]; then
+        if [[ $current_hour -ne 17 ]]; then 
             valid=false
         fi
     fi
@@ -36,7 +36,10 @@ set_exec_cmd() {
 
 # closes any windows that might have gotten through, runs every 15 minutes
 close_discord_cron(){
-    kill $(ps aux | grep -i opt/discord-ptb)
+    disc_processes=$(ps aux | grep -i opt/discord-ptb)
+    if [[ $(is_valid_time) = false ]] && [[ -n $disc_processes ]]; then
+        kill $disc_processes
+    fi
     exit 0
 }
 
