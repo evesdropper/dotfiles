@@ -1,23 +1,26 @@
 #!/bin/sh
 
-# checks eligibility:
-# valid times: staff meeting M 3-4, OH T 12-2, Disc WF 5-6, dinner 7-8
+# valid times: staff meeting M 3-4, OH T 12-2, Disc WF 5-6, dinner 7-8; class MWF 1-2/F 2-3
+is_valid_mon=(13 15)
+is_valid_tues=(12 13)
+is_valid_weds=(13 17)
+is_valid_fri=(13 14 17)
+declare -A is_valid_days
+is_valid_days[1]=${is_valid_mon[@]}
+is_valid_days[2]=${is_valid_tues[@]}
+is_valid_days[3]=${is_valid_weds[@]}
+is_valid_days[5]=${is_valid_fri[@]}
+
+# checks eligibility
 is_valid_time() {
     valid=true
     current_hour=$(date "+%H")
     current_day=$(date "+%u")
-    if [[ $current_hour -ne 19 ]]; then 
-        valid=false
-    elif [[ $current_day -eq 1 ]] && [[ $current_hour -ne 15 ]]; then
-        valid=false
-    elif [[ $current_day -eq 2 ]]; then
-        if [[ $current_hour -le 12 ]] && [[ $current_hour -ge 13 ]]; then
-            valid=false
-        fi
-    elif [[ $current_day -eq 3 ]] || [[ $current_day -eq 5 ]]; then
-        if [[ $current_hour -ne 17 ]]; then 
-            valid=false
-        fi
+    # if is_valid_days contains valid hours for the day 
+    current_day_arr=${is_valid_days[$current_day]}
+    [[ " ${current_day_arr[*]} " =~ " ${current_hour} " ]] && valid=true || valid=false
+    if [[ $current_hour -eq 19 ]]; then 
+        valid=true
     fi
     echo $valid
 }
