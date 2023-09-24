@@ -91,6 +91,9 @@ alias math='cd ~/Documents/university/etc/math/'
 alias texbook="cd ~/Documents/etc/tex/"
 alias pwv3="cd ~/Documents/code/pwv3/"
 alias ls-plugin="cd ~/Documents/code/luasnip-latex-snippets.nvim/"
+alias sboard="taskell ~/Documents/personal/boards/school.md"
+alias tboard="taskell ~/Documents/personal/boards/training.md"
+alias pboard="taskell ~/Documents/personal/boards/personal.md"
 
 # git commands
 alias g='git'
@@ -121,7 +124,9 @@ alias spellrc="nvim ~/.config/nvim/spell/en.utf-8.add"
 alias preamble="nvim ~/texmf/tex/latex/styles/random.sty"
 alias zshrc="nvim ~/dotfiles/.zshrc"
 alias swhkdrc="nvim ~/dotfiles/swhkd/swhkdrc"
-alias newsboatrc="nvim ~/.newsboat/urls"
+alias newsboatrc="nvim ~/.newsboat/config"
+alias newsboaturls="nvim ~/.newsboat/urls"
+alias muttrc="nvim ~/dotfiles/neomutt/neomuttrc"
 
 # keybinds 
 bindkey '^I'   complete-word       # tab          | complete
@@ -139,7 +144,7 @@ bindkey "^[[B" down-line-or-beginning-search # ARROW_DOWN
 
 export EDITOR="nvim"
 export TERMINAL="kitty"
-export BROWSER="qutebrowser"
+export BROWSER="firefox"
 #export NVM_INC="/home/revise/.nvm/versions/node/v19.3.0/include/node"
 export XDG_CURRENT_DESKTOP=Unity
 
