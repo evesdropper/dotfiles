@@ -62,7 +62,8 @@ c.url.searchengines = {
     'tu': 'https://www.tinyurl.com/{}',
     'gl': 'https://genius.com/search?q={}',
     'st': 'https://simpletracking.com/track/{}',
-    'bf': 'https://www.bookfinder.com/isbn/{}'
+    'bf': 'https://www.bookfinder.com/isbn/{}',
+    'dd': 'https://downdetector.com/search/?q={}'
 }
 
 # fingerprinting--;
