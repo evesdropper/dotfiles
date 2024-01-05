@@ -145,10 +145,8 @@ exec_always pgrep swayidle || swayidle -w \
     # We just use 1-10 as the default.
 
     # move left/right
-    bindsym $mod+Ctrl+Left workspace prev
-    bindsym $mod+Ctrl+Right workspace next
-    bindsym $mod+Ctrl+$left workspace prev
-    bindsym $mod+Ctrl+$right workspace next
+    bindsym $mod+Shift+Tab workspace prev
+    bindsym $mod+Tab workspace next
 #
 # Layout stuff:
 #
@@ -245,6 +243,27 @@ for_window [window_type="menu"] floating enable
 for_window [app_id="zenity"] floating enable
 for_window [app_id="zenity"] resize set 225 75
 for_window [app_id="mpv"] resize set width 70 ppt
+for_window [app_id="one.alynx.showmethekey" title="Floating Window - Show Me The Key"] {
+  floating enable
+  sticky enable
+}
+# zwift tv time :smiling_imp:
+for_window [class="^Firefox$"]                      inhibit_idle fullscreen
+for_window [app_id="^firefox$"]                     inhibit_idle fullscreen
+for_window [class="^Chromium$"]                     inhibit_idle fullscreen
+for_window [class="^Google-chrome$"]                inhibit_idle fullscreen
+for_window [app_id="^org.qutebrowser.qutebrowser$"] inhibit_idle fullscreen
+for_window [class="^jellyfin$"]                     inhibit_idle fullscreen
+for_window [class="^mpv$"]                          inhibit_idle visible
+for_window [app_id="^mpv$"]                         inhibit_idle visible
+for_window [class="^jellyfin$"]                     inhibit_idle visible
+
+assign [class="qutebrowser"] 2
+assign [app_id="firefox"] 3
+assign [class="discord"] 4
+assign [class="Spotify"] 7
+assign [class="Slack"] 8
+assign [class="Signal"] 9
 
 include /home/revise/.config/sway/config.d/*
 
