@@ -63,6 +63,7 @@ c.url.searchengines = {
     'gl': 'https://genius.com/search?q={}',
     'st': 'https://simpletracking.com/track/{}',
     'bf': 'https://www.bookfinder.com/isbn/{}',
+    'lg': 'https://libgen.is/search.php?req={}',
     'dd': 'https://downdetector.com/search/?q={}'
 }
 
@@ -73,7 +74,7 @@ c.content.headers.custom = {"accept": "text/html,application/xhtml+xml,applicati
 c.content.geolocation = False
 c.content.canvas_reading = False
 c.content.default_encoding = 'utf-8'
-#c.content.proxy = 'socks://localhost:9050/'
+# c.content.proxy = 'socks://localhost:9050/'
 
 # adblock++;
 c.content.blocking.enabled = True
