@@ -136,7 +136,7 @@ local case = function(args, snip)
 		table.insert(nodes, t({ "\\\\", "" }))
 	end
 	-- fix last node.
-	nodes[#nodes] = t("\\\\")
+    table.remove(nodes, #nodes)
 	return sn(nil, nodes)
 end
 
@@ -182,14 +182,26 @@ local int2 = function(args, snip)
 	return sn(nil, nodes)
 end
 
+local generate_postfix_dynamicnode = function(_, parent, _, user_arg1, user_arg2)
+    local capture = parent.snippet.env.POSTFIX_MATCH
+    if parent.snippet.env.POSTFIX_MATCH == nil then
+        local visual_placeholder = parent.snippet.env.SELECT_RAW
+        return sn(nil, fmta([[
+        <><><><>
+        ]],
+        {t(user_arg1), i(1, visual_placeholder), t(user_arg2), i(0)}))
+    else
+        return sn(nil, fmta([[
+        <><><><>
+        ]],
+        {t(user_arg1), t(capture), t(user_arg2), i(0)}))
+    end
+end
+
 -- visual util to add insert node
 -- thanks ejmastnak!
-local get_visual = function(args, parent)
-	if #parent.snippet.env.SELECT_RAW > 0 then
-		return sn(nil, i(1, parent.snippet.env.SELECT_RAW))
-	else -- If SELECT_RAW is empty, return a blank insert node
-		return sn(nil, i(1))
-	end
+local get_visual = function(_, parent)
+    return sn(nil, i(1, parent.snippet.env.SELECT_RAW))
 end
 
 -- cite util
@@ -380,7 +392,7 @@ local M = {
     <>
     \end{document}
     ]],
-	{ i(1, "./master.tex"), c(2, {i(1), fmta([[
+	{ i(1, "./main.tex"), c(2, {i(1), fmta([[
     \lecture[<>]{<>}
     ]], {t(os.date("%d-%m-%Y")), i(1)})}), i(0) }),
     { condition = tex.in_preamble, show_condition = tex.in_preamble }
@@ -390,16 +402,12 @@ local M = {
 	-- Introductory Stuff: e.g. table of contents, packages, other setup Stuff
 	-- think templates but modular
 	-- ]
-	s(
-		{ trig = "atoc", name = "add toc", dscr = "add this to toc line" },
-		fmt(
-			[[ 
+	s({ trig = "atoc", name = "add toc", dscr = "add this to toc line" },
+	fmta([[ 
     \addcontentsline{toc}{<>}{<>}
     <>
     ]],
-			{ i(1, "section"), i(2, "content"), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ i(1, "section"), i(2, "content"), i(0) })
 	),
 
 	--[
@@ -407,178 +415,121 @@ local M = {
 	--]
 
 	-- sections from LaTeX
-	s(
-		{ trig = "#", hidden = true, priority = 250 },
-		fmt(
-			[[
+	s({ trig = "#", hidden = true, priority = 250 },
+	fmta([[
     \section{<>}<>
     <>]],
-			{ i(1), c(2, { t(""), generate_label_snode("sec", false) }), i(0) },
-			{ delimiters = "<>" }
-		)
+    { i(1), c(2, { t(""), generate_label_snode("sec", false) }), i(0) })
 	),
-	s(
-		{ trig = "#*", hidden = true, priority = 250 },
-		fmt(
-			[[
+	s({ trig = "#*", hidden = true, priority = 250 },
+    fmta([[
     \section*{<>}<>
     <>]],
-			{ i(1), c(2, { t(""), d(1, generate_label, {}, { user_args = { "sec" } }) }), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ i(1), c(2, { t(""), d(1, generate_label, {}, { user_args = { "sec" } }) }), i(0) })
 	),
-	s(
-		{ trig = "##", hidden = true, priority = 500 },
-		fmt(
-			[[
+	s({ trig = "##", hidden = true, priority = 500 },
+	fmta([[
     \subsection{<>}<>
     <>]],
-			{ i(1), c(2, { t(""), d(1, generate_label, {}, { user_args = { "subsec" } }) }), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ i(1), c(2, { t(""), d(1, generate_label, {}, { user_args = { "subsec" } }) }), i(0) })
 	),
-	s(
-		{ trig = "##*", hidden = true, priority = 500 },
-		fmt(
-			[[
+	s({ trig = "##*", hidden = true, priority = 500 },
+    fmta([[
     \subsection*{<>}<>
     <>]],
-			{ i(1), c(2, { t(""), d(1, generate_label, {}, { user_args = { "subsec" } }) }), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ i(1), c(2, { t(""), d(1, generate_label, {}, { user_args = { "subsec" } }) }), i(0) })
 	),
-	s(
-		{ trig = "###", hidden = true, priority = 1000 },
-		fmt(
-			[[ 
+	s({ trig = "###", hidden = true, priority = 1000 },
+    fmta([[ 
     \subsubsection{<>}
     <>]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ i(1), i(0) })
 	),
-	s(
-		{ trig = "###*", hidden = true, priority = 1000 },
-		fmt(
-			[[ 
+	s({ trig = "###*", hidden = true, priority = 1000 },
+    fmta([[ 
     \subsubsection*{<>}
     <>]],
-			{ i(1), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ i(1), i(0) })
 	),
 
 	-- custom sections
-	s(
-		{ trig = "#l", name = "lecture", dscr = "fancy section header - lecture #", hidden = true },
-		fmt(
-			[[ 
+	s({ trig = "#l", name = "lecture", dscr = "fancy section header - lecture #", hidden = true },
+	fmta([[ 
     \lecture[<>]{<>}
     <>]],
-			{ t(os.date("%Y-%m-%d")), i(1), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ t(os.date("%Y-%m-%d")), i(1), i(0) })
 	),
-	s(
-		{ trig = "#ch", name = "chap", dscr = "fancy section header - chapter #", hidden = true },
-		fmt(
-			[[ 
+	s({ trig = "#ch", name = "chap", dscr = "fancy section header - chapter #", hidden = true },
+	fmta([[ 
     \bookchap[<>]{<>}{<>}
     <>]],
-			{ t(os.date("%d-%m-%Y")), i(1, "dscr"), i(2, "\\thesection"), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ t(os.date("%d-%m-%Y")), i(1, "dscr"), i(2, "\\thesection"), i(0) })
 	),
-	s(
-		{ trig = "#f", name = "fancy section", dscr = "fancy section header - vanilla", hidden = true },
-		fmt(
-			[[ 
+	s({ trig = "#f", name = "fancy section", dscr = "fancy section header - vanilla", hidden = true },
+	fmta([[ 
     \fancysec[<>]{<>}{<>}
     <>]],
-			{ t(os.date("%d-%m-%Y")), i(1, "dscr"), i(2, "title"), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ t(os.date("%d-%m-%Y")), i(1, "dscr"), i(2, "title"), i(0) })
 	),
 
 	-- links images figures
-	s(
-		{ trig = "!l", name = "link", dscr = "Link reference", hidden = true },
-		fmt([[\href{<>}{\color{<>}<>}<>]], { i(1, "link"), i(3, "blue"), i(2, "title"), i(0) }, { delimiters = "<>" })
+	s({ trig = "!l", name = "link", dscr = "Link reference", hidden = true },
+    fmta([[
+    \href{<>}{\color{<>}<>}<>
+    ]],
+    { i(1, "link"), i(3, "blue"), i(2, "title"), i(0) })
 	),
-	s(
-		{ trig = "!i", name = "image", dscr = "Image (no caption, no float)" },
-		fmt(
-			[[ 
+	s({ trig = "!i", name = "image", dscr = "Image (no caption, no float)" },
+	fmta([[ 
     \begin{Center}
     \includegraphics[width=<>\textwidth]{<>}
     \end{Center}
     <>]],
-			{ i(1, "0.5"), i(2), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ i(1, "0.5"), i(2), i(0) })
 	),
-	s(
-		{ trig = "!f", name = "figure", dscr = "Float Figure" },
-		fmt(
-			[[ 
+	s({ trig = "!f", name = "figure", dscr = "Float Figure" },
+	fmta([[ 
     \begin{figure}[<>] 
     <>
     \end{figure}]],
-			{ i(1, "htb!"), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ i(1, "htb!"), i(0) })
 	),
-	s(
-		{ trig = "gr", name = "figure image", dscr = "float image" },
-		fmt(
-			[[
+	s({ trig = "gr", name = "figure image", dscr = "float image" },
+	fmta([[
     \centering
     \includegraphics[width=<>\textwidth]{<>}\caption{<>}<>]],
-			{ i(1, "0.5"), i(2), i(3), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ i(1, "0.5"), i(2), i(3), i(0) })
 	),
 
 	-- code highlighting
-	s(
-		{ trig = "qw", name = "inline code", dscr = "inline code, ft escape" },
-		fmt(
-			[[\mintinline{<>}<>]],
-			{ i(1, "text"), c(2, { sn(nil, { t("{"), i(1), t("}") }), sn(nil, { t("|"), i(1), t("|") }) }) },
-			{ delimiters = "<>" }
-		)
+	s({ trig = "qw", name = "inline code", dscr = "inline code, ft escape" },
+	fmta([[
+    \mintinline{<>}<>
+    ]],
+	{ i(1, "text"), c(2, { sn(nil, { t("{"), i(1), t("}") }), sn(nil, { t("|"), i(1), t("|") }) }) })
 	),
-	s(
-		{ trig = "qe", name = "code", dscr = "Code with minted." },
-		fmt(
-			[[ 
+	s({ trig = "qe", name = "code", dscr = "Code with minted." },
+	fmta([[ 
     \begin{minted}{<>}
     <>
     \end{minted}
     <>]],
-			{ i(1, "python"), i(2), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ i(1, "python"), i(2), i(0) })
 	),
-	s(
-		{ trig = "mp", name = "minipage", dscr = "create minipage env" }, -- choice node
-		fmt(
-			[[
+	s({ trig = "mp", name = "minipage", dscr = "create minipage env" }, -- choice node
+	fmta([[
     \begin{minipage}{<>\textwidth}
     <>
     \end{minipage}]],
-			{ c(1, { t("0.5"), t("0.33"), i(nil) }), i(0) },
-			{ delimiters = "<>" }
-		)
+	{ c(1, { t("0.5"), t("0.33"), i(nil) }), i(0) })
 	),
 
-	-- Book Club
+	-- labels/refs
     autosnippet({ trig='alab', name='label', dscr='add a label'},
     fmta([[
     \label{<>:<>}
     ]],
     { i(1), i(0) })),
-
     autosnippet({ trig='([acCer])ref', name='(acC|eq)?ref', dscr='add a reference (with autoref, cref, eqref)', regTrig = true, hidden = true},
     fmta([[
     \<>ref{<>:<>}
@@ -593,73 +544,48 @@ local M = {
 	-- Environments
 	--]
 	-- generic
-	s(
-		{ trig = "beg", name = "begin env", dscr = "begin/end environment" },
-		fmt(
-			[[
+	s({ trig = "beg", name = "begin env", dscr = "begin/end environment" },
+	fmta([[
     \begin{<>}
     <>
-    \end{<>}]],
-			{ i(1), i(0), rep(1) },
-			{ delimiters = "<>" }
-		)
+    \end{<>}
+    ]],
+	{ i(1), i(0), rep(1) })
 	),
 
 	-- Bullet Points
-	s(
-		{ trig = "-i", name = "itemize", dscr = "bullet points (itemize)" },
-		fmt(
-			[[ 
+	s({ trig = "-i", name = "itemize", dscr = "bullet points (itemize)" },
+	fmta([[ 
     \begin{itemize}
     \item <>
     \end{itemize}]],
-			{ c(1, { i(0), sn(
-				nil,
-				fmta(
-					[[
-            [<>] <>
-            ]],
-					{ i(1), i(0) }
-				)
-			) }) },
-			{ delimiters = "<>" }
-		)
+	{ c(1, { i(0), 
+        sn(nil, fmta([[
+                [<>] <>
+                ]],
+                { i(1), i(0) }))
+        })
+    })
 	),
-	s(
-		{ trig = "-e", name = "enumerate", dscr = "numbered list (enumerate)" },
-		fmt(
-			[[ 
+	s({ trig = "-e", name = "enumerate", dscr = "numbered list (enumerate)" },
+	fmta([[ 
     \begin{enumerate}<>
     \item <>
-    \end{enumerate}]],
-			{
-				c(
-					1,
-					{
-						t(""),
-						sn(
-							nil,
-							fmta(
-								[[
+    \end{enumerate}
+    ]],
+	{c(1, { t(""),
+        sn(nil, fmta([[
             [label=<>]
             ]],
-								{ c(1, { t("(\\alph*)"), t("(\\roman*)"), i(1) }) }
-							)
-						),
-					}
-				),
-				c(2, { i(0), sn(
-					nil,
-					fmta(
-						[[
-            [<>] <>
-            ]],
-						{ i(1), i(0) }
-					)
-				) }),
-			},
-			{ delimiters = "<>" }
-		)
+			{ c(1, { t("(\\alph*)"), t("(\\roman*)"), i(1) }) })),
+		}),
+	c(2, { i(0),
+        sn(nil, fmta([[
+                [<>] <>
+                ]],
+                { i(1), i(0) }))
+        }),
+	})
 	),
 	-- generate new bullet points
 	autosnippet({ trig = "--", hidden = true }, { t("\\item") },
@@ -674,20 +600,17 @@ local M = {
 	),
 
 	-- tables/matrices
-	s(
-		{ trig = "tab(%d+)x(%d+)", regTrig = true, name = "test for tabular", dscr = "test", hidden = true },
-		fmt(
-			[[
+	s({ trig = "tab(%d+)x(%d+)", regTrig = true, name = "test for tabular", dscr = "test", hidden = true },
+	fmta([[
     \begin{tabular}{@{}<>@{}}
     \toprule
     <>
     \bottomrule
-    \end{tabular}]],
-			{ f(function(_, snip)
-				return string.rep("c", tonumber(snip.captures[2]))
-			end), d(1, tab) },
-			{ delimiters = "<>" }
-		)
+    \end{tabular}
+    ]],
+	{ f(function(_, snip)
+        return string.rep("c", tonumber(snip.captures[2]))
+    end), d(1, tab) })
 	),
     s({trig = "([bBpvV])mat(%d+)x(%d+)([ar])", name = "[bBpvV]matrix", dscr = "matrices", regTrig = true, hidden = true},
 	fmta([[
@@ -711,18 +634,22 @@ local M = {
     }),
 	{ condition = tex.in_math, show_condition = tex.in_math }
 	),
+    -- generate table row
+    s({ trig='tr(%d)', name='table row', dscr='table row', trigEngine="pattern", hidden=true},
+    fmta([[
+    <>,
+    ]],
+    { d(1, tr) }
+    )),
 
 	-- etc
-	s(
-		{ trig = "sol", name = "solution", dscr = "solution box for homework" },
-		fmt(
-			[[ 
+	s({ trig = "sol", name = "solution", dscr = "solution box for homework" },
+	fmta([[ 
     \begin{solution}
     <>
-    \end{solution}]],
-			{ i(0) },
-			{ delimiters = "<>" }
-		)
+    \end{solution}
+    ]],
+	{ i(0) })
 	),
 
 	--[
@@ -824,7 +751,7 @@ local M = {
 		{ condition = math }
 	),
 	autosnippet(
-		{ trig = "(%d)/", name = "fraction 2", dscr = "fraction autoexpand 2", regTrig = true, hidden = true },
+		{ trig = "((\\d+)|(\\d*)(\\\\)?([A-Za-z]+)((\\^|_)(\\{\\d+\\}|\\d))*)\\/", name = "fraction 2", dscr = "fraction autoexpand 2", trigEngine="ecma", hidden = true },
 		fmt(
 			[[
     \frac{<>}{<>}<>
@@ -834,6 +761,13 @@ local M = {
 		),
 		{ condition = math, show_condition = math }
 	),
+    autosnippet({ trig='(^.*\\))/', name='fraction 3', dscr='fraction 3'},
+    fmta([[\frac{<>}{<>}]],
+    { f(function (_, snip)
+        stripped = snip.trigger
+    end), i(0) }
+    ),
+    { condition = math, show_condition = math }),
     autosnippet({ trig='==', name='&= align', dscr='&= align'},
     fmta([[
     &<> <> \\
@@ -1037,6 +971,22 @@ local M = {
 	autosnippet("lb", { t("\\\\") }, { condition = math }),
 	autosnippet("tcbl", { t("\\tcbline") }),
 
+    autosnippet({ trig='(?<!\\\\)(trying|test)', name='trig', dscr='dscr', trigEngine='ecma'},
+    fmta([[
+    \<><>
+    ]],
+    { f(function (_, snip)
+        return snip.captures[1]
+    end),
+    i(0) }
+    ), { condition = math, show_condition = math }),
+
+    s({ trig='tn', name='tikz node', dscr='tikz node'},
+    fmta([[
+    \node[<><>] (<>) at <> {<>};
+    ]],
+    { i(1, "style"), c(2, {t(""), fmta([[label=<>]], {i(1)})}), i(3, "node ref"), i(4, "coord"), i(5, "") }
+    ), { condition = tikz, show_condition = tikz }),
 }
 
 
@@ -1146,6 +1096,15 @@ local env_specs = {
 		command = [[minted]],
 		ext = { opt = true, delim = "c" },
 	},
+    swt = {
+		context = {
+			name = "shownto",
+			dscr = "multiaudience shownto",
+		},
+		command = [[shownto]],
+		ext = { opt = true, delim = "c" },
+	},
+
 }
 
 local env_snippets = {}
@@ -1179,6 +1138,13 @@ local tcolorbox_specs = {
 			dscr = "add example box",
 		},
 		command = [[ex]],
+	},
+    exr = {
+		context = {
+			name = "exercise",
+			dscr = "add exercise box",
+		},
+		command = [[exer]],
 	},
 	athm = {
 		context = {
@@ -1263,6 +1229,8 @@ local auto_backslash_specs = {
 	"min",
 	"argmax",
 	"argmin",
+    "deg",
+    "angle",
 }
 
 local auto_backslash_snippets = {}
@@ -1277,7 +1245,8 @@ local symbol_snippet = require("snippets.tex.utils").scaffolding.symbol_snippet
 local greek_specs = {
 	alpha = { context = { name = "α" }, command = [[\alpha]] },
 	beta = { context = { name = "β" }, command = [[\beta]] },
-	gam = { context = { name = "β" }, command = [[\gamma]] },
+	gam = { context = { name = "γ" }, command = [[\gamma]] },
+	Gam = { context = { name = "Γ" }, command = [[\Gamma]] },
 	omega = { context = { name = "ω" }, command = [[\omega]] },
 	Omega = { context = { name = "Ω" }, command = [[\Omega]] },
 	delta = { context = { name = "δ" }, command = [[\delta]] },
@@ -1289,12 +1258,14 @@ local greek_specs = {
 	lmbd = { context = { name = "λ" }, command = [[\lambda]] },
 	Lmbd = { context = { name = "Λ" }, command = [[\Lambda]] },
 	mu = { context = { name = "μ" }, command = [[\mu]] },
-	nu = { context = { name = "μ" }, command = [[\nu]] },
+	nu = { context = { name = "ν" }, command = [[\nu]] },
 	pi = { context = { name = "π" }, command = [[\pi]] },
-	rho = { context = { name = "π" }, command = [[\rho]] },
+	rho = { context = { name = "ρ" }, command = [[\rho]] },
 	sig = { context = { name = "σ" }, command = [[\sigma]] },
 	Sig = { context = { name = "Σ" }, command = [[\Sigma]] },
-	xi = { context = { name = "Σ" }, command = [[\xi]] },
+	tau = { context = { name = "τ" }, command = [[\tau]] },
+	xi = { context = { name = "ξ" }, command = [[\xi]] },
+	psi = { context = { name = "ξ" }, command = [[\psi]] },
 	vphi = { context = { name = "φ" }, command = [[\varphi]] },
 	veps = { context = { name = "ε" }, command = [[\varepsilon]] },
 }
@@ -1350,6 +1321,7 @@ local symbol_specs = {
 	["!-"] = { context = { name = "¬" }, command = [[\lnot]] },
 	VV = { context = { name = "∨" }, command = [[\lor]] },
 	WW = { context = { name = "∧" }, command = [[\land]] },
+    ["!!"] = { context = {name = "neg"}, command = [[\neg]] },
     ["!W"] = { context = { name = "∧" }, command = [[\bigwedge]] },
 	["=>"] = { context = { name = "⇒" }, command = [[\implies]] },
 	["=<"] = { context = { name = "⇐" }, command = [[\impliedby]] },
