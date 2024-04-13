@@ -54,7 +54,7 @@ end
 
 -- dynamic stuff
 -- LFG tables and matrices work
-local tab = function(args, snip)
+local tab = function(_, snip)
 	local rows = tonumber(snip.captures[1])
 	local cols = tonumber(snip.captures[2])
 	local nodes = {}
@@ -78,7 +78,7 @@ end
 
 -- yes this is a ripoff
 -- thanks L3MON4D3!
-local mat = function(args, snip)
+local mat = function(_, snip)
 	local rows = tonumber(snip.captures[2])
 	local cols = tonumber(snip.captures[3])
 	local nodes = {}
@@ -99,7 +99,7 @@ local mat = function(args, snip)
 end
 
 -- update for cases
-local case = function(args, snip)
+local case = function(_, snip)
 	local rows = tonumber(snip.captures[1]) or 2 -- default option 2 for cases
 	local cols = 2 -- fix to 2 cols
 	local nodes = {}
@@ -120,7 +120,7 @@ local case = function(args, snip)
 end
 
 -- add table/matrix/case row
-local tr = function(args, snip)
+local tr = function(_, snip)
 	local cols = tonumber(snip.captures[1])
 	local nodes = {}
 	local ins_indx = 1
@@ -138,7 +138,7 @@ local tr = function(args, snip)
 end
 
 -- integral functions
-local int1 = function(args, snip)
+local int1 = function(_, snip)
 	local vars = tonumber(snip.captures[1])
 	local nodes = {}
 	for j = 1, vars do
@@ -151,7 +151,7 @@ local int1 = function(args, snip)
 	return sn(nil, nodes)
 end
 
-local int2 = function(args, snip)
+local int2 = function(_, snip)
 	local vars = tonumber(snip.captures[1])
 	local nodes = {}
 	for j = 1, vars do
@@ -159,6 +159,29 @@ local int2 = function(args, snip)
 		table.insert(nodes, r(j, "var" .. tostring(j), i(1)))
 	end
 	return sn(nil, nodes)
+end
+
+local generate_fraction = function (_, snip)
+    local stripped = snip.captures[1]
+    local depth = 0
+    local j = #stripped
+    while true do
+        local c = stripped:sub(j, j)
+        if c == "(" then
+            depth = depth + 1
+        elseif c == ")" then
+            depth = depth - 1
+        end
+        if depth == 0 then
+            break
+        end
+        j = j - 1
+    end
+    return sn(nil,
+        fmta([[
+        <>\frac{<>}{<>}
+        ]],
+        { t(stripped:sub(1, j-1)), t(stripped:sub(j)), i(1)}))
 end
 
 -- visual util to add insert node
@@ -684,12 +707,8 @@ local M = {
 	{ f(get_capture, {}, { user_args = { 1 } }), i(1), i(0) }),
 	{ condition=tex.in_math, show_condition=tex.in_math }
 	),
-    autosnippet({ trig='(^.*\\))/', name='fraction 3', dscr='fraction 3'},
-    fmta([[\frac{<>}{<>}]],
-    { f(function (_, snip)
-        stripped = snip.trigger
-    end), i(0) }
-    ),
+    autosnippet({ trig='(^.*\\))/', name='fraction 3', dscr='fraction 3', trigEngine="ecma", hidden=true},
+    { d(1, generate_fraction) },
     { condition=tex.in_math, show_condition=tex.in_math }),
 	autosnippet({ trig = "!!+", priority = 500 }, { t("\\bigoplus") }, { condition=tex.in_math, show_condition=tex.in_math }),
 	autosnippet({ trig = "!!*", priority = 500 }, { t("\\bigotimes") }, { condition=tex.in_math, show_condition=tex.in_math }),
