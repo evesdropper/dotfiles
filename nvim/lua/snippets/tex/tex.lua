@@ -530,7 +530,7 @@ local M = {
     \label{<>:<>}
     ]],
     { i(1), i(0) })),
-    autosnippet({ trig='([acCer])ref', name='(acC|eq)?ref', dscr='add a reference (with autoref, cref, eqref)', regTrig = true, hidden = true},
+    autosnippet({ trig='([acCer])ref', name='(acC|eq)?ref', dscr='add a reference (with autoref, cref, eqref)', trigEngine="pattern", hidden = true},
     fmta([[
     \<>ref{<>:<>}
     ]],
@@ -600,7 +600,7 @@ local M = {
 	),
 
 	-- tables/matrices
-	s({ trig = "tab(%d+)x(%d+)", regTrig = true, name = "test for tabular", dscr = "test", hidden = true },
+	s({ trig = "tab(%d+)x(%d+)", trigEngine="pattern", name = "test for tabular", dscr = "test", hidden = true },
 	fmta([[
     \begin{tabular}{@{}<>@{}}
     \toprule
@@ -612,7 +612,7 @@ local M = {
         return string.rep("c", tonumber(snip.captures[2]))
     end), d(1, tab) })
 	),
-    s({trig = "([bBpvV])mat(%d+)x(%d+)([ar])", name = "[bBpvV]matrix", dscr = "matrices", regTrig = true, hidden = true},
+    s({trig = "([bBpvV])mat(%d+)x(%d+)([ar])", name = "[bBpvV]matrix", dscr = "matrices", trigEngine="pattern", hidden = true},
 	fmta([[
     \begin{<>}<>
     <>
@@ -681,6 +681,13 @@ local M = {
     { c(1, {t("*"), t(""), t("ed")}), i(2), rep(1) }), -- in order of least-most used
 	{ condition = line_begin, show_condition = line_begin }
 	),
+    autosnippet({ trig='==', name='&= align', dscr='&= align'},
+    fmta([[
+    &<> <> \\
+    ]],
+    { c(1, {t("="), t("\\leq"), i(1)}), i(2) }
+    ), { condition = tex.in_align, show_condition = tex.in_align }),
+
 	autosnippet({ trig = "gat", name = "gather(|*|ed)", dscr = "gather math" },
 	fmta([[ 
     \begin{gather<>}
@@ -699,7 +706,7 @@ local M = {
 	{ c(1, {t("*"), t("")}), c(2, {t(""), fmta([[\tag{<>}<>]], {i(1), i(0)})}), i(3), rep(1) }),
 	{ condition = line_begin, show_condition = line_begin }
 	),
-    autosnippet({ trig = "(%d?)cases", name = "cases", dscr = "cases", regTrig = true, hidden = true },
+    autosnippet({ trig = "(%d?)cases", name = "cases", dscr = "cases", trigEngine="pattern", hidden = true },
     fmta([[
     \begin{cases}
     <>
@@ -710,56 +717,47 @@ local M = {
 	),
 
 	-- delimiters
-	s(
-		{ trig = "lr", name = "left right", dscr = "left right" },
-		fmt([[\left(<>\right)<>]], { i(1), i(0) }, { delimiters = "<>" }),
-		{ condition = math }
+	s({ trig = "lr", name = "left right", dscr = "left right" },
+	fmta([[
+    \left(<>\right)<>
+    ]],
+    { i(1), i(0) }),
+    { condition = math, show_condition = math }
 	),
-	autosnippet(
-		{ trig = "lr([aAbBcmp])", name = "left right", dscr = "left right delimiters", regTrig = true, hidden = true },
-		fmt(
-			[[
+	autosnippet({ trig = "lr([aAbBcmp])", name = "left right", dscr = "left right delimiters", trigEngine="pattern", hidden=true },
+	fmta([[
     \left<> <> \right<><>
     ]],
-			{
-				f(function(_, snip)
-					cap = snip.captures[1]
-					if brackets[cap] == nil then
-						cap = "p"
-					end -- set default to parentheses
-					return brackets[cap][1]
-				end),
-				d(1, get_visual),
-				f(function(_, snip)
-					cap = snip.captures[1]
-					if brackets[cap] == nil then
-						cap = "p"
-					end
-					return brackets[cap][2]
-				end),
-				i(0),
-			},
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
+    {f(function(_, snip)
+        cap = snip.captures[1]
+        if brackets[cap] == nil then
+            cap = "p"
+        end -- set default to parentheses
+        return brackets[cap][1]
+    end),
+    d(1, get_visual),
+    f(function(_, snip)
+        cap = snip.captures[1]
+        if brackets[cap] == nil then
+            cap = "p"
+        end
+        return brackets[cap][2]
+    end),
+    i(0)}),
+    { condition = math, show_condition = math }
 	),
 
 	-- operators, symbols
-	autosnippet(
-		{ trig = "//", name = "fraction", dscr = "fraction (autoexpand)" },
-		fmt([[\frac{<>}{<>}<>]], { i(1), i(2), i(0) }, { delimiters = "<>" }),
-		{ condition = math }
+	autosnippet({ trig = "//", name = "fraction", dscr = "fraction (autoexpand)" },
+    fmta([[\frac{<>}{<>}<>]], { i(1), i(2), i(0) }),
+    { condition = math, show_condition = math }
 	),
-	autosnippet(
-		{ trig = "((\\d+)|(\\d*)(\\\\)?([A-Za-z]+)((\\^|_)(\\{\\d+\\}|\\d))*)\\/", name = "fraction 2", dscr = "fraction autoexpand 2", trigEngine="ecma", hidden = true },
-		fmt(
-			[[
+	autosnippet({ trig = "((\\d+)|(\\d*)(\\\\)?([A-Za-z]+)((\\^|_)(\\{\\d+\\}|\\d))*)\\/", name = "fraction 2", dscr = "fraction autoexpand 2", trigEngine="ecma", hidden = true },
+	fmta([[
     \frac{<>}{<>}<>
     ]],
-			{ f(get_capture, {}, { user_args = { 1 } }), i(1), i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
+	{ f(get_capture, {}, { user_args = { 1 } }), i(1), i(0) }),
+	{ condition = math, show_condition = math }
 	),
     autosnippet({ trig='(^.*\\))/', name='fraction 3', dscr='fraction 3'},
     fmta([[\frac{<>}{<>}]],
@@ -768,40 +766,26 @@ local M = {
     end), i(0) }
     ),
     { condition = math, show_condition = math }),
-    autosnippet({ trig='==', name='&= align', dscr='&= align'},
-    fmta([[
-    &<> <> \\
-    ]],
-    { c(1, {t("="), t("\\leq"), i(1)}), i(2) }
-    ), { condition = tex.in_align, show_condition = tex.in_align }),
 	autosnippet({ trig = "!!+", priority = 500 }, { t("\\bigoplus") }, { condition = math, show_condition = math }),
 	autosnippet({ trig = "!!*", priority = 500 }, { t("\\bigotimes") }, { condition = math, show_condition = math }),
 	autosnippet({ trig = "Oo", priority = 50 }, { t("\\circ") }, { condition = math, show_condition = math }),
 
 	-- sub super scripts
-	autosnippet(
-		{ trig = "([%a%)%]%}])(%d)", regTrig = true, name = "auto subscript", dscr = "hi" },
-		fmt(
-			[[<>_<>]],
-			{ f(get_capture, {}, { user_args = { 1 } }), f(get_capture, {}, { user_args = { 2 } }) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math }
+	autosnippet({ trig = "([%a%)%]%}])(%d)", trigEngine="pattern", name = "auto subscript", dscr = "hi" },
+	fmta([[
+    <>_<>
+    ]],
+	{ f(get_capture, {}, { user_args = { 1 } }), f(get_capture, {}, { user_args = { 2 } }) }),
+    { condition = math, show_condition = math }
 	),
-	autosnippet(
-		{
-			trig = "([%a%)%]%}])_(%d%d)",
-			regTrig = true,
-			name = "auto subscript 2",
-			dscr = "auto subscript for 2+ digits",
-		},
-		fmt(
-			[[<>_{<>}]],
-			{ f(get_capture, {}, { user_args = { 1 } }), f(get_capture, {}, { user_args = { 2 } }) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math }
+	autosnippet({trig = "([%a%)%]%}])_(%d%d)", trigEngine="pattern", name = "auto subscript 2", dscr = "auto subscript for 2+ digits"},
+	fmta([[
+    <>_{<>}
+    ]],
+    { f(get_capture, {}, { user_args = { 1 } }), f(get_capture, {}, { user_args = { 2 } }) }),
+    { condition = math, show_condition = math }
 	),
+    -- short vers.
 	autosnippet("xnn", { t("x_n") }, { condition = math }),
 	autosnippet("xii", { t("x_i") }, { condition = math }),
 	autosnippet("xjj", { t("x_j") }, { condition = math }),
@@ -818,20 +802,14 @@ local M = {
 	autosnippet("dd", { t("\\dd") }, { condition = math, show_condition = math }),
 	autosnippet("nabl", { t("\\nabla") }, { condition = math, show_condition = math }),
 	autosnippet("grad", { t("\\grad") }, { condition = math, show_condition = math }),
-	autosnippet(
-		{ trig = "lim", name = "lim(sup|inf)", dscr = "lim(sup|inf)" },
-		fmt(
-			[[ 
+	autosnippet({ trig = "lim", name = "lim(sup|inf)", dscr = "lim(sup|inf)" },
+	fmta([[ 
     \lim<><><>
     ]],
-			{
-				c(1, { t(""), t("sup"), t("inf") }),
-				c(2, { t(""), fmta([[_{<> \to <>}]], { i(1, "n"), i(2, "\\infty") }) }),
-				i(0),
-			},
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
+	{c(1, { t(""), t("sup"), t("inf") }),
+	c(2, { t(""), fmta([[_{<> \to <>}]], { i(1, "n"), i(2, "\\infty") }) }),
+	i(0)}),
+    { condition = math, show_condition = math }
 	),
 	-- autosnippet(
 	-- 	{ trig = "part", name = "partial derivative", dscr = "partial derivative" },
@@ -844,78 +822,51 @@ local M = {
 	-- 	),
 	-- 	{ condition = math, show_condition = math }
 	-- ),
-	autosnippet(
-		{ trig = "dint", name = "integrals", dscr = "integrals but cooler" },
-		fmt(
-			[[
+	autosnippet({ trig = "dint", name = "integrals", dscr = "integrals but cooler" },
+    fmta([[
     \<>int_{<>}^{<>} <> <> <>
     ]],
-			{ c(1, { t(""), t("o") }), i(2, "-\\infty"), i(3, "\\infty"), i(4), t("\\dd"), i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
+	{ c(1, { t(""), t("o") }), i(2, "-\\infty"), i(3, "\\infty"), i(4), t("\\dd"), i(0) }),
+    { condition = math, show_condition = math }
 	),
-	autosnippet(
-		{ trig = "(%d)int", name = "multi integrals", dscr = "please work", regTrig = true, hidden = false },
-		fmt(
-			[[ 
+	autosnippet({ trig = "(%d)int", name = "multi integrals", dscr = "please work", trigEngine="pattern", hidden = false },
+	fmta([[ 
     <> <> <> <>
     ]],
-			{
-				c(1, {
-					fmta(
-						[[
-    \<><>nt_{<>}
-    ]],
-						{
-							c(1, { t(""), t("o") }),
-							f(function(_, parent, snip)
-								inum = tonumber(parent.parent.captures[1]) -- this guy's lineage looking like a research lab's
-								res = string.rep("i", inum)
-								return res
-							end),
-							i(2),
-						}
-					),
-					d(nil, int1),
-				}),
-				i(2),
-				d(3, int2),
-				i(0),
-			},
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
+	{ c(1, {
+        fmta([[
+        \<><>nt_{<>}
+        ]],
+	    { c(1, { t(""), t("o") }),
+		f(function(_, parent, snip)
+            inum = tonumber(parent.parent.captures[1]) -- this guy's lineage looking like a research lab's
+            res = string.rep("i", inum)
+            return res
+        end), i(2) }),
+	  d(nil, int1)}),
+	i(2), d(3, int2), i(0)}),
+    { condition = math, show_condition = math }
 	),
-	autosnippet(
-		{ trig = "sum", name = "summation", dscr = "summation" },
-		fmta(
-			[[
+	autosnippet({ trig = "sum", name = "summation", dscr = "summation" },
+    fmta([[
     \sum<> <>
     ]],
-            { c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }
-		),
-		{ condition = math, show_condition = math }
+    { c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }),
+    { condition = math, show_condition = math }
 	),
-	autosnippet(
-		{ trig = "prod", name = "product", dscr = "summation" },
-		fmta(
-			[[
+	autosnippet({ trig = "prod", name = "product", dscr = "summation" },
+    fmta([[
     \prod<> <>
     ]],
-			 { c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }
-		),
-		{ condition = math, show_condition = math }
+	{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }),
+    { condition = math, show_condition = math }
 	),
-	autosnippet(
-		{ trig = "cprod", name = "product", dscr = "summation" },
-		fmta(
-			[[
+	autosnippet({ trig = "cprod", name = "product", dscr = "summation" },
+    fmta([[
     \coprod<> <>
     ]],
-			 { c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }
-		),
-		{ condition = math, show_condition = math }
+	{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }),
+    { condition = math, show_condition = math }
 	),
 
 	-- quantifiers and cs70 n1 stuff
@@ -923,64 +874,49 @@ local M = {
 	autosnippet("!|", { t("\\notdivides") }, { condition = math, show_condition = math }),
 
 	-- sets
-	autosnippet(
-		{ trig = "set", name = "set", dscr = "set" }, -- overload with set builder notation
-		fmt(
-			[[\{<>\}<>]],
-			{ c(1, { r(1, ""), sn(nil, { r(1, ""), t(" \\mid "), i(2) }) }), i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math }
-	),
-	autosnippet(
-		{ trig = "nnn", name = "bigcap", dscr = "bigcaps" },
-		fmt(
-			[[
+	autosnippet({ trig = "set", name = "set", dscr = "set" }, -- overload with set builders notation because analysis and algebra cannot agree on a singular notation
+	fmta([[
+    \{<>\}<>
+    ]],
+	{ c(1, { r(1, ""), sn(nil, { r(1, ""), t(" \\mid "), i(2) }), sn(nil, { r(1, ""), t(" \\colon "), i(2) })}), i(0) }),
+    { condition = math, show_condition = math }
+    ),
+    autosnippet({ trig = "nnn", name = "bigcap", dscr = "bigcaps" },
+    fmta([[
     \bigcap<> <>
     ]],
-			{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
+	{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }),
+	{ condition = math, show_condition = math }
 	),
-	autosnippet(
-		{ trig = "uuu", name = "bigcup", dscr = "bigcaps" },
-		fmt(
-			[[
+	autosnippet({ trig = "uuu", name = "bigcup", dscr = "bigcaps" },
+    fmta([[
     \bigcup<> <>
     ]],
-			{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) },
-			{ delimiters = "<>" }
-		),
-		{ condition = math, show_condition = math }
+	{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }),
+    { condition = math, show_condition = math }
 	),
 
 	-- counting, probability
-	autosnippet(
-		{ trig = "bnc", name = "binomial", dscr = "binomial (nCR)" },
-		fmt([[\binom{<>}{<>}<>]], { i(1), i(2), i(0) }, { delimiters = "<>" }),
-		{ condition = math }
+	autosnippet({ trig = "bnc", name = "binomial", dscr = "binomial (nCR)" },
+    fmta([[
+    \binom{<>}{<>}<>
+    ]],
+    { i(1), i(2), i(0) }),
+    { condition = math, show_condition = math }
 	),
 
 	-- etc: utils and stuff
-	autosnippet(
-		{ trig = "([clvda])%.", regTrig = true, name = "dots", dscr = "generate some dots" },
-		fmt([[\<>dots]], { f(get_capture, {}, { user_args = { 1 } }) }, { delimiters = "<>" }),
-		{ condition = math }
+	autosnippet({ trig = "([clvda])%.", trigEngine="pattern", name = "dots", dscr = "generate some dots" },
+    fmta([[
+    \<>dots
+    ]],
+    { f(get_capture, {}, { user_args = { 1 } }) }),
+    { condition = math, show_condition = math }
 	),
 	autosnippet("lb", { t("\\\\") }, { condition = math }),
 	autosnippet("tcbl", { t("\\tcbline") }),
 
-    autosnippet({ trig='(?<!\\\\)(trying|test)', name='trig', dscr='dscr', trigEngine='ecma'},
-    fmta([[
-    \<><>
-    ]],
-    { f(function (_, snip)
-        return snip.captures[1]
-    end),
-    i(0) }
-    ), { condition = math, show_condition = math }),
-
+    --- tikz 
     s({ trig='tn', name='tikz node', dscr='tikz node'},
     fmta([[
     \node[<><>] (<>) at <> {<>};
