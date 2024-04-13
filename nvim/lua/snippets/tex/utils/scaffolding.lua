@@ -52,7 +52,17 @@ M.auto_backslash_snippet = function(context, opts)
 	context.dscr = context.dscr or (context.trig .. "with automatic backslash")
 	context.name = context.name or context.trig
 	context.docstring = context.docstring or ([[\]] .. context.trig)
-	return autosnippet(context, t([[\]] .. context.trig), opts)
+    context.trigEngine = "ecma"
+    context.trig = "(?<!\\\\)" .. "(" .. context.trig .. ")"
+	return autosnippet(context,
+    fmta([[
+    \<><>
+    ]],
+    { f(function(_, snip)
+        return snip.captures[1]
+    end),
+    i(0) }),
+    opts)
 end
 
 -- Auto symbol
@@ -196,6 +206,7 @@ M.postfix_snippet = function (context, command, opts)
 	context.dscr = context.dscr
 	context.name = context.name or context.dscr
     context.docstring = command.pre .. [[(POSTFIX_MATCH|VISUAL|<1>)]] .. command.post
+    context.match_pattern = [[[%w%.%_%-%"%']*$]]
     return postfix(context, {d(1, generate_postfix_dynamicnode, {}, { user_args = {command.pre, command.post} })}, opts)
 end
 
