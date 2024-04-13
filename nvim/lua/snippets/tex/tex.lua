@@ -19,33 +19,13 @@ local in_bullets = make_condition(tex.in_bullets)
 
 -- condition envs
 -- global p! functions from UltiSnips
-local function math()
-	return vim.api.nvim_eval("vimtex#syntax#in_mathzone()") == 1
-end
-
-local function in_text()
-	return not math()
-end
-
 local function env(name)
 	local is_inside = vim.fn["vimtex#env#is_inside"](name)
 	return (is_inside[1] > 0 and is_inside[2] > 0)
 end
 
-local function preamble()
-	return not env("document")
-end
-
 local function tikz()
 	return env("tikzpicture")
-end
-
-local function bp()
-	return env("itemize") or env("enumerate")
-end
-
-local function beamer()
-	return vim.b.vimtex["documentclass"] == "beamer"
 end
 
 -- brackets
@@ -66,7 +46,6 @@ local reference_snippet_table = {
     e = "eq",
     r = ""
 }
-
 
 -- util
 local function isempty(s) --util
@@ -182,56 +161,10 @@ local int2 = function(args, snip)
 	return sn(nil, nodes)
 end
 
-local generate_postfix_dynamicnode = function(_, parent, _, user_arg1, user_arg2)
-    local capture = parent.snippet.env.POSTFIX_MATCH
-    if parent.snippet.env.POSTFIX_MATCH == nil then
-        local visual_placeholder = parent.snippet.env.SELECT_RAW
-        return sn(nil, fmta([[
-        <><><><>
-        ]],
-        {t(user_arg1), i(1, visual_placeholder), t(user_arg2), i(0)}))
-    else
-        return sn(nil, fmta([[
-        <><><><>
-        ]],
-        {t(user_arg1), t(capture), t(user_arg2), i(0)}))
-    end
-end
-
 -- visual util to add insert node
 -- thanks ejmastnak!
 local get_visual = function(_, parent)
     return sn(nil, i(1, parent.snippet.env.SELECT_RAW))
-end
-
--- cite util
-local generate_label = function(args, parent, _, user_arg1, user_arg2)
-	if user_arg2 ~= "xargs" then
-		delims = { "\\label{", "}" }
-	else
-		delims = { "[", "]" }
-	end
-	if isempty(user_arg1) then
-		return sn(
-			nil,
-			fmta(
-				[[
-        \label{<>}
-        ]],
-				{ i(1) }
-			)
-		)
-	else
-		return sn(
-			nil,
-			fmta(
-				[[
-        <><>:<><>
-        ]],
-				{ t(delims[1]), t(user_arg1), i(1), t(delims[2]) }
-			)
-		)
-	end
 end
 
 -- jokar arc of luasnip breaking
@@ -242,25 +175,17 @@ local generate_label_snode = function(label_head, xargs)
 		delims = { "[", "]" }
 	end
 	if isempty(label_head) then
-		return sn(
-			nil,
-			fmta(
-				[[
-        \label{<>}
-        ]],
-				{ i(1) }
-			)
-		)
+		return sn(nil,
+                    fmta([[
+                    \label{<>}
+                    ]],
+                    { i(1) }))
 	else
-		return sn(
-			nil,
-			fmta(
-				[[
-        <><>:<><>
-        ]],
-				{ t(delims[1]), t(label_head), i(1), t(delims[2]) }
-			)
-		)
+		return sn(nil,
+                    fmta([[
+                    <><>:<><>
+                    ]],
+                    { t(delims[1]), t(label_head), i(1), t(delims[2]) }))
 	end
 end
 
@@ -425,19 +350,19 @@ local M = {
     fmta([[
     \section*{<>}<>
     <>]],
-	{ i(1), c(2, { t(""), d(1, generate_label, {}, { user_args = { "sec" } }) }), i(0) })
+	{ i(1), c(2, { t(""), generate_label_snode("sec", false)}), i(0) })
 	),
 	s({ trig = "##", hidden = true, priority = 500 },
 	fmta([[
     \subsection{<>}<>
     <>]],
-	{ i(1), c(2, { t(""), d(1, generate_label, {}, { user_args = { "subsec" } }) }), i(0) })
+	{ i(1), c(2, { t(""), generate_label_snode("subsec", false)}), i(0) })
 	),
 	s({ trig = "##*", hidden = true, priority = 500 },
     fmta([[
     \subsection*{<>}<>
     <>]],
-	{ i(1), c(2, { t(""), d(1, generate_label, {}, { user_args = { "subsec" } }) }), i(0) })
+	{ i(1), c(2, { t(""), generate_label_snode("subsec", false)}), i(0) })
 	),
 	s({ trig = "###", hidden = true, priority = 1000 },
     fmta([[ 
@@ -722,7 +647,7 @@ local M = {
     \left(<>\right)<>
     ]],
     { i(1), i(0) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 	autosnippet({ trig = "lr([aAbBcmp])", name = "left right", dscr = "left right delimiters", trigEngine="pattern", hidden=true },
 	fmta([[
@@ -744,20 +669,20 @@ local M = {
         return brackets[cap][2]
     end),
     i(0)}),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 
 	-- operators, symbols
 	autosnippet({ trig = "//", name = "fraction", dscr = "fraction (autoexpand)" },
     fmta([[\frac{<>}{<>}<>]], { i(1), i(2), i(0) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 	autosnippet({ trig = "((\\d+)|(\\d*)(\\\\)?([A-Za-z]+)((\\^|_)(\\{\\d+\\}|\\d))*)\\/", name = "fraction 2", dscr = "fraction autoexpand 2", trigEngine="ecma", hidden = true },
 	fmta([[
     \frac{<>}{<>}<>
     ]],
 	{ f(get_capture, {}, { user_args = { 1 } }), i(1), i(0) }),
-	{ condition = math, show_condition = math }
+	{ condition=tex.in_math, show_condition=tex.in_math }
 	),
     autosnippet({ trig='(^.*\\))/', name='fraction 3', dscr='fraction 3'},
     fmta([[\frac{<>}{<>}]],
@@ -765,10 +690,10 @@ local M = {
         stripped = snip.trigger
     end), i(0) }
     ),
-    { condition = math, show_condition = math }),
-	autosnippet({ trig = "!!+", priority = 500 }, { t("\\bigoplus") }, { condition = math, show_condition = math }),
-	autosnippet({ trig = "!!*", priority = 500 }, { t("\\bigotimes") }, { condition = math, show_condition = math }),
-	autosnippet({ trig = "Oo", priority = 50 }, { t("\\circ") }, { condition = math, show_condition = math }),
+    { condition=tex.in_math, show_condition=tex.in_math }),
+	autosnippet({ trig = "!!+", priority = 500 }, { t("\\bigoplus") }, { condition=tex.in_math, show_condition=tex.in_math }),
+	autosnippet({ trig = "!!*", priority = 500 }, { t("\\bigotimes") }, { condition=tex.in_math, show_condition=tex.in_math }),
+	autosnippet({ trig = "Oo", priority = 50 }, { t("\\circ") }, { condition=tex.in_math, show_condition=tex.in_math }),
 
 	-- sub super scripts
 	autosnippet({ trig = "([%a%)%]%}])(%d)", trigEngine="pattern", name = "auto subscript", dscr = "hi" },
@@ -776,32 +701,32 @@ local M = {
     <>_<>
     ]],
 	{ f(get_capture, {}, { user_args = { 1 } }), f(get_capture, {}, { user_args = { 2 } }) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 	autosnippet({trig = "([%a%)%]%}])_(%d%d)", trigEngine="pattern", name = "auto subscript 2", dscr = "auto subscript for 2+ digits"},
 	fmta([[
     <>_{<>}
     ]],
     { f(get_capture, {}, { user_args = { 1 } }), f(get_capture, {}, { user_args = { 2 } }) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
     -- short vers.
-	autosnippet("xnn", { t("x_n") }, { condition = math }),
-	autosnippet("xii", { t("x_i") }, { condition = math }),
-	autosnippet("xjj", { t("x_j") }, { condition = math }),
-	autosnippet("ynn", { t("y_n") }, { condition = math }),
-	autosnippet("yii", { t("y_i") }, { condition = math }),
-	autosnippet("yjj", { t("y_j") }, { condition = math }),
-	autosnippet({ trig = "sr", wordTrig = false }, { t("^2") }, { condition = math }),
-	autosnippet({ trig = "cb", wordTrig = false }, { t("^3") }, { condition = math }),
-	autosnippet({ trig = "compl", wordTrig = false }, { t("^{c}") }, { condition = math }),
-	autosnippet({ trig = "vtr", wordTrig = false }, { t("^{T}") }, { condition = math }),
-	autosnippet({ trig = "inv", wordTrig = false }, { t("^{-1}") }, { condition = math }),
+	autosnippet("xnn", { t("x_n") }, { condition=tex.in_math }),
+	autosnippet("xii", { t("x_i") }, { condition=tex.in_math }),
+	autosnippet("xjj", { t("x_j") }, { condition=tex.in_math }),
+	autosnippet("ynn", { t("y_n") }, { condition=tex.in_math }),
+	autosnippet("yii", { t("y_i") }, { condition=tex.in_math }),
+	autosnippet("yjj", { t("y_j") }, { condition=tex.in_math }),
+	autosnippet({ trig = "sr", wordTrig = false }, { t("^2") }, { condition=tex.in_math }),
+	autosnippet({ trig = "cb", wordTrig = false }, { t("^3") }, { condition=tex.in_math }),
+	autosnippet({ trig = "compl", wordTrig = false }, { t("^{c}") }, { condition=tex.in_math }),
+	autosnippet({ trig = "vtr", wordTrig = false }, { t("^{T}") }, { condition=tex.in_math }),
+	autosnippet({ trig = "inv", wordTrig = false }, { t("^{-1}") }, { condition=tex.in_math }),
 
 	-- stuff i need to do calculus
-	autosnippet("dd", { t("\\dd") }, { condition = math, show_condition = math }),
-	autosnippet("nabl", { t("\\nabla") }, { condition = math, show_condition = math }),
-	autosnippet("grad", { t("\\grad") }, { condition = math, show_condition = math }),
+	autosnippet("dd", { t("\\dd") }, { condition=tex.in_math, show_condition=tex.in_math }),
+	autosnippet("nabl", { t("\\nabla") }, { condition=tex.in_math, show_condition=tex.in_math }),
+	autosnippet("grad", { t("\\grad") }, { condition=tex.in_math, show_condition=tex.in_math }),
 	autosnippet({ trig = "lim", name = "lim(sup|inf)", dscr = "lim(sup|inf)" },
 	fmta([[ 
     \lim<><><>
@@ -809,7 +734,7 @@ local M = {
 	{c(1, { t(""), t("sup"), t("inf") }),
 	c(2, { t(""), fmta([[_{<> \to <>}]], { i(1, "n"), i(2, "\\infty") }) }),
 	i(0)}),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 	-- autosnippet(
 	-- 	{ trig = "part", name = "partial derivative", dscr = "partial derivative" },
@@ -820,14 +745,14 @@ local M = {
 	-- 		{ i(1, "V"), i(2, "x"), i(0) },
 	-- 		{ delimiters = "<>" }
 	-- 	),
-	-- 	{ condition = math, show_condition = math }
+	-- 	{ condition=tex.in_math, show_condition=tex.in_math }
 	-- ),
 	autosnippet({ trig = "dint", name = "integrals", dscr = "integrals but cooler" },
     fmta([[
     \<>int_{<>}^{<>} <> <> <>
     ]],
 	{ c(1, { t(""), t("o") }), i(2, "-\\infty"), i(3, "\\infty"), i(4), t("\\dd"), i(0) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 	autosnippet({ trig = "(%d)int", name = "multi integrals", dscr = "please work", trigEngine="pattern", hidden = false },
 	fmta([[ 
@@ -845,33 +770,33 @@ local M = {
         end), i(2) }),
 	  d(nil, int1)}),
 	i(2), d(3, int2), i(0)}),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 	autosnippet({ trig = "sum", name = "summation", dscr = "summation" },
     fmta([[
     \sum<> <>
     ]],
     { c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 	autosnippet({ trig = "prod", name = "product", dscr = "summation" },
     fmta([[
     \prod<> <>
     ]],
 	{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 	autosnippet({ trig = "cprod", name = "product", dscr = "summation" },
     fmta([[
     \coprod<> <>
     ]],
 	{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 
 	-- quantifiers and cs70 n1 stuff
-	autosnippet("||", { t("\\divides") }, { condition = math }),
-	autosnippet("!|", { t("\\notdivides") }, { condition = math, show_condition = math }),
+	autosnippet("||", { t("\\divides") }, { condition=tex.in_math }),
+	autosnippet("!|", { t("\\notdivides") }, { condition=tex.in_math, show_condition=tex.in_math }),
 
 	-- sets
 	autosnippet({ trig = "set", name = "set", dscr = "set" }, -- overload with set builders notation because analysis and algebra cannot agree on a singular notation
@@ -879,21 +804,21 @@ local M = {
     \{<>\}<>
     ]],
 	{ c(1, { r(1, ""), sn(nil, { r(1, ""), t(" \\mid "), i(2) }), sn(nil, { r(1, ""), t(" \\colon "), i(2) })}), i(0) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
     ),
     autosnippet({ trig = "nnn", name = "bigcap", dscr = "bigcaps" },
     fmta([[
     \bigcap<> <>
     ]],
 	{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }),
-	{ condition = math, show_condition = math }
+	{ condition=tex.in_math, show_condition=tex.in_math }
 	),
 	autosnippet({ trig = "uuu", name = "bigcup", dscr = "bigcaps" },
     fmta([[
     \bigcup<> <>
     ]],
 	{ c(1, {fmta([[_{<>}^{<>}]], {i(1, "i = 0"), i(2, "\\infty")}), t("")}), i(0) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 
 	-- counting, probability
@@ -902,7 +827,7 @@ local M = {
     \binom{<>}{<>}<>
     ]],
     { i(1), i(2), i(0) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
 
 	-- etc: utils and stuff
@@ -911,9 +836,9 @@ local M = {
     \<>dots
     ]],
     { f(get_capture, {}, { user_args = { 1 } }) }),
-    { condition = math, show_condition = math }
+    { condition=tex.in_math, show_condition=tex.in_math }
 	),
-	autosnippet("lb", { t("\\\\") }, { condition = math }),
+	autosnippet("lb", { t("\\\\") }, { condition=tex.in_math }),
 	autosnippet("tcbl", { t("\\tcbline") }),
 
     --- tikz 
@@ -1183,27 +1108,33 @@ local greek_specs = {
 	beta = { context = { name = "β" }, command = [[\beta]] },
 	gam = { context = { name = "γ" }, command = [[\gamma]] },
 	Gam = { context = { name = "Γ" }, command = [[\Gamma]] },
-	omega = { context = { name = "ω" }, command = [[\omega]] },
-	Omega = { context = { name = "Ω" }, command = [[\Omega]] },
 	delta = { context = { name = "δ" }, command = [[\delta]] },
 	DD = { context = { name = "Δ" }, command = [[\Delta]] },
 	eps = { context = { name = "ε" , priority = 500 }, command = [[\epsilon]] },
-	eta = { context = { name = "θ" , priority = 500}, command = [[\eta]] },
-	zeta = { context = { name = "θ" }, command = [[\zeta]] },
+    veps = { context = { name = "ε" }, command = [[\varepsilon]] },
+    zeta = { context = { name = "ζ" }, command = [[\zeta]] },
+	eta = { context = { name = "η" , priority = 500}, command = [[\eta]] },
 	theta = { context = { name = "θ" }, command = [[\theta]] },
+	Theta = { context = { name = "Θ" }, command = [[\Theta]] },
+	iota = { context = { name = "ι" }, command = [[\iota]] },
+	kappa = { context = { name = "κ" }, command = [[\kappa]] },
 	lmbd = { context = { name = "λ" }, command = [[\lambda]] },
 	Lmbd = { context = { name = "Λ" }, command = [[\Lambda]] },
 	mu = { context = { name = "μ" }, command = [[\mu]] },
 	nu = { context = { name = "ν" }, command = [[\nu]] },
+    xi = { context = { name = "ξ" }, command = [[\xi]] },
 	pi = { context = { name = "π" }, command = [[\pi]] },
 	rho = { context = { name = "ρ" }, command = [[\rho]] },
 	sig = { context = { name = "σ" }, command = [[\sigma]] },
 	Sig = { context = { name = "Σ" }, command = [[\Sigma]] },
-	tau = { context = { name = "τ" }, command = [[\tau]] },
-	xi = { context = { name = "ξ" }, command = [[\xi]] },
-	psi = { context = { name = "ξ" }, command = [[\psi]] },
-	vphi = { context = { name = "φ" }, command = [[\varphi]] },
-	veps = { context = { name = "ε" }, command = [[\varepsilon]] },
+    tau = { context = { name = "τ" }, command = [[\tau]] },
+	ups = { context = { name = "υ" }, command = [[\upsilon]] },
+    phi = { context = { name = "φ" }, command = [[\phi]] },
+    vphi = { context = { name = "φ" }, command = [[\varphi]] },
+    chi = { context = { name = "χ" }, command = [[\chi]] },
+	psi = { context = { name = "Ψ" }, command = [[\psi]] },
+	omega = { context = { name = "ω" }, command = [[\omega]] },
+	Omega = { context = { name = "Ω" }, command = [[\Omega]] },
 }
 
 local greek_snippets = {}
@@ -1263,11 +1194,11 @@ local symbol_specs = {
 	["=<"] = { context = { name = "⇐" }, command = [[\impliedby]] },
 	iff = { context = { name = "⟺" }, command = [[\iff]] },
 	["->"] = { context = { name = "→", priority = 250 }, command = [[\to]] },
-	["!>"] = { context = { name = "↦" }, command = [[\mapsto]] },
-	["<-"] = { context = { name = "↦", priority = 250}, command = [[\gets]] },
+	["!>"] = { context = { name = "→" }, command = [[\mapsto]] },
+	["<-"] = { context = { name = "←", priority = 250}, command = [[\gets]] },
     -- differentials 
 	-- dd = { context = { name = "⇒" }, command = [[\dl]] },
-	dp = { context = { name = "⇐" }, command = [[\partial]] },
+	dp = { context = { name = "∂" }, command = [[\partial]] },
 	-- arrows
 	["-->"] = { context = { name = "⟶", priority = 500 }, command = [[\longrightarrow]] },
 	["<->"] = { context = { name = "↔", priority = 500 }, command = [[\leftrightarrow]] },
@@ -1278,8 +1209,8 @@ local symbol_specs = {
 	ooo = { context = { name = "∞" }, command = [[\infty]] },
 	lll = { context = { name = "ℓ" }, command = [[\ell]] },
 	dag = { context = { name = "†" }, command = [[\dagger]] },
-	["+-"] = { context = { name = "†" }, command = [[\pm]] },
-	["-+"] = { context = { name = "†" }, command = [[\mp]] },
+	["+-"] = { context = { name = "±" }, command = [[\pm]] },
+	["-+"] = { context = { name = "∓" }, command = [[\mp]] },
 }
 
 local symbol_snippets = {}
