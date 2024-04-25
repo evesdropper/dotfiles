@@ -4,9 +4,9 @@
     "height": 30, // Waybar height (to be removed for auto height)
     // "width": 1280, // Waybar width
     // Choose the order of the modules
-    "modules-left": ["sway/workspaces", "sway/mode", "custom/media", "custom/weather"],
+    "modules-left": ["sway/workspaces", "sway/mode", "mpd", "custom/weather"],
     "modules-center": ["custom/calendar"],
-    "modules-right": ["pulseaudio", "network", "backlight", "cpu", "memory", "temperature", "sway/language", "battery", "clock", "custom/powermenu"],
+    "modules-right": ["pulseaudio", "network", "backlight", "cpu", "memory", "temperature", "sway/language", "battery", "clock"],
     // Modules configuration
     // "sway/workspaces": {
     //     "disable-scroll": true,
@@ -50,7 +50,10 @@
             "playing": ""
         },
         "tooltip-format": "MPD (connected)",
-        "tooltip-format-disconnected": "MPD (disconnected)"
+        "tooltip-format-disconnected": "MPD (disconnected)",
+        "on-click": "mpc pause-if-playing || mpc play",
+        "on-scroll-up": "mpc next",
+        "on-scroll-down": "mpc prev"
     },
     "idle_inhibitor": {
         "format": "{icon}",
@@ -178,7 +181,7 @@
         "format": "{} °",
         "tooltip": true,
         "interval": 3600,
-        "exec": "wttrbar",
+        "exec": "wttrbar --location Berkeley",
         "return-type": "json"
     },
 }
