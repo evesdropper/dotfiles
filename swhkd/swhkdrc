@@ -1,3 +1,7 @@
+/* window switch */
+super + d
+    rofi -show window
+
 /* playerctl stuff */
 ctrl + f8
     playerctl previous
@@ -8,6 +12,7 @@ ctrl + f9
 ctrl + f10 
     playerctl play-pause
 
+/* screenshots */
 print 
     ~/dotfiles/scripts/screen.sh
 
@@ -16,9 +21,6 @@ alt + print
 
 ctrl + delete
     ~/dotfiles/scripts/powermenu.sh
-
-alt + s 
-    ~/dotfiles/scripts/mediamenu.sh
 
 ctrl + print
     ~/dotfiles/scripts/figures.sh
@@ -43,12 +45,6 @@ super + x
 
 super + v
     cliphist list | rofi -dmenu -p "Copy Selected Entry: " | cliphist decode | wl-copy
-
-super + d 
-    ~/Documents/discord/test.sh 
-
-super + shift + d 
-    ~/Documents/discord/test.sh -a
 
 super + c 
     ~/Documents/university/scripts/setup.sh -r 

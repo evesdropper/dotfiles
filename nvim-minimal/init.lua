@@ -1,0 +1,6 @@
+require("random.options")
+require("random.keymaps")
+require("random.lazy")
+require("random.colors")
+require("random.vimtex")
+require("random.luasnip")
