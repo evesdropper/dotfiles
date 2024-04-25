@@ -64,7 +64,8 @@ c.url.searchengines = {
     'st': 'https://simpletracking.com/track/{}',
     'bf': 'https://www.bookfinder.com/isbn/{}',
     'lg': 'https://libgen.is/search.php?req={}',
-    'dd': 'https://downdetector.com/search/?q={}'
+    'dd': 'https://downdetector.com/search/?q={}',
+    'pe': 'https://pollev.com/{}'
 }
 
 # fingerprinting--;
