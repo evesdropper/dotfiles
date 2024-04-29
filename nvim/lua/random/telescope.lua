@@ -6,14 +6,16 @@ end
 vim.g.localleader = ","
 
 -- Telescope remaps --
+local builtin = require('telescope.builtin')
 local opts = { noremap = true, silent = true }
-vim.keymap.set("n", "<leader>ff", ":Telescope find_files<CR>", opts)
-vim.keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>", opts)
-vim.keymap.set("n", "<leader>fb", ":Telescope buffers<CR>", opts)
-vim.keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>", opts)
+vim.keymap.set("n", "<leader>ff", builtin.find_files, opts)
+vim.keymap.set("n", "<leader>fg", builtin.live_grep, opts)
+vim.keymap.set("n", "<leader>fb", builtin.buffers, opts)
+vim.keymap.set("n", "<leader>fh", builtin.help_tags, opts)
 
 local actions = require("telescope.actions")
 telescope.load_extension("media_files")
+telescope.load_extension("harpoon")
 local icons = require("random.icons")
 
 telescope.setup({

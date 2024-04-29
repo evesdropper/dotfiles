@@ -93,17 +93,25 @@ require("lazy").setup({
         "hrsh7th/cmp-nvim-lua",
     },
     {
+        "hrsh7th/cmp-omni"
+    },
+    {
         "L3MON4D3/LuaSnip",
         build = "make install_jsregexp"
     },
 
     -- code editing
     {
-        "nvim-tree/nvim-tree.lua",
+        'stevearc/oil.nvim',
         dependencies = { "nvim-tree/nvim-web-devicons" },
     },
     {
         "akinsho/toggleterm.nvim",
+    },
+
+    -- git 
+    {
+        "lewis6991/gitsigns.nvim",
     },
 
     -- colors / appearance
@@ -130,17 +138,23 @@ require("lazy").setup({
     },
     {
         'goolord/alpha-nvim',
+        dependencies = {
+            "BlakeJC94/alpha-nvim-fortune",
+        }
     },
 
     -- tex / markdown
     {
         "lervag/vimtex",
+        ft = "tex",
     },
     {
         "dkarter/bullets.vim",
+        ft = { "tex", "markdown", "text" },
     },
     {
         "toppair/peek.nvim",
+        ft = { "markdown" },
         event = { "VeryLazy" },
         build = "deno task --quiet build:fast",
     },

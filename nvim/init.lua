@@ -15,8 +15,10 @@ require("random.surround")
 require("random.comments")
 
 -- code editing 
-require("random.nvim-tree")
 require("random.toggleterm")
+
+-- git
+require("random.gitsigns")
 
 -- appearance 
 require("random.colorscheme")
@@ -24,7 +26,8 @@ require("random.lualine")
 require("random.bufferline")
 require("random.winbar")
 require("random.navic")
-require("random.alpha") -- alpha >>>>>> dashboard bc it actually works
+require("random.alpha")
 
 -- ft specific 
 require("random.vimtex") -- latex
+require("random.peek")
