@@ -27,8 +27,4 @@ echo $fileout
 [ -d "$screenshot_dir" ] || mkdir $screenshot_dir
 
 # take screenshot and copy to clipboard
-grim -g "$(slurp)" -
-wl-copy < -
-
-# edit screenshot 
-satty --filename - --output-filename "$screenshot_dir$filename.png"
+grim -g "$(slurp)" - | satty --filename - --output-filename $fileout
