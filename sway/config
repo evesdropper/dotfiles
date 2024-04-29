@@ -4,19 +4,17 @@
 #
 # Read `man 5 sway` for a complete reference.
 
-exec_always dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
-
 ### Variables
 #
 # Logo key. Use Mod1 for Alt.
-set $mod Mod1
+set $mod Mod4
 # Home row direction keys, like vim
 set $left h
 set $down j
 set $up k
 set $right l
 # Your preferred terminal emulator
-set $term kitty || ~/.local/kitty.app/bin/kitty
+set $term kitty
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
@@ -34,36 +32,27 @@ output * bg ~/dotfiles/sway/revise.png fill
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 
 ### Idle configuration
-# swaylock --font monospace --effect-blur 7x5 --effect-vignette -0.5:0.5 --grace 2 --fade-in 0.2
-#$bl_time 600
-#$lk_time 615
-#$lb_time  15
 
 exec_always pgrep swayidle || swayidle -w \
-    timeout 300 'swaylock -d' \
+    timeout 300 'gtklock -d' \
     timeout 600 'swaymsg "output * dpms off"' \
     resume 'swaymsg "output * dpms on"' \
-    timeout 15 'pgrep swaylock && swaymsg "output * dpms off"' \
-    resume 'pgrep swaylock && swaymsg "output * dpms on"' \
-    before-sleep 'swaylock -d'
-
-# bindsym $mod+escape exec killall -s SIGUSR1 swayidle && killall -s SIGUSR1 swayidle
+    timeout 15 'pgrep gtklock && swaymsg "output * dpms off"' \
+    resume 'pgrep gtklock && swaymsg "output * dpms on"' \
+    before-sleep 'gtklock -d' \
 
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
 
 ### Input configuration
-#
-# Example configuration:
-#
-#   input "2:14:SynPS/2_Synaptics_TouchPad" {
-#       dwt enabled
-#       tap enabled
-#       natural_scroll enabled
-#       middle_emulation enabled
-#   }
-#
+
+input type:keyboard {
+    xkb_layout us,us
+    xkb_variant ,dvpr
+    xkb_options "grp:win_space_toggle"
+}
+
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
 
@@ -217,11 +206,8 @@ bar {
     swaybar_command waybar
 }
 
-
 # color changes go brr
 font pango:Inconsolata Nerd Font Mono 11
-# font pango:"Inconsolata Nerd Font Mono" Regular 11
-# set $uifont "Inconsolata Nerd Font Mono"
 
 #client.<class>         <border>  <background>    <text>      <indicator>   <child_border> 
 
@@ -243,44 +229,21 @@ for_window [window_type="menu"] floating enable
 for_window [app_id="zenity"] floating enable
 for_window [app_id="zenity"] resize set 225 75
 for_window [app_id="mpv"] resize set width 70 ppt
-for_window [app_id="one.alynx.showmethekey" title="Floating Window - Show Me The Key"] {
-  floating enable
-  sticky enable
-}
-# zwift tv time :smiling_imp:
-for_window [class="^Firefox$"]                      inhibit_idle fullscreen
-for_window [app_id="^firefox$"]                     inhibit_idle fullscreen
-for_window [class="^Chromium$"]                     inhibit_idle fullscreen
-for_window [class="^Google-chrome$"]                inhibit_idle fullscreen
-for_window [app_id="^org.qutebrowser.qutebrowser$"] inhibit_idle fullscreen
-for_window [class="^jellyfin$"]                     inhibit_idle fullscreen
-for_window [class="^mpv$"]                          inhibit_idle visible
-for_window [app_id="^mpv$"]                         inhibit_idle visible
-for_window [class="^jellyfin$"]                     inhibit_idle visible
+for_window [shell="xwayland"] title_format "[XWayland] %title"
 
 assign [class="qutebrowser"] 2
 assign [app_id="firefox"] 3
-assign [class="discord"] 4
+assign [class="Texts"] 4
 assign [class="Spotify"] 7
 assign [class="Slack"] 8
 assign [class="Signal"] 9
 
 include /home/revise/.config/sway/config.d/*
 
-input type:keyboard {
-    xkb_layout us,us
-    xkb_variant ,dvp
-    xkb_options "grp:win_space_toggle"
-}
-
 # scripts
-# exec_always wl-clipboard-history -t
-exec_always autotiling -w 1 3 5 7 9
+exec_always hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec_always autotiling-rs -w 1 3 5 7 9
 exec_always swaycons
 exec_always /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec_always wl-paste --watch cliphist store
-# exec_always /usr/lib/polkit-1/polkit-agent-helper-1 
 exec_always $HOME/dotfiles/scripts/start-swhkd.sh
-# exec_always ydotoold
-
-
