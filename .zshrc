@@ -1,15 +1,16 @@
 #!/bin/sh
 
+# conda
+[ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
+
 # pathfinding 
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 export PATH=$PATH:/home/revise/texlive/2022/bin/x86_64-linux
 export PATH=$PATH:/home/revise/.local/share/gem/ruby/3.0.0/bin
 export PATH=$PATH:/home/revise/go/bin
+export PATH=$PATH:/home/revise/.cargo/bin/
 export PATH=$PATH:/home/revise/Documents/code/happy-hacking-gnu/bin
-
-# nvim test
-export NVIM_APPNAME="nvim"
 
 # plugin manager
 [ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh"
@@ -37,6 +38,8 @@ zstyle ':completion:*' menu select=5
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 zstyle :compinstall filename '/home/revise/.zshrc'
 
+# completion
+fpath=(/home/revise/.config/lf/ $fpath)
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
@@ -71,9 +74,9 @@ elif [ $month -ge 8 ]; then
     sem="fa"
 else 
     sem="su"
-fi 
+fi
 
-CURRENT_SEM="$sem$year"
+export CURRENT_SEM="$sem$year"
 
 # common places to go 
 alias clearcd="clear; cd"
@@ -84,6 +87,7 @@ alias ...='cd ..; cd ..'
 alias ....='cd ..; cd ..; cd ..'
 alias docs='cd ~/Documents/'
 alias notesdir='cd ~/Documents/university/bachelor-3/$CURRENT_SEM/'
+alias cs70="cd ~/Documents/university/teaching/"
 alias plandir='cd ~/Documents/university/plan'
 alias ccdir='cd ~/Documents/university/bachelor-3/current-course/'
 alias books='cd ~/Downloads/Documents/books/'
@@ -91,9 +95,12 @@ alias math='cd ~/Documents/university/etc/math/'
 alias texbook="cd ~/Documents/etc/tex/"
 alias pwv3="cd ~/Documents/code/pwv3/"
 alias ls-plugin="cd ~/Documents/code/luasnip-latex-snippets.nvim/"
+alias emails="cd ~/Documents/university/scripts/emails/"
 alias sboard="taskell ~/Documents/personal/boards/school.md"
 alias tboard="taskell ~/Documents/personal/boards/training.md"
 alias pboard="taskell ~/Documents/personal/boards/personal.md"
+alias rlog="cd ~/Documents/personal/logs/"
+alias edposts="nvim ~/Documents/university/teaching/ed.tex"
 
 # git commands
 alias g='git'
@@ -139,14 +146,15 @@ zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search # ARROW_UP
 bindkey "^[[B" down-line-or-beginning-search # ARROW_DOWN
-#bindkey '^[[H' beginning-of-line
-#bindkey '^[[F' end-of-line
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
 
 export EDITOR="nvim"
+export NVIM_APPNAME="nvim"
+export OPENER=handlr
 export TERMINAL="kitty"
-export BROWSER="firefox"
-#export NVM_INC="/home/revise/.nvm/versions/node/v19.3.0/include/node"
 export XDG_CURRENT_DESKTOP=Unity
+export ADW_DISABLE_PORTAL=1
 
 # git 
 source /usr/share/zsh/scripts/git-prompt.zsh
@@ -162,19 +170,5 @@ RPROMPT='%B%F{red}%(0?||Exit code: %?)%f%b'
 
 # syntax highlight
 
-# To customize prompt, run `p10k configure` or edit ~/dotfiles/.p10k.zsh.
-# [[ ! -f ~/dotfiles/.p10k.zsh ]] || source ~/dotfiles/.p10k.zsh
-
-month="$(date +%m)"
-year="$(date +%y)"
-
-if [ $month -le 5 ]; then
-    sem="sp"
-elif [ $month -ge 8 ]; then 
-    sem="fa"
-else 
-    sem="su"
-fi
-
-export CURRENT_SEM="$sem$year"
-
+# zoxide!
+eval "$(zoxide init zsh)"
