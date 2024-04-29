@@ -31,10 +31,10 @@ end
 -- brackets
 local brackets = {
 	a = { "\\langle", "\\rangle" },
-	A = { "Angle", "Angle" },
-	b = { "brack", "brack" },
-	B = { "Brack", "Brack" },
-	c = { "brace", "brace" },
+	A = { "\\rAngle", "\\rAngle" },
+	b = { "[", "]" },
+	B = { "\\lBrack", "\\rBrack" },
+	c = { "\\{", "\\}" },
 	m = { "|", "|" },
 	p = { "(", ")" },
 }
@@ -165,7 +165,7 @@ local generate_fraction = function (_, snip)
     local stripped = snip.captures[1]
     local depth = 0
     local j = #stripped
-    while true do
+    while j >= 1 do
         local c = stripped:sub(j, j)
         if c == "(" then
             depth = depth + 1
@@ -1160,7 +1160,7 @@ local greek_snippets = {}
 for k, v in pairs(greek_specs) do
 	table.insert(
 		greek_snippets,
-		symbol_snippet(vim.tbl_deep_extend("keep", { trig = k }, v.context), v.command, { condition = tex.in_math })
+		symbol_snippet(vim.tbl_deep_extend("keep", { trig = k }, v.context), v.command, { condition = tex.in_math, backslash = true })
 	)
 end
 vim.list_extend(M, greek_snippets)
@@ -1359,7 +1359,7 @@ for k, v in pairs(single_command_math_specs) do
 		single_command_snippet(
 			vim.tbl_deep_extend("keep", { trig = k, snippetType = "autosnippet" }, v.context),
 			v.command,
-			{ condition = tex.in_math },
+			v.opts or { condition = tex.in_math },
 			v.ext or {}
 		)
 	)
