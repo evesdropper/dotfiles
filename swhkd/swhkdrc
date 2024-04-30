@@ -1,5 +1,5 @@
 /* window switch */
-super + d
+alt + d
     rofi -show window
 
 /* playerctl stuff */
@@ -16,14 +16,11 @@ ctrl + f10
 print 
     ~/dotfiles/scripts/screen.sh
 
-alt + print 
-    ~/dotfiles/scripts/screen.sh --screen
+alt + shift + p
+    ~/dotfiles/scripts/mediamenu.sh
 
 ctrl + delete
     ~/dotfiles/scripts/powermenu.sh
-
-ctrl + print
-    ~/dotfiles/scripts/figures.sh
 
 ctrl + alt + shift + r 
     ~/dotfiles/scripts/record.sh
@@ -46,8 +43,5 @@ super + x
 super + v
     cliphist list | rofi -dmenu -p "Copy Selected Entry: " | cliphist decode | wl-copy
 
-super + c 
-    ~/Documents/university/scripts/setup.sh -r 
-
-super + s
+alt + s
     ~/dotfiles/nvim/lua/snippets/localsnippets.sh
