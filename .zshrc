@@ -7,9 +7,9 @@
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 export PATH=$PATH:/home/revise/texlive/2022/bin/x86_64-linux
-export PATH=$PATH:/home/revise/.local/share/gem/ruby/3.0.0/bin
+export PATH=$PATH:/home/revise/.cargo/bin
 export PATH=$PATH:/home/revise/go/bin
-export PATH=$PATH:/home/revise/.cargo/bin/
+export PATH=$PATH:/home/revise/.local/share/gem/ruby/3.0.0/bin
 export PATH=$PATH:/home/revise/Documents/code/happy-hacking-gnu/bin
 
 # plugin manager
@@ -21,7 +21,6 @@ plug "hlissner/zsh-autopair"
 plug "zap-zsh/vim"
 plug "zap-zsh/fzf"
 plug "zap-zsh/supercharge"
-# plug "romkatv/powerlevel10k"
 plug "zsh-users/zsh-syntax-highlighting"
 
 # completion
@@ -171,4 +170,4 @@ RPROMPT='%B%F{red}%(0?||Exit code: %?)%f%b'
 # syntax highlight
 
 # zoxide!
-eval "$(zoxide init zsh)"
+eval "$(zoxide init --cmd cd zsh)"
