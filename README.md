@@ -6,32 +6,33 @@ If you're looking for the LuaSnip Guide: [website](https://evesdropper.dev/files
 
 <hr> 
 
-New (and hopefully more organized) dotfiles on Arch Linux. Wayland-based configuration.
+Some dotfiles on Arch Linux. Wayland-based configuration.
 
 ## Setup
 Some basic information about my setup.
 - OS: Arch Linux
 - Window Manager: Sway
+    * Status Bar: Waybar
+    * Screen Lock: gtklock
 - Terminal: kitty
 - Shell: zsh
+- File Manager: lf
 - Text Editor: Neovim
+- Web Browser: A mix of qutebrowser and hardened Firefox (modified with [Narsil's `user.js`](https://codeberg.org/Narsil/user.js) and [Cascade](https://github.com/cascadefox/cascade))
 
 ### Install?
-No, I don't think so.
+No, I don't think so. I probably should make an install script, mostly for when I have to work on Windows.
 
 ## Serious To Do
 - [ ] System: Wifi Setup (Eduroam)
-- [ ] System: Get Bluetooth to work with headphones
-- [x] System: Get zsh env to be the same as bash, then configure stuff.
 - [ ] LaTeX: update preamble.
-- [x] Neovim: configure current plugins (nvim-tree, commment, bufferline). 
-- [ ] General (Neovim/LuaSnip): add development plugins (e.g. toggleterm) and create snippets/commands/keybinds for software development.
-- [ ] Waybar: Add Google Calendar integration.
+- [ ] General (Neovim/LuaSnip): create snippets/commands/keybinds for software development.
+- [ ] General: find a stupid task to do such as making a script to generate quotes.
 
 ## Cool Stuff
-Sure. I currently have a nice lockscreen, and that's about it.
+Sure. I currently have a nice (new, gtklock) lockscreen, and that's about it.
 
-![Lockscreen](./assets/lockscreen.png)
+![Lockscreen](./assets/new-lockscreen.png)
 
 
 ## Serious Stuff
