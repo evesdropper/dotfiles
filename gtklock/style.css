@@ -37,3 +37,10 @@ window {
 #error-label {
     color: #dc322f
 }
+
+#runshell {
+    font-size: 1.25em;
+    font-family: monospace;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); 
+}
+
