@@ -10,6 +10,7 @@ settings:
     https://calendar.google.com: true
     https://fujitsuscannerstore.com: false
     https://oh.eecs70.org: true
+    https://srchfitness.com: false
   content.proxy:
     global: system
   content.register_protocol_handler:

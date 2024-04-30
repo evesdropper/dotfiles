@@ -81,9 +81,24 @@ c.content.default_encoding = 'utf-8'
 c.content.blocking.enabled = True
 c.content.blocking.method = 'both'
 c.content.blocking.hosts.lists = [
-    'https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn-social/hosts',
-    'https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts',
+    'https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn-social/hosts'
     '/home/revise/.config/qutebrowser/blocked-hosts'
+]
+c.content.blocking.whitelist = [
+    "redd.it",
+    "*.reddit.com/*",
+    "*.redditmedia.com/*", 
+    "*.redditblog.com/*",
+    "*.redditgifts.com/*",
+    "*.redditinc.com/*",
+    "*.redditmedia.com/*",
+    "*.redditstatic.com/*",
+    "*.reddituploads.com/*",
+    "*.amp-reddit-com.cdn.ampproject.org/*",
+    "*.reddit-uploaded-media.s3-accelerate.amazonaws.com/*",
+    "*.reddit-uploaded-video.s3-accelerate.amazonaws.com/*",
+    "*.reddit.map.fastly.net/*",
+    "*.redditgifts.s3.amazonaws.com/*",
 ]
 
 # misc
