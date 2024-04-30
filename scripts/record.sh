@@ -29,7 +29,7 @@ SavePath=$( zenity \
 	--file-selection \
 	--save \
 	--confirm-overwrite \
-	--file-filter=*.gif \
+	--file-filter=*.mp4 \
 	--filename="$DefaultSaveDir"'/.mp4' \
 ) || exit
 

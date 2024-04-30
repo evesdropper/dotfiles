@@ -10,5 +10,7 @@ QUOTES_DIR="$HOME/dotfiles/assets/quotes/"
 quotefile=$(find $QUOTES_DIR -type f | shuf -n 1)
 name=$(yq ".name" $quotefile)
 quote=$(yq ".quote" $quotefile)
+context=$(yq ".context" $quotefile)
+[[ $context == "null" ]] && context="" || context=", $context"
 
-printf "\"%s\"\n%60s" "$(echo $quote | fmt -w 60)" "- $name"
+printf "\"%s\"\n\n%80s" "$(echo $quote | fmt -w 80)" "- $name$context"
