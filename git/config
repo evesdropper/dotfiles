@@ -2,7 +2,6 @@
     name = Evelyn Koo 
     email = r_evelynkoo@berkeley.edu
     username = evesdropper
-    signingkey = AC78ECD49A4799B5
 [init]
     defaultBranch = main
 [branch "main"]
