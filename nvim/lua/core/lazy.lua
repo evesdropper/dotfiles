@@ -35,9 +35,6 @@ require("lazy").setup({
         build = ":TSUpdate",
     },
     {
-        "nvim-treesitter/playground",
-    },
-    {
         "kylechui/nvim-surround",
     },
     {

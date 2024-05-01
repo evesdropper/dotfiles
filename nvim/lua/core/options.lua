@@ -1,5 +1,6 @@
 vim.g.maplocalleader = ","
 vim.g.python3_host_prog = "/sbin/python3"
+vim.bo.omnifunc = 'v:lua.vim.treesitter.query.omnifunc'
 
 local options = {
 	backup = false, -- creates a backup file
