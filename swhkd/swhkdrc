@@ -1,0 +1,47 @@
+/* window switch */
+alt + d
+    rofi -show window
+
+/* playerctl stuff */
+ctrl + f8
+    playerctl previous
+
+ctrl + f9
+    playerctl next
+
+ctrl + f10 
+    playerctl play-pause
+
+/* screenshots */
+print 
+    ~/dotfiles/scripts/screen.sh
+
+alt + shift + p
+    ~/dotfiles/scripts/mediamenu.sh
+
+ctrl + delete
+    ~/dotfiles/scripts/powermenu.sh
+
+ctrl + alt + shift + r 
+    ~/dotfiles/scripts/record.sh
+
+ctrl + alt + shift + g
+    ~/dotfiles/scripts/gifrecord.sh
+
+ctrl + alt + shift + k 
+    ~/dotfiles/scripts/keys.sh
+
+ctrl + super + shift + k 
+    ~/dotfiles/scripts/keys.sh -g
+
+ctrl + f5 
+    sudo pkill -HUP swhkd
+
+super + x
+    cliphist list | rofi -dmenu -p "Delete Selected Entry: " | cliphist delete
+
+super + v
+    cliphist list | rofi -dmenu -p "Copy Selected Entry: " | cliphist decode | wl-copy
+
+alt + s
+    ~/dotfiles/nvim/lua/snippets/localsnippets.sh

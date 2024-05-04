@@ -1,0 +1,41 @@
+\makeatletter
+\def\getslant#1{\strip@pt\fontdimen1 #1}
+
+\newbox\usefulbox
+\newdimen\slantlength
+
+\def\basickern{1mu}
+
+% parameters: typeface, style, font, text
+\def\wunderbar#1#2#3#4{%
+	\setbox\usefulbox=\hbox{$\m@th#2#1{\global\slantlength=\fontdimen1#3\mathgroup#4}$}%
+	\dimen@ \strip@pt\slantlength \ht\usefulbox
+	\mkern\basickern\underline{\mkern-\basickern\box\usefulbox\mkern-\basickern\kern-\dimen@}\kern\dimen@\mkern\basickern}
+
+\def\woverbar#1#2#3#4{%
+	\setbox\usefulbox=\hbox{$\m@th#2#1{\global\slantlength=\fontdimen1#3\mathgroup#4}$}%
+	\dimen@ \strip@pt\slantlength \ht\usefulbox
+	\kern\dimen@\mkern\basickern\overline{\kern-\dimen@\mkern-\basickern\box\usefulbox\mkern-\basickern}\mkern\basickern}
+
+
+\def\woverunderbar#1#2#3#4{%
+	\setbox\usefulbox=\hbox{$\m@th#2#1{\global\slantlength=\fontdimen1#3\mathgroup#4}$}%
+	\dimen@ \strip@pt\slantlength \ht\usefulbox
+	\mkern\basickern\underline{\mkern-\basickern\usebox\usefulbox\mkern-\basickern\kern-\dimen@}\kern\dimen@\mkern\basickern%
+	\hskip-\wd\usefulbox
+	\kern\dimen@\mkern\basickern\overline{\kern-\dimen@\mkern-\basickern\usebox\usefulbox\mkern-\basickern}\mkern\basickern%
+}
+
+%parameters: typeface, text, command
+\def\wchoice#1#2#3{
+	\mathchoice{#3{#1}{\displaystyle}{\textfont}{#2}}%
+		   {#3{#1}{\textstyle}{\textfont}{#2}}%
+		   {#3{#1}{\scriptstyle}{\scriptfont}{#2}}%
+		   {#3{#1}{\scriptscriptstyle}{\scriptscriptfont}{#2}}%
+}
+
+%parameters: typeface, text
+\def\wunderbarchoice#1#2{\wchoice{#1}{#2}{\wunderbar}}
+\def\woverbarchoice#1#2{\wchoice{#1}{#2}{\woverbar}}
+
+\makeatother

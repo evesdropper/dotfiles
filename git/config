@@ -1,0 +1,21 @@
+[user]
+    name = Evelyn Koo 
+    email = r_evelynkoo@berkeley.edu
+    username = evesdropper
+[init]
+    defaultBranch = main
+[branch "main"]
+    remote = origin
+    merge = refs/heads/main
+    rebase = true
+[core]
+    editor = nvim
+    whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+    pager = delta
+[rerere]
+    enabled = 1
+    autoupdate = 1
+[pull]
+    rebase = true
+[commit]
+    gpgsign = true

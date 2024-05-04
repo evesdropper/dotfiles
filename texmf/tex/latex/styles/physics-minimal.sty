@@ -1,0 +1,153 @@
+\ProvidesPackage{physics-minimal}[A minimal version of the physics package.]
+
+\RequirePackage{xparse}
+\RequirePackage{amsmath}
+
+% Options
+
+\DeclareOption{trig}{\let\trigopt = 1}
+\DeclareOption{notrig}{\let\trigopt = 0}
+
+\ExecuteOptions{trig}
+\ProcessOptions\relax
+
+% ========== \qty command ==========
+
+\ProvideDocumentCommand\lparen{}{(} % Left parenthesis
+\ProvideDocumentCommand\rparen{}{)} % Right parenthesis
+
+% Brackets and braces
+\DeclareDocumentCommand\quantity{}{{\ifnum\z@=`}\fi\@quantity}
+\DeclareDocumentCommand\@quantity{ t\big t\Big t\bigg t\Bigg !g !o !d() !d|| }
+{ % Flexible automatic bracketing of an expression in () or [] or {} or ||
+	% Handles manual override of sizing
+	\IfBooleanTF{#1}{\let\ltag\bigl \let\rtag\bigr}{
+		\IfBooleanTF{#2}{\let\ltag\Bigl \let\rtag\Bigr}{
+			\IfBooleanTF{#3}{\let\ltag\biggl \let\rtag\biggr}{
+				\IfBooleanTF{#4}
+				{\let\ltag\Biggl \let\rtag\Biggr}
+				{\let\ltag\left \let\rtag\right}
+			}
+		}
+	}
+	% Handles actual bracketing
+	\IfNoValueTF{#5}{
+		\IfNoValueTF{#6}{
+			\IfNoValueTF{#7}{
+				\IfNoValueTF{#8}
+				{()}
+				{\ltag\lvert{#8}\rtag\rvert}
+			}
+			{\ltag(#7\rtag) \IfNoValueTF{#8}{}{|#8|}}
+		}
+		{\ltag[#6\rtag] \IfNoValueTF{#7}{}{(#7)} \IfNoValueTF{#8}{}{|#8|}}
+	}
+	{\ltag\lbrace#5\rtag\rbrace  \IfNoValueTF{#6}{}{[#6]} \IfNoValueTF{#7}{}{(#7)} \IfNoValueTF{#8}{}{|#8|}}
+	\ifnum\z@=`{\fi}
+}
+\DeclareDocumentCommand\qty{}{\quantity} % Shorthand for \quantity
+
+\DeclareDocumentCommand\argopen{s}{\IfBooleanTF{#1}{\mathopen{}\mathclose\bgroup}{\mathopen{}\mathclose\bgroup\left}} % Special open grouping for argument of a function
+\DeclareDocumentCommand\argclose{s}{\IfBooleanTF{#1}{\egroup}{\aftergroup\egroup\right}} % Special close grouping for argument of a function
+
+% braces around a function argument
+\DeclareDocumentCommand\opbraces{ m !g !o !d() }
+{
+    #1
+	\IfNoValueTF{#2}
+	{
+		\IfNoValueTF{#3}
+			{
+				\IfNoValueTF{#4}
+				{}
+                {\argopen(#4\argclose)}
+			}
+			{
+                \argopen[#3\argclose]
+				\IfNoValueTF{#4}{}{(#4)}
+			}
+	}
+	{
+        \argopen\{#2\argclose\}
+		\IfNoValueTF{#3}{}{[#3]}
+		\IfNoValueTF{#4}{}{(#4)}
+	}
+}
+
+% braces around trig; only () possible, with exponent as optional argument
+\DeclareDocumentCommand\trigbraces{ m !o !d() }
+{
+	\IfNoValueTF{#3}
+	{#1 \IfNoValueTF{#2}{}{[#2]}}
+	{#1 \IfNoValueTF{#2}{}{^{#2}} \argopen(#3\argclose)}
+}
+
+% ========== function braces ==========
+
+\ifx\trigopt 1
+	\let\sine\sin \DeclareDocumentCommand\sin{}{\trigbraces{\sine}}
+	\let\cosine\cos \DeclareDocumentCommand\cos{}{\trigbraces{\cosine}}
+	\let\tangent\tan \DeclareDocumentCommand\tan{}{\trigbraces{\tangent}}
+	\let\cosecant\csc \DeclareDocumentCommand\csc{}{\trigbraces{\cosecant}}
+	\let\secant\sec \DeclareDocumentCommand\sec{}{\trigbraces{\secant}}
+	\let\cotangent\cot \DeclareDocumentCommand\cot{}{\trigbraces{\cotangent}}
+
+	\let\arcsine\arcsin \DeclareDocumentCommand\arcsin{}{\trigbraces{\arcsine}}
+	\let\arccosine\arccos \DeclareDocumentCommand\arccos{}{\trigbraces{\arccosine}}
+	\let\arctangent\arctan \DeclareDocumentCommand\arctan{}{\trigbraces{\arctangent}}
+	\DeclareMathOperator{\arccosecant}{arccsc}
+	\DeclareDocumentCommand\arccsc{}{\trigbraces{\arccosecant}}
+	\DeclareMathOperator{\arcsecant}{arcsec}
+	\DeclareDocumentCommand\arcsec{}{\trigbraces{\arcsecant}}
+	\DeclareMathOperator{\arccotangent}{arccot}
+	\DeclareDocumentCommand\arccot{}{\trigbraces{\arccotangent}}
+
+	\DeclareMathOperator{\asine}{asin}
+	\DeclareDocumentCommand\asin{}{\trigbraces{\asine}}
+	\DeclareMathOperator{\acosine}{acos}
+	\DeclareDocumentCommand\acos{}{\trigbraces{\acosine}}
+	\DeclareMathOperator{\atangent}{atan}
+	\DeclareDocumentCommand\atan{}{\trigbraces{\atangent}}
+	\DeclareMathOperator{\acosecant}{acsc}
+	\DeclareDocumentCommand\acsc{}{\trigbraces{\acosecant}}
+	\DeclareMathOperator{\asecant}{asec}
+	\DeclareDocumentCommand\asec{}{\trigbraces{\asecant}}
+	\DeclareMathOperator{\acotangent}{acot}
+	\DeclareDocumentCommand\acot{}{\trigbraces{\acotangent}}
+
+	\let\hypsine\sinh \DeclareDocumentCommand\sinh{}{\trigbraces{\hypsine}}
+	\let\hypcosine\cosh \DeclareDocumentCommand\cosh{}{\trigbraces{\hypcosine}}
+	\let\hyptangent\tanh \DeclareDocumentCommand\tanh{}{\trigbraces{\hyptangent}}
+	\DeclareMathOperator{\hypcosecant}{csch}
+	\DeclareDocumentCommand\csch{}{\trigbraces{\hypcosecant}}
+	\DeclareMathOperator{\hypsecant}{sech}
+	\DeclareDocumentCommand\sech{}{\trigbraces{\hypsecant}}
+	\let\hypcotangent\coth \DeclareDocumentCommand\coth{}{\trigbraces{\hypcotangent}}
+
+	\let\exponential\exp \DeclareDocumentCommand\exp{}{\opbraces{\exponential}}
+	\let\logarithm\log \DeclareDocumentCommand\log{}{\trigbraces{\logarithm}}
+	\let\naturallogarithm\ln \DeclareDocumentCommand\ln{}{\trigbraces{\naturallogarithm}}
+	\let\determinant\det \DeclareDocumentCommand\det{}{\opbraces{\determinant}}
+	\let\Probability\Pr \DeclareDocumentCommand\Pr{}{\opbraces{\Probability}}
+	\DeclareDocumentCommand\tr{}{\opbraces{\trace}}
+	\DeclareDocumentCommand\Tr{}{\opbraces{\Trace}}
+	\DeclareDocumentCommand\Res{}{\opbraces{\Residue}}
+\else
+	\DeclareMathOperator{\arccsc}{arccsc}
+	\DeclareMathOperator{\arcsec}{arcsec}
+	\DeclareMathOperator{\arccot}{arccot}
+
+	\DeclareMathOperator{\asin}{asin}
+	\DeclareMathOperator{\acos}{acos}
+	\DeclareMathOperator{\atan}{atan}
+	\DeclareMathOperator{\acsc}{acsc}
+	\DeclareMathOperator{\asec}{asec}
+	\DeclareMathOperator{\acot}{acot}
+
+	\DeclareMathOperator{\csch}{csch}
+	\DeclareMathOperator{\sech}{sech}
+
+	\DeclareDocumentCommand\tr{}{\trace}
+	\DeclareDocumentCommand\Tr{}{\Trace}
+	\DeclareDocumentCommand\Res{}{\Residue}
+\fi
