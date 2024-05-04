@@ -1,1 +1,0 @@
--- test bank for c# :vomnit:

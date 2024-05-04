@@ -1,6 +1,0 @@
-require("random.options")
-require("random.keymaps")
-require("random.lazy")
-require("random.colors")
-require("random.treesitter")
-require("random.luasnip")
