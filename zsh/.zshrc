@@ -33,3 +33,6 @@ alias tree='ls --tree'
 
 # zoxide
 eval "$(zoxide init --cmd cd zsh)"
+
+# ssh
+eval "$(ssh-agent -s)"
