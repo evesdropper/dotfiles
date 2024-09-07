@@ -1,0 +1,21 @@
+aw: https://wiki.archlinux.org/?search=%s
+ap: https://archlinux.org/packages/?q=%s
+aur: https://aur.archlinux.org/packages/?K=%s
+pp: https://pypi.org/search/?q=%s
+tp: https://ctan.org/search?phrase=%s
+tse: https://tex.stackexchange.com/search?q=%s
+sr: https://www.reddit.com/r/%s
+rs: https://www.reddit.com/search/?q=%s
+gmap: https://maps.google.com/maps/search/%s
+gs: https://scholar.google.com/scholar?q=%s
+gh: https://github.com/search?q=%s
+eb: https://www.ebay.com/sch/i.html?_nkw=%s
+az: https://www.amazon.com/s/?field-keywords=%s Amazon
+lt: https://www.linktr.ee/%s
+tu: https://www.tinyurl.com/%s
+st: https://simpletracking.com/track/%s
+bf: https://www.bookfinder.com/isbn/%s
+lg: https://libgen.is/search.php?req=%s
+dd: https://downdetector.com/search/?q=%s
+yt: https://www.youtube.com/results?search_query=%s
+sx: https://searxng.site/searxng/search?q=%s
