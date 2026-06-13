@@ -1,0 +1,24 @@
+outputs = "Active"
+
+[modules]
+left = [ "Updates", "Workspaces", "MediaPlayer" ]
+center = [ "WindowTitle" ]
+right = [ "SystemInfo", [ "Tempo", "Privacy", "KeyboardLayout", "Settings" ], "Notifications" ]
+
+[tempo]
+timezones = [ "America/Los_Angeles", "UTC", "Asia/Taipei" ]
+weather_location = "Current"
+
+[updates]
+check_cmd = "checkupdates; paru -Qua"
+update_cmd = 'kitty -e bash -c "paru; echo Done - Press enter to exit; read" &'
+interval = 3600
+
+[appearance]
+font_name = "InconsolataGo Nerd Font Mono"
+
+[settings]
+lock_cmd = "hyprlock"
+logout_cmd = "hyprshutdown"
+shutdown_cmd = "hyprshutdown -t 'Shutting down...' --post-cmd 'shutdown -P 0'"
+reboot_cmd = "hyprshutdown -t 'Restarting...' --post-cmd 'reboot'"

@@ -1,0 +1,12 @@
+[status]
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+[which]
+desc            = { fg = "magenta" }
+separator_style = { fg = "cyan" }
+
+[icon]
+append_files = [
+    { name = ".styluaignore", text = "", fg = "#00a2ff" },
+]

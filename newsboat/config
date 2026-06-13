@@ -1,0 +1,11 @@
+# reload
+auto-reload yes
+reload-threads 25
+
+# browser
+browser "firefox %u"
+
+# headings
+highlight feedlist ".*0/0.." default default invis
+
+# appearance
