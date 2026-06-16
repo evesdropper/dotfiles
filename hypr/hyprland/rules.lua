@@ -34,9 +34,27 @@ hl.window_rule({
 })
 
 hl.window_rule({
+  name = "bitwarden",
+  match = {
+    class = "bitwarden",
+  },
+  group = "set",
+  workspace = "3",
+})
+
+hl.window_rule({
   name = "signal",
   match = {
     class = "signal",
+  },
+  group = "set",
+  workspace = "4",
+})
+
+hl.window_rule({
+  name = "beeper",
+  match = {
+    class = "beeper",
   },
   group = "set",
   workspace = "4",

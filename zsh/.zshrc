@@ -48,8 +48,11 @@ alias la='ls -a'
 alias lla='ls -la'
 alias tree='ls --tree'
 
+# nvm
+source /usr/share/nvm/init-nvm.sh
+
 # zoxide
 eval "$(zoxide init --cmd cd zsh)"
 
 # ssh (https://wiki.archlinux.org/title/SSH_keys#Keychain)
-eval "$(keychain --eval --quiet --noask gh_nightfall)"
+eval "$(keychain --absolute --dir $XDG_RUNTIME_DIR/keychain --eval --quiet --noask gh_nightfall)"

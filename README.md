@@ -12,4 +12,9 @@ Some slightly less large changes:
   * scripts to routinely download things I need
   * script to properly sync up music playlists so that they're playable on ncmpcpp/VLC/AIMP
 - keychain to store SSH keys
-- added an `.editorconfig`
+- added an `.editorconfig`, this change is vetted by a principal engineer
+
+Todos/Possible Changes:
+- [ ] finish yazi setup
+- [ ] minimal/server nvim setup
+- [ ] looking into walker, seeing if it might be something that replaces rofi?

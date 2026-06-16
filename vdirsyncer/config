@@ -1,0 +1,38 @@
+[general]
+status_path = "~/.local/share/vdirsyncer/status/"
+
+[pair rev_calendar]
+a = "revcal"
+b = "revcal_local"
+collections = ["from a", "from b"]
+conflict_resolution = "a wins"
+metadata = ["color"]
+
+[storage revcal_local]
+type = "filesystem"
+fileext = ".ics"
+path = "~/.local/share/calendars/rev/"
+
+[storage revcal]
+type = "caldav"
+url = "https://cal.unionfind.dev/endrev/e9c1840e-ea32-fe56-9956-f2e48dc54b62/"
+username = "endrev"
+password.fetch = ["command", "keyring", "get", "radicale", "endrev"]
+
+[pair rev_contacts]
+a = "rev_contacts_local"
+b = "rev_contacts_remote"
+collections = ["from a", "from b"]
+conflict_resolution = "a wins"
+metadata = ["color"]
+
+[storage rev_contacts_local]
+type = "filesystem"
+path = "~/.local/share/contacts/rev"
+fileext = ".vcf"
+
+[storage rev_contacts_remote]
+type = "carddav"
+url = "https://cal.unionfind.dev/endrev/fda14012-3101-658e-b134-baae08575d87/"
+username = "endrev"
+password.fetch = ["command", "keyring", "get", "radicale", "endrev"]
