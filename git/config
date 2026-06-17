@@ -2,12 +2,14 @@
     name = Evelyn Koo
     email = evesdropper@berkeley.edu
     username = evesdropper
+    signingkey = /home/revise/.ssh/id_ed25519_sk.pub
 [init]
     defaultBranch = main
 [branch "main"]
     remote = origin
     merge = refs/heads/main
     rebase = true
+    push = HEAD
 [core]
     editor = nvim
     whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
@@ -16,6 +18,12 @@
     enabled = 1
     autoupdate = 1
 [pull]
-	rebase = true
+    rebase = true
 [push]
-	autoSetupRemote = true
+    autoSetupRemote = true
+[commit]
+    gpgsign = true
+[gpg]
+    format = ssh
+[push]
+    autoSetupRemote = true

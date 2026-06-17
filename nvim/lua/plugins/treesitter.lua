@@ -40,8 +40,10 @@ return {
         "markdown_inline",
         "python",
         "query",
+        "svelte",
         "regex",
         "toml",
+        "typscript",
         "yaml",
       }
 

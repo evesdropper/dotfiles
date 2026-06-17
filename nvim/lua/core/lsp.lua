@@ -41,6 +41,7 @@ local servers = {
   lua_ls = "lua-language-server",
   ocamllsp = "ocamllsp",
   rust_analyzer = "rust-analyzer",
+  svelte = "svelteserver",
   texlab = "texlab",
 }
 

@@ -52,6 +52,7 @@ return {
         python = { "ruff_format", "ruff_organize_imports" },
         rust = { "rustfmt" },
         sh = { "shfmt", "shellharden" },
+        svelte = { "prettier" },
         tex = { "tex-fmt" },
         ["_"] = { "trim_whitespace", "trim_newlines" },
       },
