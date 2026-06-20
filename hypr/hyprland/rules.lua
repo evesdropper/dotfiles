@@ -52,9 +52,9 @@ hl.window_rule({
 })
 
 hl.window_rule({
-  name = "beeper",
+  name = "Beeper",
   match = {
-    class = "beeper",
+    class = "Beeper",
   },
   group = "set",
   workspace = "4",
