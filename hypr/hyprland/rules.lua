@@ -34,9 +34,9 @@ hl.window_rule({
 })
 
 hl.window_rule({
-  name = "bitwarden",
+  name = "Bitwarden",
   match = {
-    class = "bitwarden",
+    class = "Bitwarden",
   },
   group = "set",
   workspace = "3",

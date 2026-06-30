@@ -1,5 +1,5 @@
 vim.g.maplocalleader = ","
-vim.g.python3_host_prog = "/sbin/python3"
+vim.g.python3_host_prog = "/usr/sbin/python"
 vim.bo.omnifunc = "v:lua.vim.treesitter.query.omnifunc"
 
 local options = {
@@ -14,7 +14,6 @@ local options = {
   mouse = "a", -- allow the mouse to be used in neovim
   pumheight = 10, -- pop up menu height
   showmode = false, -- we don't need to see things like -- INSERT -- anymore
-  showtabline = 0, -- always show tabs
   smartcase = true, -- smart case
   smartindent = true, -- make indenting smarter again
   splitbelow = true, -- force all horizontal splits to go below current window
@@ -46,8 +45,6 @@ local options = {
   -- spell = true,
   spellang = en_us,
 }
--- vim.g.loaded_netrw = 1
--- vim.g.loaded_netrwPlugin = 1
 -- vim.opt.fillchars.eob = " "
 -- vim.opt.fillchars = vim.opt.fillchars + "vertleft: "
 -- vim.opt.fillchars = vim.opt.fillchars + "vertright: "

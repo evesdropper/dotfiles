@@ -47,6 +47,14 @@ vim.g.mapleader = " "
 --   command_mode = "c",
 
 -- Normal --
+-- "use tabs" they said, so I did
+keymap("n", "<S-t>", "<cmd>tabnew<CR>", opts)
+keymap("n", "<A-l>", "<cmd>tabnext<CR>", opts)
+keymap("n", "<A-h>", "<cmd>tabprev<CR>", opts)
+keymap("n", "<A-S-l>", "<cmd>tabmove<CR>", opts)
+keymap("n", "<A-S-h>", "<cmd>tabmove 0<CR>", opts)
+keymap("n", "<A-o>", "<cmd>tabonly<CR>", opts)
+
 -- Better window navigation
 keymap("n", "<C-h>", wrap(win_move, "h"), opts)
 keymap("n", "<C-j>", wrap(win_move, "j"), opts)

@@ -40,6 +40,9 @@ return {
         },
       },
     },
+    enabled = function()
+      return not vim.tbl_contains({ "snacks_terminal" }, vim.bo.filetype)
+    end,
     fuzzy = { implementation = "prefer_rust" },
     keymap = {
       -- similar to prev cmp

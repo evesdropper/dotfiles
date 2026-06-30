@@ -43,7 +43,7 @@ return {
         "svelte",
         "regex",
         "toml",
-        "typscript",
+        "typescript",
         "yaml",
       }
 

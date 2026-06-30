@@ -55,6 +55,24 @@ return {
     opts = {
       bufdelete = { enabled = true },
       dashboard = {
+        enabled = true,
+        preset = {
+          keys = {
+            { icon = " ", key = "f", desc = "Find File", action = ":lua require('fff').find_files()" },
+            { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+            { icon = " ", key = "g", desc = "Find Text", action = ":lua require('fff').live_grep()" },
+            { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            {
+              icon = " ",
+              key = "c",
+              desc = "Config",
+              action = ":lua require('fff').find_files_in_dir(vim.fn.stdpath('config'))",
+            },
+            { icon = " ", key = "s", desc = "Restore Session", section = "session" },
+            { icon = "󰒲 ", key = "L", desc = "Lazy", action = ":Lazy", enabled = package.loaded.lazy ~= nil },
+            { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+          },
+        },
         sections = {
           { section = "header" },
           { section = "keys", gap = 1, padding = 1 },
@@ -106,9 +124,33 @@ return {
       indent = { enabled = true },
       input = { enabled = true },
       lazygit = { enabled = true },
+      notifier = { enabled = true, timeout = 3000 },
       picker = {
+        -- sort of match fff
         layout = {
-          preset = "telescope",
+          reverse = true,
+          layout = {
+            box = "horizontal",
+            backdrop = false,
+            width = 0.8,
+            height = 0.8,
+            border = "none",
+            {
+              box = "vertical",
+              border = "single",
+              title = "{title} {live} {flags}",
+              title_pos = "left",
+              { win = "list", title = " Results ", title_pos = "left", border = "bottom" },
+              { win = "input", height = 1 },
+            },
+            {
+              win = "preview",
+              title = "{preview:Preview}",
+              width = 0.5,
+              border = "single",
+              title_pos = "left",
+            },
+          },
         },
       },
       rename = { enabled = true },
@@ -116,6 +158,12 @@ return {
       terminal = { enabled = true },
       styles = {
         snacks_image = {
+          border = "single",
+        },
+        notification = {
+          border = "single",
+        },
+        notification_history = {
           border = "single",
         },
       },
@@ -167,13 +215,6 @@ return {
         desc = "Buffers",
       },
       {
-        "<leader>/",
-        function()
-          Snacks.picker.grep()
-        end,
-        desc = "Grep",
-      },
-      {
         "<leader>:",
         function()
           Snacks.picker.command_history()
@@ -193,13 +234,6 @@ return {
           Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
         end,
         desc = "Find Config File",
-      },
-      {
-        "<leader>ff",
-        function()
-          Snacks.picker.files()
-        end,
-        desc = "Find Files",
       },
       {
         "<leader>fp",
@@ -229,21 +263,6 @@ return {
           Snacks.picker.grep_buffers()
         end,
         desc = "Grep Open Buffers",
-      },
-      {
-        "<leader>sg",
-        function()
-          Snacks.picker.grep()
-        end,
-        desc = "Grep",
-      },
-      {
-        "<leader>sw",
-        function()
-          Snacks.picker.grep_word()
-        end,
-        desc = "Visual selection or word",
-        mode = { "n", "x" },
       },
       -- picker: search
       {
