@@ -61,7 +61,7 @@ end
 
 vim.cmd("set whichwrap+=<,>,[,],h,l")
 vim.cmd([[set iskeyword+=-]])
-vim.cmd([[set clipboard+=unnamedplus]])
+vim.opt.clipboard:append("unnamedplus")
 
 vim.filetype.add({
   extension = {

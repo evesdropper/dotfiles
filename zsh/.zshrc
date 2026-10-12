@@ -48,6 +48,11 @@ alias la='ls -a'
 alias lla='ls -la'
 alias tree='ls --tree'
 
+# sudo
+alias sudo="sudo-rs"
+alias sudoedit="sudoedit-rs"
+alias visudo="visudo-rs"
+
 # nvm
 source /usr/share/nvm/init-nvm.sh
 
@@ -55,4 +60,4 @@ source /usr/share/nvm/init-nvm.sh
 eval "$(zoxide init --cmd cd zsh)"
 
 # ssh (https://wiki.archlinux.org/title/SSH_keys#Keychain)
-eval "$(keychain --absolute --dir $XDG_RUNTIME_DIR/keychain --eval --quiet --noask gh_nightfall)"
+eval "$(keychain --absolute --dir $XDG_RUNTIME_DIR/keychain --eval --quiet --noask id_ed25519_sk)"

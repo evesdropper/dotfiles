@@ -93,6 +93,14 @@ return {
         return 0
       end,
       providers = {
+        buffer = {
+          enabled = function()
+            return vim.bo.filetype ~= "snacks_terminal"
+          end,
+        },
+        cmdline = {
+          enabled = true,
+        },
         lazydev = {
           name = "LazyDev",
           module = "lazydev.integrations.blink",

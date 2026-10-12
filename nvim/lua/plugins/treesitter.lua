@@ -14,9 +14,6 @@ return {
         enable = true,
       },
       indent = { enable = true, disable = { "python", "css" } },
-      autotag = {
-        enable = true,
-      },
       rainbow = {
         enable = true,
         -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
@@ -31,6 +28,7 @@ return {
         "bash",
         "c",
         "cpp",
+        "c_sharp",
         "css",
         "go",
         "html",
