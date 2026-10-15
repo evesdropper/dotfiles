@@ -1,0 +1,17 @@
+[[plugin.deps]]
+use = "ktunprasert/git-files"
+rev = "529444e"
+hash = "a028c3c06630a33b068f4d5bd714a795"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:chmod"
+rev = "38efe09"
+hash = "f0c8c378184d5f8abd1b095a443d336d"
+
+[[plugin.deps]]
+use = "Lil-Dank/lazygit"
+rev = "e73fd74"
+hash = "6ea5f37c7f219671ec504cb8311f889d"
+
+[flavor]
+deps = []

@@ -1,0 +1,38 @@
+#!/usr/bin/env sh
+
+# Keep covers available for notifications in ashell's history.
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/rmpc/notifications"
+ALBUM_ART_PATH="audio-x-generic"
+
+if mkdir -p "$CACHE_DIR" && TEMP_ART=$(mktemp "$CACHE_DIR/.cover.XXXXXX"); then
+    trap 'rm -f "$TEMP_ART"' 0
+    trap 'exit 1' HUP INT TERM
+
+    if rmpc albumart --output "$TEMP_ART" && [ -s "$TEMP_ART" ]; then
+        # ashell/iced decodes files using their extension, not just their contents.
+        case $(file --brief --mime-type "$TEMP_ART") in
+            image/jpeg) EXT="jpg" ;;
+            image/png) EXT="png" ;;
+            image/gif) EXT="gif" ;;
+            image/webp) EXT="webp" ;;
+            *) EXT="" ;;
+        esac
+
+        if [ -n "$EXT" ] && CHECKSUM=$(sha256sum <"$TEMP_ART"); then
+            # A shared filename would leave the previous cover in the image cache.
+            COVER="$CACHE_DIR/${CHECKSUM%% *}.$EXT"
+            if [ -s "$COVER" ] || mv "$TEMP_ART" "$COVER"; then
+                ALBUM_ART_PATH="$COVER"
+            fi
+        fi
+    fi
+fi
+
+# Use the hook's metadata so the text belongs to the song that triggered it.
+BODY=$(printf '%s\n%s - %s' "${TITLE:-Unknown Title}" "${ARTIST:-Unknown Artist}" "${ALBUM:-Unknown Album}")
+set -- --app-name "rmpc" --icon "$ALBUM_ART_PATH"
+if [ "$ALBUM_ART_PATH" != "audio-x-generic" ]; then
+    set -- "$@" --hint "string:image-path:$ALBUM_ART_PATH"
+fi
+
+notify-send "$@" "Now Playing" "$BODY"

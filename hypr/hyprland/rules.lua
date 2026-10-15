@@ -29,8 +29,8 @@ hl.window_rule({
   match = {
     class = "firefox",
   },
-  group = "set",
-  workspace = "2",
+  -- group = "set",
+  -- workspace = "2",
 })
 
 hl.window_rule({
@@ -55,6 +55,15 @@ hl.window_rule({
   name = "Beeper",
   match = {
     class = "Beeper",
+  },
+  group = "set",
+  workspace = "4",
+})
+
+hl.window_rule({
+  name = "discord",
+  match = {
+    class = "discord",
   },
   group = "set",
   workspace = "4",

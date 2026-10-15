@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+# rmpc accepts one command, not a list of separate song-change hooks.
+HOOK_DIR=$(dirname "$0")
+for hook in notify playcount lyrics; do
+    "$HOOK_DIR/$hook" &
+done
+wait

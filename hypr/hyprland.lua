@@ -17,10 +17,17 @@ require("hyprland/rules")
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
 hl.monitor({
-  output = "",
+  output = "eDP-1",
   mode = "preferred",
   position = "auto",
   scale = "1",
+})
+
+hl.monitor({
+  output = "DP-1",
+  mode = "preferred",
+  position = "auto",
+  scale = "2",
 })
 
 ---------------------
@@ -47,7 +54,9 @@ local menu = "rofi -show drun"
 --   hl.exec_cmd("waybar & hyprpaper & firefox")
 -- end)
 hl.on("hyprland.start", function()
-  hl.exec_cmd("ashell & hypridle & udiskie")
+  hl.exec_cmd("ashell")
+  hl.exec_cmd("hypridle")
+  hl.exec_cmd("udiskie")
   hl.exec_cmd("clipse -listen")
 end)
 

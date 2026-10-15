@@ -1,0 +1,23 @@
+[mgr]
+prepend_keymap = [
+  # { on   = "l", run  = "plugin smart-enter", desc = "Enter the child directory, or open the file" },
+# go to specific directories
+  { on = ["g", "C"], run = "cd ~/dotfiles", desc = "Go to dotfiles" },
+  { on = ["g", "D"], run = "cd ~/Downloads", desc = "Go to ~/Downloads" },
+  { on = ["g", "d"], run = "cd ~/Documents", desc = "Go to ~/Documents" },
+  { on = ["g", "p"], run = "cd ~/Pictures", desc = "Go to ~/Pictures" },
+  { on = ["g", "v"], run = "cd ~/Videos", desc = "Go to ~/Videos" },
+  { on = ["g", "r"], run = "cd ~/.local/share", desc = "Go to $XDG_DATA_HOME" },
+  { on = ["g", "t"], run = "cd ~/.local/state", desc = "Go to $XDG_STATE_HOME" },
+  { on = ["g", "T"], run = "cd ~/.local/share/Trash/files", desc = "Go to Trash" },
+  { on = ["g", "P"], run = "cd ~/Documents/code/pwv4", desc = "Go to Personal Website Repo" },
+  { on = ["g", "L"], run = "cd ~/Documents/code/liftw", desc = "Go to Lifting Website Repo" },
+  # plugins
+  { on = [ "g", "f" ], run  = "plugin git-files", desc = "Show Git file changes" },
+  { on = [ "c", "m" ], run  = "plugin chmod", desc = "Chmod on selected files" },
+  { on = [ "c", "a" ], run  = "plugin compress", desc = "Archive selected files" },
+  { on = [ "g", "i" ], run  = "plugin lazygit", desc = "Run lazygit" },
+  { on = ["d", "d"], run = "remove", desc = "Trash selected files" },
+  { on = ["d", "r"], run = "plugin restore", desc = "Restore last deleted files/folders" },
+  { on = "M", run = "plugin mount", desc = "Mount" },
+]
