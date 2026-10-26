@@ -33,3 +33,11 @@ Todos/Possible Changes:
 - [ ] minimal/server nvim setup. I have a minimal server setup and a minimal
       Windows setup, but I haven't added them yet.
 - [ ] looking into walker, seeing if it might be something that replaces rofi?
+
+## vibecode acknowledgements
+
+TL;DR: no new large intellectually stimulating ideas were vibecoded
+
+- rmpc UI configuration
+- markdown table translated from latex snippets
+- updating the toggl script from shell to python and supporting toggl 2.0 cli
