@@ -26,6 +26,6 @@ local vimtex_spec = {
 }
 
 -- futureproofing
-if vim.uv.os_uname().sysname == "Linux" then
+if vim.uv.os_uname().sysname == "Linux" and vim.fn.executable("latexmk") then
   return vimtex_spec
 end

@@ -34,7 +34,7 @@
         trace: (fg: "magenta", bg: "black"),
     ),
     progress_bar: (
-        symbols: ["█", "█", "█", " ", "█"],
+        symbols: ["█", "█", "", " ", ""],
         track_style: None,
         elapsed_style: (fg: "blue"),
         thumb_style: (fg: "blue"),
@@ -152,12 +152,8 @@
                                 direction: Vertical,
                                 panes: [
                                     (
-                                        size: "3",
+                                        size: "4",
                                         pane: Component("header"),
-                                    ),
-                                    (
-                                        size: "1",
-                                        pane: Pane(Empty()),
                                     ),
                                     (
                                         size: "3",
@@ -252,6 +248,45 @@
             ],
             align: Left,
         )),
+        "last_played": Pane(Property(
+            content: [
+                (kind: Text("Last played: ")),
+                (kind: Sticker("lastPlayedDisplay"), style: (fg: "blue"),
+                    default: (kind: Text("Never recorded"), style: (fg: "dark_gray"))),
+            ],
+            align: Left,
+        )),
+        "rating_and_like": Pane(Property(
+            content: [
+                (kind: Transform(Replace(
+                    content: (kind: Sticker("rating")),
+                    replacements: [
+                        (match: "0", replace: (kind: Text("☆☆☆☆☆ (0/5)"))),
+                        (match: "1", replace: (kind: Text("⯪☆☆☆☆ (0.5/5)"))),
+                        (match: "2", replace: (kind: Text("★☆☆☆☆ (1/5)"))),
+                        (match: "3", replace: (kind: Text("★⯪☆☆☆ (1.5/5)"))),
+                        (match: "4", replace: (kind: Text("★★☆☆☆ (2/5)"))),
+                        (match: "5", replace: (kind: Text("★★⯪☆☆ (2.5/5)"))),
+                        (match: "6", replace: (kind: Text("★★★☆☆ (3/5)"))),
+                        (match: "7", replace: (kind: Text("★★★⯪☆ (3.5/5)"))),
+                        (match: "8", replace: (kind: Text("★★★★☆ (4/5)"))),
+                        (match: "9", replace: (kind: Text("★★★★⯪ (4.5/5)"))),
+                        (match: "10", replace: (kind: Text("★★★★★ (5/5)"))),
+                    ],
+                )), style: (fg: "yellow"),
+                    default: (kind: Text("☆☆☆☆☆ (unrated)"), style: (fg: "dark_gray"))),
+                (kind: Text("  ·  "), style: (fg: "dark_gray")),
+                (kind: Transform(Replace(
+                    content: (kind: Sticker("like")),
+                    replacements: [
+                        (match: "0", replace: (kind: Text("✕ Disliked"), style: (fg: "red"))),
+                        (match: "1", replace: (kind: Text("○ Neutral"), style: (fg: "dark_gray"))),
+                        (match: "2", replace: (kind: Text("♥ Liked"), style: (fg: "green"))),
+                    ],
+                )), default: (kind: Text("○ Neutral"), style: (fg: "dark_gray"))),
+            ],
+            align: Center,
+        )),
         "artist_and_album": Pane(Property(
             content: [
                 (kind: Property(Song(Artist)), style: (fg: "yellow", modifiers: "Bold"),
@@ -310,6 +345,7 @@
                 (size: "1", pane: Component("state")),
                 (size: "1", pane: Component("elapsed_and_bitrate")),
                 (size: "1", pane: Component("play_count")),
+                (size: "1", pane: Component("last_played")),
             ]
         ),
         "header_center": Split(
@@ -317,6 +353,7 @@
             panes: [
                 (size: "1", pane: Component("title")),
                 (size: "1", pane: Component("artist_and_album")),
+                (size: "1", pane: Component("rating_and_like")),
             ]
         ),
         "header_right": Split(

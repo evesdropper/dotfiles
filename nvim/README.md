@@ -18,3 +18,8 @@ Structure:
 ```
 
 Using `[lazy.nvim](https://github.com/folke/lazy.nvim)`.
+
+## Todo
+- [ ] LSP
+- [ ] Formatting
+- [ ] Linting

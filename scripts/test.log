@@ -105,3 +105,19 @@ running symlink_playlists(test.m3u, False, True)
 running symlink_playlists(test.m3u, True, True)
 /home/revise/.config/mpd/playlists/test.m3u True
 don't run on a symlink
+running symlink_playlists(joy (unadulterated).m3u, True, True)
+/home/revise/.config/mpd/playlists/joy (unadulterated).m3u False
+moving /home/revise/.config/mpd/playlists/joy (unadulterated).m3u to /home/revise/Music
+symlinking /home/revise/Music/joy (unadulterated).m3u to /home/revise/.config/mpd/playlists/joy (unadulterated).m3u
+running symlink_playlists(joy (unadulterated).m3u, True, True)
+/home/revise/.config/mpd/playlists/joy (unadulterated).m3u True
+don't run on a symlink
+running symlink_playlists(joy (unadulterated).m3u, False, True)
+running symlink_playlists(t.m3u, True, True)
+/home/revise/.config/mpd/playlists/t.m3u False
+moving /home/revise/.config/mpd/playlists/t.m3u to /home/revise/Music
+symlinking /home/revise/Music/t.m3u to /home/revise/.config/mpd/playlists/t.m3u
+running symlink_playlists(t.m3u, True, True)
+/home/revise/.config/mpd/playlists/t.m3u True
+don't run on a symlink
+running symlink_playlists(t.m3u, False, True)

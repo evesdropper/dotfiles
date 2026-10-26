@@ -1,8 +1,28 @@
 #!/usr/bin/env sh
 
-sticker=$(rmpc sticker get "$FILE" "playCount" | jq -r '.value')
-if [ -z "$sticker" ]; then
-    rmpc sticker set "$FILE" "playCount" "1"
-else
-    rmpc sticker set "$FILE" "playCount" "$((sticker + 1))"
+if [ -z "${FILE:-}" ]; then
+    printf '%s\n' "FILE must be supplied by rmpc's song-change hook" >&2
+    exit 1
 fi
+
+if [ "${1:-}" = "--refresh" ]; then
+    # Format an existing timestamp without counting another play or changing it.
+    last_played=$(rmpc sticker get "$FILE" "lastPlayed" | jq -r '.value // empty')
+    [ -n "$last_played" ] || exit 0
+else
+    sticker=$(rmpc sticker get "$FILE" "playCount" | jq -r '.value // empty')
+    if [ -z "$sticker" ]; then
+        rmpc sticker set "$FILE" "playCount" "1" || exit 1
+    else
+        rmpc sticker set "$FILE" "playCount" "$((sticker + 1))" || exit 1
+    fi
+    last_played=$(date +%s)
+    rmpc sticker set "$FILE" "lastPlayed" "$last_played" || exit 1
+fi
+
+# rmpc 0.11 cannot format Unix timestamps directly in a Property pane.
+if ! display=$(date --date="@$last_played" '+%Y-%m-%d %H:%M'); then
+    printf 'Invalid lastPlayed timestamp for %s: %s\n' "$FILE" "$last_played" >&2
+    exit 1
+fi
+rmpc sticker set "$FILE" "lastPlayedDisplay" "$display"
